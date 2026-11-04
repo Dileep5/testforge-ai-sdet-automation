@@ -1,0 +1,46 @@
+{
+ "story_id": "US-102",
+ "cases": [
+  {
+   "title": "Cancel within the grace period",
+   "category": "positive",
+   "priority": "P1",
+   "requirement_ids": [
+    "US-102/AC-1",
+    "US-102/AC-3"
+   ],
+   "preconditions": [
+    "An order in Pending status",
+    "Signed in as Manager"
+   ],
+   "steps": [
+    "Cancel the order within 15 minutes"
+   ],
+   "expected_results": [
+    "A refund of 100 percent is issued",
+    "An \"Order voided\" banner appears"
+   ],
+   "assumptions": [
+    "Cancellations notify the Auditor by email"
+   ]
+  },
+  {
+   "title": "Superuser can always cancel",
+   "category": "authorization",
+   "priority": "P1",
+   "requirement_ids": [
+    "US-102/AC-4"
+   ],
+   "preconditions": [
+    "Signed in as Superuser"
+   ],
+   "steps": [
+    "Cancel a Delivered order"
+   ],
+   "expected_results": [
+    "The order is cancelled"
+   ],
+   "assumptions": []
+  }
+ ]
+}

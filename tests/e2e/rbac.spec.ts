@@ -1,7 +1,7 @@
 import { expect, test } from "../../framework/fixtures";
 import { expectApiError } from "../../framework/helpers/api-client";
 
-const STAFF_LINKS = ["Dashboard", "Orders", "Products", "Inventory"];
+const STAFF_LINKS = ["Dashboard", "Orders", "Products", "Inventory", "Support"];
 
 test.describe("role-based access", { tag: "@regression" }, () => {
   test("each role sees the navigation for its permissions", { tag: "@smoke" }, async ({ admin, manager, viewer, buyer }) => {

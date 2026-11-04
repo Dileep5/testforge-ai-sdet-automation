@@ -17,18 +17,18 @@ Each scan's full result is attached to the HTML report as `axe-<screen>`.
 
 | Suite | Browser | Passed | Failed | Skipped | Flaky |
 | --- | --- | --- | --- | --- | --- |
-| axe scans (`axe.spec.ts`) | Chromium 156 | 29 | 0 | 0 | 0 |
+| axe scans (`axe.spec.ts`) | Chromium 156 | 30 | 0 | 0 | 0 |
 | Semantics and focus visibility (`semantics.spec.ts`) | Chromium 156 | 19 | 0 | 0 | 0 |
-| Keyboard (`keyboard.spec.ts`) | Chromium 156 | 32 | 0 | 0 | 0 |
-| Keyboard (`keyboard.spec.ts`) | WebKit 27.2 | 32 | 0 | 0 | 0 |
-| Keyboard (`keyboard.spec.ts`) | Firefox 157 | **0: unverified** | 32 at launch, no test body ran | 0 | 0 |
+| Keyboard (`keyboard.spec.ts`) | Chromium 156 | 33 | 0 | 0 | 0 |
+| Keyboard (`keyboard.spec.ts`) | WebKit 27.2 | 33 | 0 | 0 | 0 |
+| Keyboard (`keyboard.spec.ts`) | Firefox 157 | **0: unverified** | 33 at launch, no test body ran | 0 | 0 |
 
-Retries were off. Run 3 times over, the Chromium and WebKit suites gave 336 passed and 0 failed.
+Retries were off. In Phase 4, before the support page was added, the Chromium and WebKit suites run 3 times over gave 336 passed and 0 failed. That repeat was not run again in Phase 5.
 
 ## axe-core
 
 axe-core 4.14 ran with the `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa` and `best-practice` tags. **No rule is
-disabled or excluded.** The final run scanned 37 screen states with **0 violations**.
+disabled or excluded.** The final run scanned 41 screen states with **0 violations**. Four of them, on the support page, were added in Phase 5.
 
 | Area | States scanned |
 | --- | --- |
@@ -40,6 +40,7 @@ disabled or excluded.** The final run scanned 37 screen states with **0 violatio
 | Dialogs | Status, status with server error, new product, its errors, edit, retire, adjust, its errors, new user |
 | Products and inventory | Grids, product details, success toast, inventory at 320px wide |
 | Other | Users, audit log, access denied, page not found |
+| Support | Form, validation error, answer, refusal |
 
 ### Needs manual review
 

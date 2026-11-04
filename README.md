@@ -2,11 +2,7 @@
 
 An enterprise SDET and test automation portfolio project, built around a real application under test.
 
-> **Status: Phases 1 and 2 of 7 complete.** The commerce application, backend tests and Playwright
-> framework exist and are verified. **Firefox could not be run on this machine.** API contract,
-> accessibility, performance and AI evaluation suites, Docker and CI are **not built yet**.
-> See [TEST_RESULTS.md](TEST_RESULTS.md), [ARCHITECTURE.md](ARCHITECTURE.md) and
-> [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md).
+> **Status: Phases 1 to 5 of 7 complete, and every result is local.** The commerce application and its backend, browser, API, contract, database, security, accessibility, performance and AI test suites exist and ran on this machine. **Firefox cannot launch here, so it is unverified. One WebKit failure is unresolved. No live LLM has been called, and offline chatbot results are modest.** Docker and CI are **not built yet**. See [TEST_RESULTS.md](TEST_RESULTS.md), [AI_EVALUATION.md](AI_EVALUATION.md), [ARCHITECTURE.md](ARCHITECTURE.md) and [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md).
 
 ## The application
 
@@ -22,6 +18,7 @@ fictional, and payments are simulated: no card data is accepted and no real mone
 | Orders | Multi-line orders in one transaction, row locks that prevent overselling, a status state machine, filtered grid, CSV export. |
 | Payments | Deterministic simulated approve, decline and timeout, idempotency keys, settlement. |
 | Audit | Business actions are recorded in the same transaction as the change they describe. |
+| Support | A chat page that answers from approved articles with citations, and from orders the user may see. Offline by default. |
 
 ## Stack
 
@@ -77,6 +74,9 @@ against its own database and ports, so it does not touch development data.
 | `npm run test:a11y` | axe, semantics, focus and keyboard tests in Chromium |
 | `npm run test:a11y:keyboard` | Keyboard tests in WebKit |
 | `npm run perf:install`, then `npm run perf` | k6 scenarios on a dedicated database. See [PERFORMANCE.md](PERFORMANCE.md) |
+| `npm run test:ai`, `npm run lint:ai` | AI tests and lint, offline with no key. See [AI_TESTING.md](AI_TESTING.md) |
+| `npm run ai:eval`, `npm run ai:eval:heldout` | Chatbot evaluation. See [AI_EVALUATION.md](AI_EVALUATION.md) |
+| `npm run ai:triage:corpus` | Run deliberately failing tests, then classify them. Failures are expected |
 | `npm run typecheck` | Strict type check of the frontend and framework |
 | `npm run lint` / `npm run lint:backend` | ESLint / Ruff |
 | `npm run build` | Frontend production build |
@@ -90,7 +90,7 @@ npx playwright test --grep "rapid typing" --headed           # watch one test
 ```
 
 **On this machine, use `npm run test:e2e:chromium` and `test:e2e:webkit`.** Firefox currently fails to
-launch here, so `npm run test:e2e` reports 58 launch failures and Firefox is unverified. See
+launch here, so `npm run test:e2e` reports 64 launch failures and Firefox is unverified. See
 [TEST_RESULTS.md](TEST_RESULTS.md#firefox).
 
 ### Investigating a failure
@@ -137,13 +137,14 @@ tests/e2e     Playwright browser tests
 tests/api, contract, database, security, reliability    Playwright tests with no browser
 tests/accessibility    axe, semantics, focus and keyboard tests
 performance   k6 scenarios
+ai            AI test generation, support chatbot, LLM evaluation and failure triage
 scripts       Setup, local PostgreSQL, dev runner, E2E API runner, OpenAPI export
 ```
 
 The fixture design, page objects, isolation and browser configuration are explained in
 [ARCHITECTURE.md](ARCHITECTURE.md#playwright-framework). What each test layer covers is in
 [TEST_STRATEGY.md](TEST_STRATEGY.md), and results are in [TEST_RESULTS.md](TEST_RESULTS.md),
-[ACCESSIBILITY.md](ACCESSIBILITY.md) and [PERFORMANCE.md](PERFORMANCE.md).
+[ACCESSIBILITY.md](ACCESSIBILITY.md), [PERFORMANCE.md](PERFORMANCE.md), [AI_TESTING.md](AI_TESTING.md) and [AI_EVALUATION.md](AI_EVALUATION.md).
 
 ## Known limitations
 

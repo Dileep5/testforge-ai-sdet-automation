@@ -17,6 +17,7 @@ export type PaymentStatus = Schemas["PaymentStatus"];
 export type HistoryEntry = Schemas["OrderHistoryEntry"];
 export type AuditEntry = Schemas["AuditLogOut"];
 export type DashboardSummary = Schemas["DashboardSummary"];
+export type ChatResponse = Schemas["ChatResponse"];
 
 export const ORDER_STATUSES: OrderStatus[] = [
   "PENDING",

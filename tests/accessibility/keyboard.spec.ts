@@ -85,6 +85,19 @@ test.describe("keyboard: navigation order", { tag: "@keyboard" }, () => {
 });
 
 test.describe("keyboard: activation", { tag: "@keyboard" }, () => {
+  test("the support question can be asked using only the keyboard", async ({ viewer, browserName }) => {
+    const { support } = viewer.app;
+    const { page } = viewer;
+    await support.goto();
+    await support.question.focus();
+    await page.keyboard.type("How long do refunds take?");
+    await tab(page, browserName);
+    await expect(support.submit).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(support.answer).toContainText("5 business days");
+    await expect(support.submit).toBeFocused();
+  });
+
   test("Enter submits the login form from a field", async ({ anon }) => {
     const { login } = anon.app;
     const { page } = anon;

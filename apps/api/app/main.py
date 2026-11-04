@@ -24,6 +24,7 @@ from app.routers import (
     orders,
     payments,
     products,
+    support,
     users,
     warehouses,
 )
@@ -76,6 +77,8 @@ def _validation_details(exc: RequestValidationError) -> list[dict[str, Any]]:
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    # A live provider that is not fully configured stops the server at startup, not on a request.
+    support.get_bot()
     app = FastAPI(
         title="TestForge Commerce API",
         version="1.0.0",
@@ -163,6 +166,7 @@ def create_app() -> FastAPI:
         payments,
         audit,
         dashboard,
+        support,
     ):
         api.include_router(module.router, responses=_error_responses)
     app.include_router(api)

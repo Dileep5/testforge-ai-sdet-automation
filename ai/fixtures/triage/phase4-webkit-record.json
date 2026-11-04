@@ -1,0 +1,21 @@
+[
+  {
+    "test": "the low stock filter shows a low row and leaves out a healthy one",
+    "project": "webkit",
+    "status": "failed",
+    "errors": [
+      "TimeoutError: page.waitForResponse: Timeout 15000ms exceeded while waiting for event \"response\"\n\n   at ../../framework/helpers/network.ts:30\n\n  28 |  */\n  29 | export async function whileWaitingFor(page: Page, match: ApiMatch, action: () => Promise<void>): Promise<Response> {\n> 30 |   const [response] = await Promise.all([page.waitForResponse((candidate) => matches(candidate, match)), action()]);\n     |                                              ^\n  31 |   return response;\n  32 | }\n  33 |\n    at whileWaitingFor (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/helpers/network.ts:30:46)\n    at InventoryPage.search (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/pages/inventory-page.ts:36:26)\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/tests/e2e/inventory.spec.ts:145:5"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": null,
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "diagnostics"
+    ]
+  }
+]

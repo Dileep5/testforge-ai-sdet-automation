@@ -1,0 +1,16 @@
+{
+  "id": "US-102",
+  "title": "Cancel an order",
+  "as_a": "Manager",
+  "i_want": "to cancel an order that has not shipped",
+  "so_that": "reserved stock returns to the warehouse",
+  "surface": "both",
+  "allowed_roles": ["Manager", "Admin"],
+  "forbidden_roles": ["Viewer"],
+  "acceptance_criteria": [
+    {"id": "AC-1", "text": "A Pending or Confirmed order can be cancelled."},
+    {"id": "AC-2", "text": "A Shipped or Delivered order cannot be cancelled."},
+    {"id": "AC-3", "text": "Cancelling returns each line's quantity to stock exactly once."},
+    {"id": "AC-4", "text": "A Viewer cannot cancel an order."}
+  ]
+}

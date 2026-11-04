@@ -54,6 +54,153 @@
         "title": "AuditLogOut",
         "type": "object"
       },
+      "ChatResponse": {
+        "properties": {
+          "answer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Generated text. Set only when status=answered.",
+            "title": "Answer"
+          },
+          "citations": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/Citation"
+            },
+            "title": "Citations",
+            "type": "array"
+          },
+          "evidence": {
+            "default": [],
+            "description": "Retrieved text, separate from the answer.",
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "guard_failures": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Guard Failures",
+            "type": "array"
+          },
+          "kb_version": {
+            "title": "Kb Version",
+            "type": "string"
+          },
+          "latency_ms": {
+            "default": 0.0,
+            "title": "Latency Ms",
+            "type": "number"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Fixed text explaining a refusal or a question.",
+            "title": "Message"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "refusal_reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "no_evidence",
+                  "conflicting_evidence",
+                  "prompt_injection",
+                  "data_request",
+                  "order_not_available",
+                  "output_rejected",
+                  "provider_error",
+                  "tool_error",
+                  "invalid_input"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refusal Reason"
+          },
+          "status": {
+            "enum": [
+              "answered",
+              "refused",
+              "needs_clarification"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "usage": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TokenUsage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "mode",
+          "kb_version"
+        ],
+        "title": "ChatResponse",
+        "type": "object"
+      },
+      "Citation": {
+        "additionalProperties": false,
+        "properties": {
+          "quote": {
+            "maxLength": 600,
+            "minLength": 1,
+            "title": "Quote",
+            "type": "string"
+          },
+          "source_id": {
+            "maxLength": 40,
+            "title": "Source Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "quote"
+        ],
+        "title": "Citation",
+        "type": "object"
+      },
       "CustomerCreate": {
         "additionalProperties": false,
         "properties": {
@@ -230,6 +377,44 @@
           "error"
         ],
         "title": "ErrorResponse",
+        "type": "object"
+      },
+      "Evidence": {
+        "description": "Text a person approved, or a value read by a backend tool. Never written by the model.",
+        "properties": {
+          "kind": {
+            "default": "faq",
+            "enum": [
+              "faq",
+              "live_order"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "source_id": {
+            "title": "Source Id",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_id",
+          "title",
+          "text",
+          "score"
+        ],
+        "title": "Evidence",
         "type": "object"
       },
       "HealthOut": {
@@ -1405,6 +1590,40 @@
           "session_expires_at"
         ],
         "title": "SessionUserOut",
+        "type": "object"
+      },
+      "SupportChatRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "question": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Question",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "title": "SupportChatRequest",
+        "type": "object"
+      },
+      "TokenUsage": {
+        "properties": {
+          "input_tokens": {
+            "title": "Input Tokens",
+            "type": "integer"
+          },
+          "output_tokens": {
+            "title": "Output Tokens",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "input_tokens",
+          "output_tokens"
+        ],
+        "title": "TokenUsage",
         "type": "object"
       },
       "UserCreate": {
@@ -4997,6 +5216,108 @@
         "summary": "List Roles",
         "tags": [
           "users"
+        ]
+      }
+    },
+    "/api/v1/support/chat": {
+      "post": {
+        "description": "Answer from approved support articles, and from orders the signed-in user may see.",
+        "operationId": "chat_api_v1_support_chat_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupportChatRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unauthorized"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Forbidden"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Unprocessable Content"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Service Unavailable"
+          }
+        },
+        "summary": "Chat",
+        "tags": [
+          "support"
         ]
       }
     },

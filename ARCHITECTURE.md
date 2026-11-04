@@ -149,6 +149,10 @@ error responses, including each response's request ID, which links it to the API
 
 `framework/helpers/accessibility.ts` runs axe with no rule disabled and attaches each result. It also checks what axe does not: heading hierarchy, label associations, and a visible focus indicator at each Tab stop.
 
+### Failure triage corpus
+
+`playwright.triage.config.ts` runs `ai/triage-corpus/`, a set of deliberately failing tests that give the triage tool real artifacts. It has its own output folder and is never part of a normal run. Failure diagnostics also list requests still pending at failure, because that separates a timing failure from a missing element.
+
 ### Project configuration
 
 Projects are defined in `playwright.config.ts`: `chromium`, `firefox`, `webkit`, a browserless `framework` project for
@@ -166,3 +170,38 @@ A retried test that passes is reported as flaky, not passed, so retries cannot h
 Playwright only records video automatically for its built-in `page` fixture. Role sessions open their
 own contexts, so the fixture records and keeps video itself. Traces and screenshots do apply to those
 contexts automatically. A deliberate failure with two sessions confirmed all three are captured.
+
+## AI modules
+
+`ai/testforge_ai` is one Python package shared by a command line and a thin API route. It holds test generation, the support chatbot, the evaluation framework and failure triage. Detail is in [AI_TESTING.md](AI_TESTING.md).
+
+```mermaid
+flowchart LR
+  subgraph Browser
+    P[Support page]
+  end
+  subgraph API
+    R[POST /support/chat] --> S[Scoped order lookup]
+    R --> B
+  end
+  subgraph Package[testforge_ai]
+    B[SupportBot] --> K[(Approved articles)]
+    B --> G[Guards]
+    B --> L[llm.py]
+    C[Generator, review, exporter] --> L
+    T[Triage] --> L
+    E[Evaluation] --> B
+  end
+  P --> R
+  S --> DB[(PostgreSQL)]
+  L -. opt-in only .-> O[OpenAI]
+```
+
+**Design decisions:**
+
+- **Offline by default.** Nothing needs a key. `OpenAIProvider` can only be created with an explicit allow flag, a key and a named model, so a key that happens to be in the environment does nothing.
+- **Authorization stays in the backend.** The route resolves an order with the same `scope_to_user` as every other read and passes the bot only a validated number, status and date. The model has no tools.
+- **No connection is held during a model call.** The route rolls back before calling the bot. Admission allows as many requests as there are connections, so a slow model holding them would bring back the Phase 2 starvation problem.
+- **A model is untrusted.** Output is parsed, validated and checked by rules, and only then shown. Refusals use fixed text.
+- **Plain BM25, with no vector database.** The purpose is testing AI systems, and a few dozen short articles do not need more.
+- **A failed configuration stops startup.** A live provider that is not fully configured fails when the server starts, not on a customer's request.

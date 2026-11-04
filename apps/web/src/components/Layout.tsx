@@ -9,6 +9,7 @@ const LINKS = [
   { to: "/orders", label: "Orders" },
   { to: "/products", label: "Products" },
   { to: "/inventory", label: "Inventory" },
+  { to: "/support", label: "Support" },
   { to: "/admin/users", label: "Users", permission: "users:manage" },
   { to: "/admin/audit", label: "Audit log", permission: "audit:read" },
 ];

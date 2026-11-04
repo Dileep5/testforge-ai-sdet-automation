@@ -12,6 +12,7 @@ import { OrderDetailPage } from "./pages/OrderDetail";
 import { OrdersPage } from "./pages/Orders";
 import { ProductDetailPage } from "./pages/ProductDetail";
 import { ProductsPage } from "./pages/Products";
+import { SupportPage } from "./pages/Support";
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, ready } = useAuth();
@@ -60,6 +61,7 @@ export function App() {
         <Route path="products" element={<ProductsPage />} />
         <Route path="products/:productId" element={<ProductDetailPage />} />
         <Route path="inventory" element={<InventoryPage />} />
+        <Route path="support" element={<SupportPage />} />
         <Route
           path="admin/users"
           element={

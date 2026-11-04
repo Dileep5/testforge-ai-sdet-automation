@@ -1,0 +1,3262 @@
+<testsuites id="" name="" tests="71" failures="22" skipped="0" errors="49" time="36.273034">
+<testsuite name="dev.spec.ts" timestamp="2026-11-04T15:43:36.393Z" hostname="corpus-chromium" tests="17" failures="6" skipped="0" time="18.721" errors="11">
+<testcase name="case D01" classname="dev.spec.ts" time="2.55">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D01-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D01-corpus-chromium/attachments/video-8fb1478950ebc77408f7082412acd6711aecd554.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D01-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D01-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:5:5 › case D01 ───────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('orders-grid').locator('tbody tr').first()
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('orders-grid').locator('tbody tr').first() with timeout 1500ms
+      - waiting for getByTestId('orders-grid').locator('tbody tr').first()
+
+
+       6 |   await manager.page.route("**/api/v1/orders*", (route) => route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: { code: "INTERNAL_ERROR", message: "x", details: [], request_id: "r" } }) }));
+       7 |   await manager.page.goto("/orders");
+    >  8 |   await expect(manager.page.getByTestId("orders-grid").locator("tbody tr").first()).toBeVisible(short);
+         |                                                                                     ^
+       9 | });
+      10 |
+      11 | test("case D02", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:8:85
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D01-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D01-corpus-chromium/attachments/video-8fb1478950ebc77408f7082412acd6711aecd554.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D01-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D01-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D01-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D02" classname="dev.spec.ts" time="2.586">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D02-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D02-corpus-chromium/attachments/video-067815e60adaf54030b796b469d5931ab89fc7ed.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D02-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D02-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toContainText(expected) failed" type="expect.toContainText">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:11:5 › case D02 ──────────────────────────────────────────────────
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('stat-total-orders')
+    Expected substring: "60"
+    Received string:    "424242"
+    Timeout: 1500ms
+
+    Call log:
+      - Expect "toContainText" getByTestId('stat-total-orders') with timeout 1500ms
+      - waiting for getByTestId('stat-total-orders')
+        13 × locator resolved to <div class="stat-value" data-testid="stat-total-orders">424242</div>
+           - unexpected value "424242"
+
+
+      17 |   const expected = (await manager.api.dashboard()).total_orders;
+      18 |   await manager.page.goto("/");
+    > 19 |   await expect(manager.page.getByTestId("stat-total-orders")).toContainText(String(expected), short);
+         |                                                               ^
+      20 | });
+      21 |
+      22 | test("case D03", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:19:63
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D02-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D02-corpus-chromium/attachments/video-067815e60adaf54030b796b469d5931ab89fc7ed.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D02-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D02-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D02-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D03" classname="dev.spec.ts" time="1.087">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D03-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D03-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D03-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="uncaught errors in the page" type="expect.toEqual">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:22:5 › case D03 ──────────────────────────────────────────────────
+
+    Error: uncaught errors in the page
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "Cannot read properties of undefined (reading 'status')",
+    + ]
+
+       at ../../framework/fixtures/index.ts:124
+
+      122 |     if (!failed) await rm(testInfo.outputPath("videos"), { recursive: true, force: true });
+      123 |     // A crash in the page is a bug even when the visible assertions happen to pass.
+    > 124 |     expect(uncaught, "uncaught errors in the page").toEqual([]);
+          |                                                     ^
+      125 |   };
+      126 |
+      127 |   return { open, closeAll };
+        at closeAll (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:124:53)
+        at Object.openBrowser (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:158:5)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D03-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D03-corpus-chromium/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D03-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D03-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D04" classname="dev.spec.ts" time="2.727">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D04-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D04-corpus-chromium/attachments/video-b2c7b84af9fe756b210fb33d79e45321d4d85acb.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D04-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D04-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="locator.click: Timeout 1500ms exceeded." type="TimeoutError">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:28:5 › case D04 ──────────────────────────────────────────────────
+
+    TimeoutError: locator.click: Timeout 1500ms exceeded.
+    Call log:
+      - waiting for getByTestId('no-such-button')
+
+
+      29 |   await manager.page.goto("/");
+      30 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible();
+    > 31 |   await manager.page.getByTestId("no-such-button").click(short);
+         |                                                    ^
+      32 | });
+      33 |
+      34 | test("case D05", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:31:52
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D04-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D04-corpus-chromium/attachments/video-b2c7b84af9fe756b210fb33d79e45321d4d85acb.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D04-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D04-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D04-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D05" classname="dev.spec.ts" time="0.323">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D05-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D05-corpus-chromium/attachments/video-4eb1415962166b021f9ca63d21840f1535eec600.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D05-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D05-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="locator.click: Error: strict mode violation: getByRole(&apos;link&apos;) resolved to 16 elements:" type="Error">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:34:5 › case D05 ──────────────────────────────────────────────────
+
+    Error: locator.click: Error: strict mode violation: getByRole('link') resolved to 16 elements:
+        1) <a href="#main" class="skip-link">Skip to content</a> aka getByRole('link', { name: 'Skip to content' })
+        2) <a href="/" aria-current="page" data-discover="true" class="nav-link active">Dashboard</a> aka getByRole('link', { name: 'Dashboard' })
+        3) <a href="/orders" class="nav-link" data-discover="true">Orders</a> aka getByRole('link', { name: 'Orders' })
+        4) <a class="nav-link" href="/products" data-discover="true">Products</a> aka getByRole('link', { name: 'Products' })
+        5) <a class="nav-link" href="/inventory" data-discover="true">Inventory</a> aka getByRole('link', { name: 'Inventory' })
+        6) <a href="/support" class="nav-link" data-discover="true">Support</a> aka getByRole('link', { name: 'Support' })
+        7) <a data-discover="true" href="/orders?status=PENDING">…</a> aka getByRole('link', { name: 'Pending' })
+        8) <a data-discover="true" href="/orders?status=CONFIRMED">…</a> aka getByRole('link', { name: 'Confirmed' })
+        9) <a data-discover="true" href="/orders?status=SHIPPED">…</a> aka getByRole('link', { name: 'Shipped' })
+        10) <a data-discover="true" href="/orders?status=DELIVERED">…</a> aka getByRole('link', { name: 'Delivered' })
+        ...
+
+    Call log:
+      - waiting for getByRole('link')
+
+
+      35 |   await manager.page.goto("/");
+      36 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible();
+    > 37 |   await manager.page.getByRole("link").click();
+         |                                        ^
+      38 | });
+      39 |
+      40 | test("case D06", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:37:40
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D05-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D05-corpus-chromium/attachments/video-4eb1415962166b021f9ca63d21840f1535eec600.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D05-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D05-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D05-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D06" classname="dev.spec.ts" time="1.941">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D06-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D06-corpus-chromium/attachments/video-b439b51745bacf3d5a8e1ab21fafe7d2682d96fb.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D06-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D06-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:40:5 › case D06 ──────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Dashbord' })
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Dashbord' }) with timeout 1500ms
+      - waiting for getByRole('heading', { name: 'Dashbord' })
+
+
+      41 |   await manager.page.goto("/");
+      42 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible();
+    > 43 |   await expect(manager.page.getByRole("heading", { name: "Dashbord" })).toBeVisible(short);
+         |                                                                         ^
+      44 | });
+      45 |
+      46 | test("case D07", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:43:73
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D06-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D06-corpus-chromium/attachments/video-b439b51745bacf3d5a8e1ab21fafe7d2682d96fb.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D06-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D06-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D06-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D07" classname="dev.spec.ts" time="1.847">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D07-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D07-corpus-chromium/attachments/video-9f80de0f39ca56fcae6e8f85f37aec774577465a.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D07-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D07-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:46:5 › case D07 ──────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('stat-total-orders')
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('stat-total-orders') with timeout 1500ms
+      - waiting for getByTestId('stat-total-orders')
+
+
+      47 |   await manager.page.route("**/api/v1/dashboard/summary", () => undefined);
+      48 |   await manager.page.goto("/");
+    > 49 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible(short);
+         |                                                               ^
+      50 | });
+      51 |
+      52 | test("case D08", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:49:63
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D07-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D07-corpus-chromium/attachments/video-9f80de0f39ca56fcae6e8f85f37aec774577465a.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D07-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D07-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D07-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D08" classname="dev.spec.ts" time="1.974">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D08-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D08-corpus-chromium/attachments/video-a4a3a3e541d59cb347e71fc489c88efdb51d8065.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D08-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D08-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="page.waitForResponse: Timeout 1500ms exceeded while waiting for event &quot;response&quot;" type="TimeoutError">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:52:5 › case D08 ──────────────────────────────────────────────────
+
+    TimeoutError: page.waitForResponse: Timeout 1500ms exceeded while waiting for event "response"
+    =========================== logs ===========================
+    waiting for response "**/api/v1/never-called"
+    ============================================================
+
+      52 | test("case D08", async ({ manager }) => {
+      53 |   await manager.page.goto("/");
+    > 54 |   await manager.page.waitForResponse("**/api/v1/never-called", short);
+         |                      ^
+      55 | });
+      56 |
+      57 | test("case D09", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:54:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D08-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D08-corpus-chromium/attachments/video-a4a3a3e541d59cb347e71fc489c88efdb51d8065.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D08-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D08-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D08-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D09" classname="dev.spec.ts" time="3.144">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D09-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D09-corpus-chromium/attachments/video-374b3750d7895495d4a33a96019fafa54c339e33.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D09-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D09-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="Test timeout of 3000ms exceeded." type="Error">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:57:5 › case D09 ──────────────────────────────────────────────────
+
+    Test timeout of 3000ms exceeded.
+
+    Error: page.waitForResponse: Target page, context or browser has been closed
+    =========================== logs ===========================
+    waiting for response "**/api/v1/products*"
+    ============================================================
+
+      59 |   await manager.page.route("**/api/v1/products*", () => undefined);
+      60 |   await manager.page.goto("/products");
+    > 61 |   await manager.page.waitForResponse("**/api/v1/products*", { timeout: 60_000 });
+         |                      ^
+      62 | });
+      63 |
+      64 | test("case D10", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:61:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D09-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D09-corpus-chromium/attachments/video-374b3750d7895495d4a33a96019fafa54c339e33.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D09-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D09-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D09-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D10" classname="dev.spec.ts" time="0.223">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D10-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D10-corpus-chromium/attachments/video-98e6bcd8b0e7dda078c3737fc9bee1eac97ab1e7.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D10-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D10-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:59999/" type="Error">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:64:5 › case D10 ──────────────────────────────────────────────────
+
+    Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:59999/
+    Call log:
+      - navigating to "http://127.0.0.1:59999/", waiting until "load"
+
+
+      63 |
+      64 | test("case D10", async ({ manager }) => {
+    > 65 |   await manager.page.goto("http://127.0.0.1:59999/");
+         |                      ^
+      66 | });
+      67 |
+      68 | test("case D11", async ({ playwright }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:65:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D10-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D10-corpus-chromium/attachments/video-98e6bcd8b0e7dda078c3737fc9bee1eac97ab1e7.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D10-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D10-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D10-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D11" classname="dev.spec.ts" time="0.008">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D11-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D11-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:59999" type="Error">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:68:5 › case D11 ──────────────────────────────────────────────────
+
+    Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:59999
+    Call log:
+      - → GET http://127.0.0.1:59999/api/v1/health
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+
+
+      68 | test("case D11", async ({ playwright }) => {
+      69 |   const request = await playwright.request.newContext();
+    > 70 |   await request.get("http://127.0.0.1:59999/api/v1/health");
+         |                 ^
+      71 | });
+      72 |
+      73 | test("case D13", async ({ playwright }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:70:17
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D11-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D11-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D11-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D13" classname="dev.spec.ts" time="0.068">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D13-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D13-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="Login as nobody-here@e2e.example failed: 401 {&quot;error&quot;:{&quot;code&quot;:&quot;INVALID_CREDENTIALS&quot;,&quot;message&quot;:&quot;Incorrect email or password&quot;,&quot;details&quot;:[],&quot;request_id&quot;:&quot;1efbfc26-53f9-4e3b-96c5-47c65a6a9259&quot;}}" type="Error">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:73:5 › case D13 ──────────────────────────────────────────────────
+
+    Error: Login as nobody-here@e2e.example failed: 401 {"error":{"code":"INVALID_CREDENTIALS","message":"Incorrect email or password","details":[],"request_id":"1efbfc26-53f9-4e3b-96c5-47c65a6a9259"}}
+
+       at ../../framework/fixtures/index.ts:80
+
+      78 |   const response = await request.post("/api/v1/auth/login", { data: { email, password } });
+      79 |   if (!response.ok()) {
+    > 80 |     throw new Error(`Login as ${credentials.email} failed: ${response.status()} ${await response.text()}`);
+         |           ^
+      81 |   }
+      82 |   return request;
+      83 | }
+        at apiLogin (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:80:11)
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:74:3
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D13-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D13-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D13-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D14" classname="dev.spec.ts" time="0.154">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D14-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D14-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="POST /orders returned 409: {&quot;error&quot;:{&quot;code&quot;:&quot;INSUFFICIENT_STOCK&quot;,&quot;message&quot;:&quot;Not enough stock at YYZ1&quot;,&quot;details&quot;:[{&quot;product_id&quot;:&quot;a248d13f-9c0d-45e3-8171-d1f657a30c15&quot;,&quot;sku&quot;:&quot;E2E-35E2401B21-2&quot;,&quot;requested&quot;:50,&quot;available&quot;:1}],&quot;request_id&quot;:&quot;da37443a-dbce-4cf0-8153-f01f7871636f&quot;}}" type="Error">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:77:5 › case D14 ──────────────────────────────────────────────────
+
+    Error: POST /orders returned 409: {"error":{"code":"INSUFFICIENT_STOCK","message":"Not enough stock at YYZ1","details":[{"product_id":"a248d13f-9c0d-45e3-8171-d1f657a30c15","sku":"E2E-35E2401B21-2","requested":50,"available":1}],"request_id":"da37443a-dbce-4cf0-8153-f01f7871636f"}}
+
+       at ../../framework/helpers/api-client.ts:51
+
+      49 |     const response = await this.send(method, path, options);
+      50 |     if (!response.ok()) {
+    > 51 |       throw new Error(`${method} ${path} returned ${response.status()}: ${await response.text()}`);
+         |             ^
+      52 |     }
+      53 |     return (response.status() === 204 ? undefined : await response.json()) as T;
+      54 |   }
+        at ApiClient.json (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/helpers/api-client.ts:51:13)
+        at TestData.order (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/factories/test-data.ts:112:19)
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:80:3
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D14-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D14-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D14-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D15" classname="dev.spec.ts" time="0.086">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D15-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D15-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="Setup: seeded customer not found: 404 {&quot;error&quot;:{&quot;code&quot;:&quot;NOT_FOUND&quot;,&quot;message&quot;:&quot;The requested resource was not found&quot;,&quot;details&quot;:[],&quot;request_id&quot;:&quot;7908892f-e5af-4469-83ce-bda33d410975&quot;}}" type="Error">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:83:5 › case D15 ──────────────────────────────────────────────────
+
+    Error: Setup: seeded customer not found: 404 {"error":{"code":"NOT_FOUND","message":"The requested resource was not found","details":[],"request_id":"7908892f-e5af-4469-83ce-bda33d410975"}}
+
+      83 | test("case D15", async ({ setupApi }) => {
+      84 |   const response = await setupApi.send("GET", "/customers/00000000-0000-4000-8000-000000000000");
+    > 85 |   if (!response.ok()) throw new Error(`Setup: seeded customer not found: ${response.status()} ${await response.text()}`);
+         |                             ^
+      86 | });
+      87 |
+      88 | test("case D16", async () => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:85:29
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D15-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D15-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D15-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D16" classname="dev.spec.ts" time="0">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D16-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D16-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="Unexpected state in helper" type="Error">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:88:5 › case D16 ──────────────────────────────────────────────────
+
+    Error: Unexpected state in helper
+
+      87 |
+      88 | test("case D16", async () => {
+    > 89 |   throw new Error("Unexpected state in helper");
+         |         ^
+      90 | });
+      91 |
+      92 | test("case D17", async () => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:89:9
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D16-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D16-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D16-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D17" classname="dev.spec.ts" time="0.003">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D17-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D17-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:92:5 › case D17 ──────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 2
+
+      91 |
+      92 | test("case D17", async () => {
+    > 93 |   expect(2 as number).toBe(3);
+         |                       ^
+      94 | });
+      95 |
+      96 | test("case D18", async () => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:93:23
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D17-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D17-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D17-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D18" classname="dev.spec.ts" time="0">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D18-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D18-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="Cannot read properties of undefined (reading &apos;foo&apos;)" type="TypeError">
+<![CDATA[  [corpus-chromium] › dev.spec.ts:96:5 › case D18 ──────────────────────────────────────────────────
+
+    TypeError: Cannot read properties of undefined (reading 'foo')
+
+       96 | test("case D18", async () => {
+       97 |   const value = undefined as unknown as { foo: string };
+    >  98 |   expect(value.foo).toBe("x");
+          |                ^
+       99 | });
+      100 |
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:98:16
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D18-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D18-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D18-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="heldout.spec.ts" timestamp="2026-11-04T15:43:36.393Z" hostname="corpus-chromium" tests="18" failures="5" skipped="0" time="28.516" errors="13">
+<testcase name="case H01" classname="heldout.spec.ts" time="1.922">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H01-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H01-corpus-chromium/attachments/video-7722a752e484069a0eee4755cec4ef24300f5335.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H01-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H01-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:5:5 › case H01 ───────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('table tbody tr').first()
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('table tbody tr').first() with timeout 1500ms
+      - waiting for locator('table tbody tr').first()
+
+
+       6 |   await manager.page.route("**/api/v1/products*", (route) => route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: { code: "OVERLOADED", message: "x", details: [], request_id: "r" } }) }));
+       7 |   await manager.page.goto("/products");
+    >  8 |   await expect(manager.page.locator("table tbody tr").first()).toBeVisible(short);
+         |                                                                ^
+       9 | });
+      10 |
+      11 | test("case H02", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:8:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H01-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H01-corpus-chromium/attachments/video-7722a752e484069a0eee4755cec4ef24300f5335.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H01-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H01-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H01-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case H02" classname="heldout.spec.ts" time="2.001">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H02-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H02-corpus-chromium/attachments/video-80a4e1fc1f9577e6da03a089376e5f0691595ccf.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H02-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H02-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toHaveText(expected) failed" type="expect.toHaveText">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:11:5 › case H02 ──────────────────────────────────────────────
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByTestId('stat-low-stock')
+    Expected pattern: /^\D*8$/
+    Received string:  "987654"
+    Timeout: 1500ms
+
+    Call log:
+      - Expect "toHaveText" getByTestId('stat-low-stock') with timeout 1500ms
+      - waiting for getByTestId('stat-low-stock')
+        15 × locator resolved to <div class="stat-value" data-testid="stat-low-stock">987654</div>
+           - unexpected value "987654"
+
+
+      17 |   const expected = (await manager.api.dashboard()).low_stock_count;
+      18 |   await manager.page.goto("/");
+    > 19 |   await expect(manager.page.getByTestId("stat-low-stock")).toHaveText(new RegExp(`^\\D*${expected}$`), short);
+         |                                                            ^
+      20 | });
+      21 |
+      22 | test("case H03", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:19:60
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H02-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H02-corpus-chromium/attachments/video-80a4e1fc1f9577e6da03a089376e5f0691595ccf.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H02-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H02-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H02-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case H03" classname="heldout.spec.ts" time="1.901">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H03-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H03-corpus-chromium/attachments/video-006916bc9e32a53e4853331e98fb5a767812613c.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H03-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H03-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:22:5 › case H03 ──────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('stat-total-orders')
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('stat-total-orders') with timeout 1500ms
+      - waiting for getByTestId('stat-total-orders')
+
+
+      23 |   await manager.page.route("**/api/v1/dashboard/summary", (route) => route.fulfill({ status: 200, contentType: "application/json", body: "<html>not json</html>" }));
+      24 |   await manager.page.goto("/");
+    > 25 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible(short);
+         |                                                               ^
+      26 | });
+      27 |
+      28 | test("case H04", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:25:63
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H03-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H03-corpus-chromium/attachments/video-006916bc9e32a53e4853331e98fb5a767812613c.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H03-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H03-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H03-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case H04" classname="heldout.spec.ts" time="2.025">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H04-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H04-corpus-chromium/attachments/video-6ea1ff39bfc748f16ed8ba0ebe683cba04ad6ca3.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H04-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H04-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="locator.click: Timeout 1500ms exceeded." type="TimeoutError">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:28:5 › case H04 ──────────────────────────────────────────────
+
+    TimeoutError: locator.click: Timeout 1500ms exceeded.
+    Call log:
+      - waiting for locator('.does-not-exist')
+
+
+      29 |   await manager.page.goto("/");
+      30 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible();
+    > 31 |   await manager.page.locator(".does-not-exist").click(short);
+         |                                                 ^
+      32 | });
+      33 |
+      34 | test("case H05", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:31:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H04-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H04-corpus-chromium/attachments/video-6ea1ff39bfc748f16ed8ba0ebe683cba04ad6ca3.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H04-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H04-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H04-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H05" classname="heldout.spec.ts" time="0.592">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H05-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H05-corpus-chromium/attachments/video-c5dd4f7c1b607bb12b8cd367d71e45d112b935a6.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H05-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H05-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="locator.click: Error: strict mode violation: getByRole(&apos;button&apos;) resolved to 4 elements:" type="Error">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:34:5 › case H05 ──────────────────────────────────────────────
+
+    Error: locator.click: Error: strict mode violation: getByRole('button') resolved to 4 elements:
+        1) <button type="button" class="button button-small button-sidebar">Sign out</button> aka getByRole('button', { name: 'Sign out' })
+        2) <button type="button" class="button" aria-disabled="false">Export CSV</button> aka getByRole('button', { name: 'Export CSV' })
+        3) <button type="submit" class="button button-primary">Apply filters</button> aka getByRole('button', { name: 'Apply filters' })
+        4) <button type="button" class="button">Clear</button> aka getByRole('button', { name: 'Clear' })
+
+    Call log:
+      - waiting for getByRole('button')
+
+
+      35 |   await manager.page.goto("/orders");
+      36 |   await expect(manager.page.getByRole("heading", { level: 1 })).toBeVisible();
+    > 37 |   await manager.page.getByRole("button").click();
+         |                                          ^
+      38 | });
+      39 |
+      40 | test("case H06", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:37:42
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H05-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H05-corpus-chromium/attachments/video-c5dd4f7c1b607bb12b8cd367d71e45d112b935a6.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H05-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H05-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H05-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H06" classname="heldout.spec.ts" time="1.976">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H06-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H06-corpus-chromium/attachments/video-99e352379b7432d3e45506bd00c7f3e01dd2fcd0.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H06-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H06-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="locator.fill: Timeout 1500ms exceeded." type="TimeoutError">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:40:5 › case H06 ──────────────────────────────────────────────
+
+    TimeoutError: locator.fill: Timeout 1500ms exceeded.
+    Call log:
+      - waiting for getByLabel('No such field')
+
+
+      41 |   await manager.page.goto("/support");
+      42 |   await expect(manager.page.getByRole("heading", { level: 1 })).toBeVisible();
+    > 43 |   await manager.page.getByLabel("No such field").fill("text", short);
+         |                                                  ^
+      44 | });
+      45 |
+      46 | test("case H07", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:43:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H06-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H06-corpus-chromium/attachments/video-99e352379b7432d3e45506bd00c7f3e01dd2fcd0.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H06-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H06-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H06-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H07" classname="heldout.spec.ts" time="1.868">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H07-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H07-corpus-chromium/attachments/video-4e7dfcfdfb91e9a046b9305a48501393b471d6ba.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H07-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H07-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:46:5 › case H07 ──────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('table tbody tr').first()
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('table tbody tr').first() with timeout 1500ms
+      - waiting for locator('table tbody tr').first()
+
+
+      47 |   await manager.page.route("**/api/v1/products*", () => undefined);
+      48 |   await manager.page.goto("/products");
+    > 49 |   await expect(manager.page.locator("table tbody tr").first()).toBeVisible(short);
+         |                                                                ^
+      50 | });
+      51 |
+      52 | test("case H08", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:49:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H07-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H07-corpus-chromium/attachments/video-4e7dfcfdfb91e9a046b9305a48501393b471d6ba.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H07-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H07-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H07-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case H08" classname="heldout.spec.ts" time="3.147">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H08-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H08-corpus-chromium/attachments/video-6e4d371d51ed777cc957e4236be696a5a9916933.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H08-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H08-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="Test timeout of 3000ms exceeded." type="Error">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:52:5 › case H08 ──────────────────────────────────────────────
+
+    Test timeout of 3000ms exceeded.
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H08-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H08-corpus-chromium/attachments/video-6e4d371d51ed777cc957e4236be696a5a9916933.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H08-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H08-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H08-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H09" classname="heldout.spec.ts" time="12.287">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H09-corpus-chromium/attachments/video-7faf8784caa9163943283b70e56c753985f99284.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H09-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H09-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="page.goto: Timeout 1500ms exceeded." type="TimeoutError">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:59:5 › case H09 ──────────────────────────────────────────────
+
+    TimeoutError: page.goto: Timeout 1500ms exceeded.
+    Call log:
+      - navigating to "http://localhost:5273/support", waiting until "load"
+
+
+      59 | test("case H09", async ({ manager }) => {
+      60 |   await manager.page.route("**/support", () => undefined);
+    > 61 |   await manager.page.goto("/support", short);
+         |                      ^
+      62 | });
+      63 |
+      64 | test("case H10", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:61:22
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H09-corpus-chromium/attachments/video-7faf8784caa9163943283b70e56c753985f99284.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H09-corpus-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H09-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H09-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H10" classname="heldout.spec.ts" time="0.313">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H10-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H10-corpus-chromium/attachments/video-7fdddc59032238d05cce70be8361a451b5947ee0.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H10-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H10-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="page.goto: net::ERR_NAME_NOT_RESOLVED at http://testforge.invalid/" type="Error">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:64:5 › case H10 ──────────────────────────────────────────────
+
+    Error: page.goto: net::ERR_NAME_NOT_RESOLVED at http://testforge.invalid/
+    Call log:
+      - navigating to "http://testforge.invalid/", waiting until "load"
+
+
+      63 |
+      64 | test("case H10", async ({ manager }) => {
+    > 65 |   await manager.page.goto("http://testforge.invalid/");
+         |                      ^
+      66 | });
+      67 |
+      68 | test("case H11", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:65:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H10-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H10-corpus-chromium/attachments/video-7fdddc59032238d05cce70be8361a451b5947ee0.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H10-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H10-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H10-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H11" classname="heldout.spec.ts" time="0.207">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H11-corpus-chromium/attachments/video-b50889b4c5c6706e263b62e3b58ec8f3197bea61.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H11-corpus-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H11-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H11-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="page.goto: Target page, context or browser has been closed" type="Error">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:68:5 › case H11 ──────────────────────────────────────────────
+
+    Error: page.goto: Target page, context or browser has been closed
+
+      68 | test("case H11", async ({ manager }) => {
+      69 |   await manager.context.close();
+    > 70 |   await manager.page.goto("/");
+         |                      ^
+      71 | });
+      72 |
+      73 | test("case H12", async ({ playwright }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:70:22
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H11-corpus-chromium/attachments/video-b50889b4c5c6706e263b62e3b58ec8f3197bea61.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H11-corpus-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H11-corpus-chromium/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H11-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H11-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H12" classname="heldout.spec.ts" time="0.009">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H12-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H12-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:59999" type="Error">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:73:5 › case H12 ──────────────────────────────────────────────
+
+    Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:59999
+    Call log:
+      - → POST http://127.0.0.1:59999/api/v1/auth/login
+        - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 2
+
+
+      73 | test("case H12", async ({ playwright }) => {
+      74 |   const request = await playwright.request.newContext();
+    > 75 |   await request.post("http://127.0.0.1:59999/api/v1/auth/login", { data: {} });
+         |                 ^
+      76 | });
+      77 |
+      78 | test("case H13", async ({ playwright }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:75:17
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H12-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H12-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H12-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H13" classname="heldout.spec.ts" time="0.06">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H13-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H13-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="Login as viewer@testforge.example failed: 401 {&quot;error&quot;:{&quot;code&quot;:&quot;INVALID_CREDENTIALS&quot;,&quot;message&quot;:&quot;Incorrect email or password&quot;,&quot;details&quot;:[],&quot;request_id&quot;:&quot;a3ff9024-3f16-4875-a4e2-9b9f4156a2be&quot;}}" type="Error">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:78:5 › case H13 ──────────────────────────────────────────────
+
+    Error: Login as viewer@testforge.example failed: 401 {"error":{"code":"INVALID_CREDENTIALS","message":"Incorrect email or password","details":[],"request_id":"a3ff9024-3f16-4875-a4e2-9b9f4156a2be"}}
+
+       at ../../framework/fixtures/index.ts:80
+
+      78 |   const response = await request.post("/api/v1/auth/login", { data: { email, password } });
+      79 |   if (!response.ok()) {
+    > 80 |     throw new Error(`Login as ${credentials.email} failed: ${response.status()} ${await response.text()}`);
+         |           ^
+      81 |   }
+      82 |   return request;
+      83 | }
+        at apiLogin (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:80:11)
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:79:3
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H13-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H13-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H13-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H14" classname="heldout.spec.ts" time="0.105">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H14-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H14-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="Could not create product: 422 {&quot;error&quot;:{&quot;code&quot;:&quot;VALIDATION_ERROR&quot;,&quot;message&quot;:&quot;The request is not valid&quot;,&quot;details&quot;:[{&quot;field&quot;:&quot;body.unit_price_cents&quot;,&quot;message&quot;:&quot;Field required&quot;,&quot;type&quot;:&quot;missing&quot;},{&quot;field&quot;:&quot;body.price_cents&quot;,&quot;message&quot;:&quot;Extra inputs are not permitted&quot;,&quot;type&quot;:&quot;extra_forbidden&quot;}],&quot;request_id&quot;:&quot;7e7d343a-6cc4-4dbf-aefe-c54ea3d5c403&quot;}}" type="Error">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:82:5 › case H14 ──────────────────────────────────────────────
+
+    Error: Could not create product: 422 {"error":{"code":"VALIDATION_ERROR","message":"The request is not valid","details":[{"field":"body.unit_price_cents","message":"Field required","type":"missing"},{"field":"body.price_cents","message":"Extra inputs are not permitted","type":"extra_forbidden"}],"request_id":"7e7d343a-6cc4-4dbf-aefe-c54ea3d5c403"}}
+
+      83 |   const product = await data.product();
+      84 |   const response = await setupApi.send("POST", "/products", { data: { sku: product.sku, name: "Copy", category: product.category, price_cents: 100 } });
+    > 85 |   if (!response.ok()) throw new Error(`Could not create product: ${response.status()} ${await response.text()}`);
+         |                             ^
+      86 | });
+      87 |
+      88 | test("case H15", async ({ data }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:85:29
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H14-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H14-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H14-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H15" classname="heldout.spec.ts" time="0.099">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H15-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H15-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="POST /orders returned 409: {&quot;error&quot;:{&quot;code&quot;:&quot;INSUFFICIENT_STOCK&quot;,&quot;message&quot;:&quot;Not enough stock at YYC1&quot;,&quot;details&quot;:[{&quot;product_id&quot;:&quot;0dc7b3c6-2675-476b-b2a7-3bb7500c7b07&quot;,&quot;sku&quot;:&quot;E2E-BAE7FFBEF8-2&quot;,&quot;requested&quot;:3,&quot;available&quot;:2}],&quot;request_id&quot;:&quot;e33ad423-13be-481c-aa6d-b97c20e80967&quot;}}" type="Error">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:88:5 › case H15 ──────────────────────────────────────────────
+
+    Error: POST /orders returned 409: {"error":{"code":"INSUFFICIENT_STOCK","message":"Not enough stock at YYC1","details":[{"product_id":"0dc7b3c6-2675-476b-b2a7-3bb7500c7b07","sku":"E2E-BAE7FFBEF8-2","requested":3,"available":2}],"request_id":"e33ad423-13be-481c-aa6d-b97c20e80967"}}
+
+       at ../../framework/helpers/api-client.ts:51
+
+      49 |     const response = await this.send(method, path, options);
+      50 |     if (!response.ok()) {
+    > 51 |       throw new Error(`${method} ${path} returned ${response.status()}: ${await response.text()}`);
+         |             ^
+      52 |     }
+      53 |     return (response.status() === 204 ? undefined : await response.json()) as T;
+      54 |   }
+        at ApiClient.json (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/helpers/api-client.ts:51:13)
+        at TestData.order (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/factories/test-data.ts:112:19)
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:91:3
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H15-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H15-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H15-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H16" classname="heldout.spec.ts" time="0.003">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H16-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H16-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:94:5 › case H16 ──────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "abd"
+    Received: "abc"
+
+      93 |
+      94 | test("case H16", async () => {
+    > 95 |   expect("abc" as string).toBe("abd");
+         |                           ^
+      96 | });
+      97 |
+      98 | test("case H17", async () => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:95:27
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H16-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H16-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H16-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case H17" classname="heldout.spec.ts" time="0">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H17-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H17-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="Assertion helper not configured" type="Error">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:98:5 › case H17 ──────────────────────────────────────────────
+
+    Error: Assertion helper not configured
+
+       97 |
+       98 | test("case H17", async () => {
+    >  99 |   throw new Error("Assertion helper not configured");
+          |         ^
+      100 | });
+      101 |
+      102 | test("case H18", async () => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:99:9
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H17-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H17-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H17-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H18" classname="heldout.spec.ts" time="0.001">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H18-corpus-chromium/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H18-corpus-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="Expected property name or &apos;}&apos; in JSON at position 1 (line 1 column 2)" type="SyntaxError">
+<![CDATA[  [corpus-chromium] › heldout.spec.ts:102:5 › case H18 ─────────────────────────────────────────────
+
+    SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+
+      101 |
+      102 | test("case H18", async () => {
+    > 103 |   JSON.parse("{");
+          |        ^
+      104 | });
+      105 |
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:103:8
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H18-corpus-chromium/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H18-corpus-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H18-corpus-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="dev.spec.ts" timestamp="2026-11-04T15:43:36.393Z" hostname="corpus-webkit" tests="17" failures="6" skipped="0" time="22.522" errors="11">
+<testcase name="case D01" classname="dev.spec.ts" time="3.233">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D01-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D01-corpus-webkit/attachments/video-3387d86c2f42a9e1780c1ce633f08bef109ed123.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D01-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D01-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:5:5 › case D01 ─────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('orders-grid').locator('tbody tr').first()
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('orders-grid').locator('tbody tr').first() with timeout 1500ms
+      - waiting for getByTestId('orders-grid').locator('tbody tr').first()
+
+
+       6 |   await manager.page.route("**/api/v1/orders*", (route) => route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: { code: "INTERNAL_ERROR", message: "x", details: [], request_id: "r" } }) }));
+       7 |   await manager.page.goto("/orders");
+    >  8 |   await expect(manager.page.getByTestId("orders-grid").locator("tbody tr").first()).toBeVisible(short);
+         |                                                                                     ^
+       9 | });
+      10 |
+      11 | test("case D02", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:8:85
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D01-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D01-corpus-webkit/attachments/video-3387d86c2f42a9e1780c1ce633f08bef109ed123.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D01-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D01-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D01-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D02" classname="dev.spec.ts" time="3.197">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D02-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D02-corpus-webkit/attachments/video-c0929db3733ee55d21e9eeaf309441416dded26d.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D02-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D02-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toContainText(expected) failed" type="expect.toContainText">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:11:5 › case D02 ────────────────────────────────────────────────────
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: getByTestId('stat-total-orders')
+    Expected substring: "60"
+    Received string:    "424242"
+    Timeout: 1500ms
+
+    Call log:
+      - Expect "toContainText" getByTestId('stat-total-orders') with timeout 1500ms
+      - waiting for getByTestId('stat-total-orders')
+        13 × locator resolved to <div class="stat-value" data-testid="stat-total-orders">424242</div>
+           - unexpected value "424242"
+
+
+      17 |   const expected = (await manager.api.dashboard()).total_orders;
+      18 |   await manager.page.goto("/");
+    > 19 |   await expect(manager.page.getByTestId("stat-total-orders")).toContainText(String(expected), short);
+         |                                                               ^
+      20 | });
+      21 |
+      22 | test("case D03", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:19:63
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D02-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D02-corpus-webkit/attachments/video-c0929db3733ee55d21e9eeaf309441416dded26d.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D02-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D02-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D02-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D03" classname="dev.spec.ts" time="1.704">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D03-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D03-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D03-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<failure message="uncaught errors in the page" type="expect.toEqual">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:22:5 › case D03 ────────────────────────────────────────────────────
+
+    Error: uncaught errors in the page
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 3
+
+    - Array []
+    + Array [
+    +   "Cannot read properties of undefined (reading 'status')",
+    + ]
+
+       at ../../framework/fixtures/index.ts:124
+
+      122 |     if (!failed) await rm(testInfo.outputPath("videos"), { recursive: true, force: true });
+      123 |     // A crash in the page is a bug even when the visible assertions happen to pass.
+    > 124 |     expect(uncaught, "uncaught errors in the page").toEqual([]);
+          |                                                     ^
+      125 |   };
+      126 |
+      127 |   return { open, closeAll };
+        at closeAll (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:124:53)
+        at Object.openBrowser (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:158:5)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D03-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D03-corpus-webkit/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D03-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D03-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D04" classname="dev.spec.ts" time="2.294">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D04-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D04-corpus-webkit/attachments/video-b6be598b0dd0d6d7baf3c9137097fe8eec229d58.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D04-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D04-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="locator.click: Timeout 1500ms exceeded." type="TimeoutError">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:28:5 › case D04 ────────────────────────────────────────────────────
+
+    TimeoutError: locator.click: Timeout 1500ms exceeded.
+    Call log:
+      - waiting for getByTestId('no-such-button')
+
+
+      29 |   await manager.page.goto("/");
+      30 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible();
+    > 31 |   await manager.page.getByTestId("no-such-button").click(short);
+         |                                                    ^
+      32 | });
+      33 |
+      34 | test("case D05", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:31:52
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D04-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D04-corpus-webkit/attachments/video-b6be598b0dd0d6d7baf3c9137097fe8eec229d58.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D04-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D04-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D04-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D05" classname="dev.spec.ts" time="0.779">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D05-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D05-corpus-webkit/attachments/video-791e9ab523b4bccfda466f917ceddc76111d71b3.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D05-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D05-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="locator.click: Error: strict mode violation: getByRole(&apos;link&apos;) resolved to 16 elements:" type="Error">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:34:5 › case D05 ────────────────────────────────────────────────────
+
+    Error: locator.click: Error: strict mode violation: getByRole('link') resolved to 16 elements:
+        1) <a href="#main" class="skip-link">Skip to content</a> aka getByRole('link', { name: 'Skip to content' })
+        2) <a href="/" aria-current="page" data-discover="true" class="nav-link active">Dashboard</a> aka getByRole('link', { name: 'Dashboard' })
+        3) <a href="/orders" class="nav-link" data-discover="true">Orders</a> aka getByRole('link', { name: 'Orders' })
+        4) <a class="nav-link" href="/products" data-discover="true">Products</a> aka getByRole('link', { name: 'Products' })
+        5) <a class="nav-link" href="/inventory" data-discover="true">Inventory</a> aka getByRole('link', { name: 'Inventory' })
+        6) <a href="/support" class="nav-link" data-discover="true">Support</a> aka getByRole('link', { name: 'Support' })
+        7) <a data-discover="true" href="/orders?status=PENDING">…</a> aka getByRole('link', { name: 'Pending' })
+        8) <a data-discover="true" href="/orders?status=CONFIRMED">…</a> aka getByRole('link', { name: 'Confirmed' })
+        9) <a data-discover="true" href="/orders?status=SHIPPED">…</a> aka getByRole('link', { name: 'Shipped' })
+        10) <a data-discover="true" href="/orders?status=DELIVERED">…</a> aka getByRole('link', { name: 'Delivered' })
+        ...
+
+    Call log:
+      - waiting for getByRole('link')
+
+
+      35 |   await manager.page.goto("/");
+      36 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible();
+    > 37 |   await manager.page.getByRole("link").click();
+         |                                        ^
+      38 | });
+      39 |
+      40 | test("case D06", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:37:40
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D05-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D05-corpus-webkit/attachments/video-791e9ab523b4bccfda466f917ceddc76111d71b3.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D05-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D05-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D05-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D06" classname="dev.spec.ts" time="2.332">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D06-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D06-corpus-webkit/attachments/video-9da172fb12d035405dc617a47c347a4956e5e2a5.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D06-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D06-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:40:5 › case D06 ────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Dashbord' })
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Dashbord' }) with timeout 1500ms
+      - waiting for getByRole('heading', { name: 'Dashbord' })
+
+
+      41 |   await manager.page.goto("/");
+      42 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible();
+    > 43 |   await expect(manager.page.getByRole("heading", { name: "Dashbord" })).toBeVisible(short);
+         |                                                                         ^
+      44 | });
+      45 |
+      46 | test("case D07", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:43:73
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D06-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D06-corpus-webkit/attachments/video-9da172fb12d035405dc617a47c347a4956e5e2a5.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D06-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D06-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D06-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D07" classname="dev.spec.ts" time="2.101">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D07-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D07-corpus-webkit/attachments/video-d89c1358b07f2473d0e14af28259bb58fc146442.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D07-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D07-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:46:5 › case D07 ────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('stat-total-orders')
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('stat-total-orders') with timeout 1500ms
+      - waiting for getByTestId('stat-total-orders')
+
+
+      47 |   await manager.page.route("**/api/v1/dashboard/summary", () => undefined);
+      48 |   await manager.page.goto("/");
+    > 49 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible(short);
+         |                                                               ^
+      50 | });
+      51 |
+      52 | test("case D08", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:49:63
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D07-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D07-corpus-webkit/attachments/video-d89c1358b07f2473d0e14af28259bb58fc146442.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D07-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D07-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D07-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D08" classname="dev.spec.ts" time="2.225">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D08-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D08-corpus-webkit/attachments/video-7f6e10794232bd9021093ad1d3879a46bda98a34.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D08-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D08-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="page.waitForResponse: Timeout 1500ms exceeded while waiting for event &quot;response&quot;" type="TimeoutError">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:52:5 › case D08 ────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForResponse: Timeout 1500ms exceeded while waiting for event "response"
+    =========================== logs ===========================
+    waiting for response "**/api/v1/never-called"
+    ============================================================
+
+      52 | test("case D08", async ({ manager }) => {
+      53 |   await manager.page.goto("/");
+    > 54 |   await manager.page.waitForResponse("**/api/v1/never-called", short);
+         |                      ^
+      55 | });
+      56 |
+      57 | test("case D09", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:54:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D08-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D08-corpus-webkit/attachments/video-7f6e10794232bd9021093ad1d3879a46bda98a34.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D08-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D08-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D08-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D09" classname="dev.spec.ts" time="3.768">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D09-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D09-corpus-webkit/attachments/video-2d8580d2329292d29e9e71f1834b08d9d2badb93.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D09-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D09-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="Test timeout of 3000ms exceeded." type="Error">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:57:5 › case D09 ────────────────────────────────────────────────────
+
+    Test timeout of 3000ms exceeded.
+
+    Error: page.waitForResponse: Target page, context or browser has been closed
+    =========================== logs ===========================
+    waiting for response "**/api/v1/products*"
+    ============================================================
+
+      59 |   await manager.page.route("**/api/v1/products*", () => undefined);
+      60 |   await manager.page.goto("/products");
+    > 61 |   await manager.page.waitForResponse("**/api/v1/products*", { timeout: 60_000 });
+         |                      ^
+      62 | });
+      63 |
+      64 | test("case D10", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:61:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D09-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D09-corpus-webkit/attachments/video-2d8580d2329292d29e9e71f1834b08d9d2badb93.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D09-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D09-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D09-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D10" classname="dev.spec.ts" time="0.588">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D10-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/dev-case-D10-corpus-webkit/attachments/video-1b0b554d65ef2d71ae41e7d58edce8e30f17b7bd.webm]]
+
+[[ATTACHMENT|test-results/dev-case-D10-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D10-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="page.goto: Could not connect to the server." type="Error">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:64:5 › case D10 ────────────────────────────────────────────────────
+
+    Error: page.goto: Could not connect to the server.
+    Call log:
+      - navigating to "http://127.0.0.1:59999/", waiting until "load"
+
+
+      63 |
+      64 | test("case D10", async ({ manager }) => {
+    > 65 |   await manager.page.goto("http://127.0.0.1:59999/");
+         |                      ^
+      66 | });
+      67 |
+      68 | test("case D11", async ({ playwright }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:65:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D10-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D10-corpus-webkit/attachments/video-1b0b554d65ef2d71ae41e7d58edce8e30f17b7bd.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D10-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D10-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D10-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D11" classname="dev.spec.ts" time="0.01">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D11-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D11-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:59999" type="Error">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:68:5 › case D11 ────────────────────────────────────────────────────
+
+    Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:59999
+    Call log:
+      - → GET http://127.0.0.1:59999/api/v1/health
+        - user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+
+
+      68 | test("case D11", async ({ playwright }) => {
+      69 |   const request = await playwright.request.newContext();
+    > 70 |   await request.get("http://127.0.0.1:59999/api/v1/health");
+         |                 ^
+      71 | });
+      72 |
+      73 | test("case D13", async ({ playwright }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:70:17
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D11-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D11-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D11-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D13" classname="dev.spec.ts" time="0.063">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D13-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D13-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="Login as nobody-here@e2e.example failed: 401 {&quot;error&quot;:{&quot;code&quot;:&quot;INVALID_CREDENTIALS&quot;,&quot;message&quot;:&quot;Incorrect email or password&quot;,&quot;details&quot;:[],&quot;request_id&quot;:&quot;a689d4fa-656e-4c8c-b67e-c9615cb32cf5&quot;}}" type="Error">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:73:5 › case D13 ────────────────────────────────────────────────────
+
+    Error: Login as nobody-here@e2e.example failed: 401 {"error":{"code":"INVALID_CREDENTIALS","message":"Incorrect email or password","details":[],"request_id":"a689d4fa-656e-4c8c-b67e-c9615cb32cf5"}}
+
+       at ../../framework/fixtures/index.ts:80
+
+      78 |   const response = await request.post("/api/v1/auth/login", { data: { email, password } });
+      79 |   if (!response.ok()) {
+    > 80 |     throw new Error(`Login as ${credentials.email} failed: ${response.status()} ${await response.text()}`);
+         |           ^
+      81 |   }
+      82 |   return request;
+      83 | }
+        at apiLogin (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:80:11)
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:74:3
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D13-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D13-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D13-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D14" classname="dev.spec.ts" time="0.131">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D14-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D14-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="POST /orders returned 409: {&quot;error&quot;:{&quot;code&quot;:&quot;INSUFFICIENT_STOCK&quot;,&quot;message&quot;:&quot;Not enough stock at YYZ1&quot;,&quot;details&quot;:[{&quot;product_id&quot;:&quot;5f3e84c7-a389-4860-b709-a3fcacb179b0&quot;,&quot;sku&quot;:&quot;E2E-B31EFD495F-2&quot;,&quot;requested&quot;:50,&quot;available&quot;:1}],&quot;request_id&quot;:&quot;1a6ec804-89ef-4d9b-9407-2d9461be5485&quot;}}" type="Error">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:77:5 › case D14 ────────────────────────────────────────────────────
+
+    Error: POST /orders returned 409: {"error":{"code":"INSUFFICIENT_STOCK","message":"Not enough stock at YYZ1","details":[{"product_id":"5f3e84c7-a389-4860-b709-a3fcacb179b0","sku":"E2E-B31EFD495F-2","requested":50,"available":1}],"request_id":"1a6ec804-89ef-4d9b-9407-2d9461be5485"}}
+
+       at ../../framework/helpers/api-client.ts:51
+
+      49 |     const response = await this.send(method, path, options);
+      50 |     if (!response.ok()) {
+    > 51 |       throw new Error(`${method} ${path} returned ${response.status()}: ${await response.text()}`);
+         |             ^
+      52 |     }
+      53 |     return (response.status() === 204 ? undefined : await response.json()) as T;
+      54 |   }
+        at ApiClient.json (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/helpers/api-client.ts:51:13)
+        at TestData.order (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/factories/test-data.ts:112:19)
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:80:3
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D14-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D14-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D14-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D15" classname="dev.spec.ts" time="0.092">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D15-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D15-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="Setup: seeded customer not found: 404 {&quot;error&quot;:{&quot;code&quot;:&quot;NOT_FOUND&quot;,&quot;message&quot;:&quot;The requested resource was not found&quot;,&quot;details&quot;:[],&quot;request_id&quot;:&quot;524e46b9-641c-4f08-bdfd-a4a98d9b5ff2&quot;}}" type="Error">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:83:5 › case D15 ────────────────────────────────────────────────────
+
+    Error: Setup: seeded customer not found: 404 {"error":{"code":"NOT_FOUND","message":"The requested resource was not found","details":[],"request_id":"524e46b9-641c-4f08-bdfd-a4a98d9b5ff2"}}
+
+      83 | test("case D15", async ({ setupApi }) => {
+      84 |   const response = await setupApi.send("GET", "/customers/00000000-0000-4000-8000-000000000000");
+    > 85 |   if (!response.ok()) throw new Error(`Setup: seeded customer not found: ${response.status()} ${await response.text()}`);
+         |                             ^
+      86 | });
+      87 |
+      88 | test("case D16", async () => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:85:29
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D15-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D15-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D15-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D16" classname="dev.spec.ts" time="0.001">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D16-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D16-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="Unexpected state in helper" type="Error">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:88:5 › case D16 ────────────────────────────────────────────────────
+
+    Error: Unexpected state in helper
+
+      87 |
+      88 | test("case D16", async () => {
+    > 89 |   throw new Error("Unexpected state in helper");
+         |         ^
+      90 | });
+      91 |
+      92 | test("case D17", async () => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:89:9
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D16-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D16-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D16-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case D17" classname="dev.spec.ts" time="0.004">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D17-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D17-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:92:5 › case D17 ────────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 3
+    Received: 2
+
+      91 |
+      92 | test("case D17", async () => {
+    > 93 |   expect(2 as number).toBe(3);
+         |                       ^
+      94 | });
+      95 |
+      96 | test("case D18", async () => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:93:23
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D17-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D17-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D17-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case D18" classname="dev.spec.ts" time="0">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/dev-case-D18-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/dev-case-D18-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="Cannot read properties of undefined (reading &apos;foo&apos;)" type="TypeError">
+<![CDATA[  [corpus-webkit] › dev.spec.ts:96:5 › case D18 ────────────────────────────────────────────────────
+
+    TypeError: Cannot read properties of undefined (reading 'foo')
+
+       96 | test("case D18", async () => {
+       97 |   const value = undefined as unknown as { foo: string };
+    >  98 |   expect(value.foo).toBe("x");
+          |                ^
+       99 | });
+      100 |
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:98:16
+
+    Error Context: ../../reports/triage-corpus/test-results/dev-case-D18-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/dev-case-D18-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/dev-case-D18-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="heldout.spec.ts" timestamp="2026-11-04T15:43:36.393Z" hostname="corpus-webkit" tests="18" failures="5" skipped="0" time="23.61" errors="13">
+<testcase name="case H01" classname="heldout.spec.ts" time="2.496">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H01-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H01-corpus-webkit/attachments/video-48f076d916d4969aa7736bd04460d2141ad143b4.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H01-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H01-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:5:5 › case H01 ─────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('table tbody tr').first()
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('table tbody tr').first() with timeout 1500ms
+      - waiting for locator('table tbody tr').first()
+
+
+       6 |   await manager.page.route("**/api/v1/products*", (route) => route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: { code: "OVERLOADED", message: "x", details: [], request_id: "r" } }) }));
+       7 |   await manager.page.goto("/products");
+    >  8 |   await expect(manager.page.locator("table tbody tr").first()).toBeVisible(short);
+         |                                                                ^
+       9 | });
+      10 |
+      11 | test("case H02", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:8:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H01-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H01-corpus-webkit/attachments/video-48f076d916d4969aa7736bd04460d2141ad143b4.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H01-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H01-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H01-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case H02" classname="heldout.spec.ts" time="2.676">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H02-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H02-corpus-webkit/attachments/video-21e24102708c20a16ecc8a662940b56b9e438a35.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H02-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H02-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toHaveText(expected) failed" type="expect.toHaveText">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:11:5 › case H02 ────────────────────────────────────────────────
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByTestId('stat-low-stock')
+    Expected pattern: /^\D*8$/
+    Received string:  "987654"
+    Timeout: 1500ms
+
+    Call log:
+      - Expect "toHaveText" getByTestId('stat-low-stock') with timeout 1500ms
+      - waiting for getByTestId('stat-low-stock')
+        13 × locator resolved to <div class="stat-value" data-testid="stat-low-stock">987654</div>
+           - unexpected value "987654"
+
+
+      17 |   const expected = (await manager.api.dashboard()).low_stock_count;
+      18 |   await manager.page.goto("/");
+    > 19 |   await expect(manager.page.getByTestId("stat-low-stock")).toHaveText(new RegExp(`^\\D*${expected}$`), short);
+         |                                                            ^
+      20 | });
+      21 |
+      22 | test("case H03", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:19:60
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H02-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H02-corpus-webkit/attachments/video-21e24102708c20a16ecc8a662940b56b9e438a35.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H02-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H02-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H02-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case H03" classname="heldout.spec.ts" time="2.672">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H03-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H03-corpus-webkit/attachments/video-5bde1d34883a0a114b50889c10ca6cba17e6f0e6.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H03-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H03-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:22:5 › case H03 ────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByTestId('stat-total-orders')
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByTestId('stat-total-orders') with timeout 1500ms
+      - waiting for getByTestId('stat-total-orders')
+
+
+      23 |   await manager.page.route("**/api/v1/dashboard/summary", (route) => route.fulfill({ status: 200, contentType: "application/json", body: "<html>not json</html>" }));
+      24 |   await manager.page.goto("/");
+    > 25 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible(short);
+         |                                                               ^
+      26 | });
+      27 |
+      28 | test("case H04", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:25:63
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H03-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H03-corpus-webkit/attachments/video-5bde1d34883a0a114b50889c10ca6cba17e6f0e6.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H03-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H03-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H03-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case H04" classname="heldout.spec.ts" time="2.391">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H04-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H04-corpus-webkit/attachments/video-dfffcb69a131d12c01620de3068da7f30969d504.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H04-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H04-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="locator.click: Timeout 1500ms exceeded." type="TimeoutError">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:28:5 › case H04 ────────────────────────────────────────────────
+
+    TimeoutError: locator.click: Timeout 1500ms exceeded.
+    Call log:
+      - waiting for locator('.does-not-exist')
+
+
+      29 |   await manager.page.goto("/");
+      30 |   await expect(manager.page.getByTestId("stat-total-orders")).toBeVisible();
+    > 31 |   await manager.page.locator(".does-not-exist").click(short);
+         |                                                 ^
+      32 | });
+      33 |
+      34 | test("case H05", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:31:49
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H04-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H04-corpus-webkit/attachments/video-dfffcb69a131d12c01620de3068da7f30969d504.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H04-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H04-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H04-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H05" classname="heldout.spec.ts" time="1.248">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H05-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H05-corpus-webkit/attachments/video-8f9fa62d8f0046653c0b6075bd8cd1669fac5051.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H05-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H05-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="locator.click: Error: strict mode violation: getByRole(&apos;button&apos;) resolved to 4 elements:" type="Error">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:34:5 › case H05 ────────────────────────────────────────────────
+
+    Error: locator.click: Error: strict mode violation: getByRole('button') resolved to 4 elements:
+        1) <button type="button" class="button button-small button-sidebar">Sign out</button> aka getByRole('button', { name: 'Sign out' })
+        2) <button type="button" class="button" aria-disabled="false">Export CSV</button> aka getByRole('button', { name: 'Export CSV' })
+        3) <button type="submit" class="button button-primary">Apply filters</button> aka getByRole('button', { name: 'Apply filters' })
+        4) <button type="button" class="button">Clear</button> aka getByRole('button', { name: 'Clear' })
+
+    Call log:
+      - waiting for getByRole('button')
+
+
+      35 |   await manager.page.goto("/orders");
+      36 |   await expect(manager.page.getByRole("heading", { level: 1 })).toBeVisible();
+    > 37 |   await manager.page.getByRole("button").click();
+         |                                          ^
+      38 | });
+      39 |
+      40 | test("case H06", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:37:42
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H05-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H05-corpus-webkit/attachments/video-8f9fa62d8f0046653c0b6075bd8cd1669fac5051.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H05-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H05-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H05-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H06" classname="heldout.spec.ts" time="2.597">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H06-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H06-corpus-webkit/attachments/video-f0d45dcea703dd06efc358080745f2b5347d6499.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H06-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H06-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="locator.fill: Timeout 1500ms exceeded." type="TimeoutError">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:40:5 › case H06 ────────────────────────────────────────────────
+
+    TimeoutError: locator.fill: Timeout 1500ms exceeded.
+    Call log:
+      - waiting for getByLabel('No such field')
+
+
+      41 |   await manager.page.goto("/support");
+      42 |   await expect(manager.page.getByRole("heading", { level: 1 })).toBeVisible();
+    > 43 |   await manager.page.getByLabel("No such field").fill("text", short);
+         |                                                  ^
+      44 | });
+      45 |
+      46 | test("case H07", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:43:50
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H06-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H06-corpus-webkit/attachments/video-f0d45dcea703dd06efc358080745f2b5347d6499.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H06-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H06-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H06-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H07" classname="heldout.spec.ts" time="2.357">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H07-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H07-corpus-webkit/attachments/video-48d983a70db1709450b23aa2b9996ee64c5687cb.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H07-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H07-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:46:5 › case H07 ────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('table tbody tr').first()
+    Expected: visible
+    Timeout: 1500ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('table tbody tr').first() with timeout 1500ms
+      - waiting for locator('table tbody tr').first()
+
+
+      47 |   await manager.page.route("**/api/v1/products*", () => undefined);
+      48 |   await manager.page.goto("/products");
+    > 49 |   await expect(manager.page.locator("table tbody tr").first()).toBeVisible(short);
+         |                                                                ^
+      50 | });
+      51 |
+      52 | test("case H08", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:49:64
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H07-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H07-corpus-webkit/attachments/video-48d983a70db1709450b23aa2b9996ee64c5687cb.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H07-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H07-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H07-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case H08" classname="heldout.spec.ts" time="3.149">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H08-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H08-corpus-webkit/attachments/video-e917060bb2652ad2619829b269d8e0871e1cb64e.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H08-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H08-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="Test timeout of 3000ms exceeded." type="Error">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:52:5 › case H08 ────────────────────────────────────────────────
+
+    Test timeout of 3000ms exceeded.
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H08-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H08-corpus-webkit/attachments/video-e917060bb2652ad2619829b269d8e0871e1cb64e.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H08-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H08-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H08-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H09" classname="heldout.spec.ts" time="2.215">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H09-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H09-corpus-webkit/attachments/video-a8287fac6e73b0a76c4a5ee9a184eecd8238b442.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H09-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H09-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="page.goto: Timeout 1500ms exceeded." type="TimeoutError">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:59:5 › case H09 ────────────────────────────────────────────────
+
+    TimeoutError: page.goto: Timeout 1500ms exceeded.
+    Call log:
+      - navigating to "http://localhost:5273/support", waiting until "load"
+
+
+      59 | test("case H09", async ({ manager }) => {
+      60 |   await manager.page.route("**/support", () => undefined);
+    > 61 |   await manager.page.goto("/support", short);
+         |                      ^
+      62 | });
+      63 |
+      64 | test("case H10", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:61:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H09-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H09-corpus-webkit/attachments/video-a8287fac6e73b0a76c4a5ee9a184eecd8238b442.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H09-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H09-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H09-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H10" classname="heldout.spec.ts" time="0.759">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H10-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H10-corpus-webkit/attachments/video-c0095eb09949f1e6ae6d742d911700833bf16037.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H10-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H10-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="page.goto: A server with the specified hostname could not be found." type="Error">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:64:5 › case H10 ────────────────────────────────────────────────
+
+    Error: page.goto: A server with the specified hostname could not be found.
+    Call log:
+      - navigating to "http://testforge.invalid/", waiting until "load"
+
+
+      63 |
+      64 | test("case H10", async ({ manager }) => {
+    > 65 |   await manager.page.goto("http://testforge.invalid/");
+         |                      ^
+      66 | });
+      67 |
+      68 | test("case H11", async ({ manager }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:65:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H10-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H10-corpus-webkit/attachments/video-c0095eb09949f1e6ae6d742d911700833bf16037.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H10-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H10-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H10-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H11" classname="heldout.spec.ts" time="0.718">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H11-corpus-webkit/attachments/video-abe528f9a7a4dd7c1eef44bf90ce651215b4fcc0.webm]]
+
+[[ATTACHMENT|test-results/heldout-case-H11-corpus-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|test-results/heldout-case-H11-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H11-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="page.goto: Target page, context or browser has been closed" type="Error">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:68:5 › case H11 ────────────────────────────────────────────────
+
+    Error: page.goto: Target page, context or browser has been closed
+
+      68 | test("case H11", async ({ manager }) => {
+      69 |   await manager.context.close();
+    > 70 |   await manager.page.goto("/");
+         |                      ^
+      71 | });
+      72 |
+      73 | test("case H12", async ({ playwright }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:70:22
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H11-corpus-webkit/attachments/video-abe528f9a7a4dd7c1eef44bf90ce651215b4fcc0.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H11-corpus-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H11-corpus-webkit/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H11-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H11-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H12" classname="heldout.spec.ts" time="0.01">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H12-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H12-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:59999" type="Error">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:73:5 › case H12 ────────────────────────────────────────────────
+
+    Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:59999
+    Call log:
+      - → POST http://127.0.0.1:59999/api/v1/auth/login
+        - user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15
+        - accept: */*
+        - accept-encoding: gzip,deflate,br
+        - content-type: application/json
+        - content-length: 2
+
+
+      73 | test("case H12", async ({ playwright }) => {
+      74 |   const request = await playwright.request.newContext();
+    > 75 |   await request.post("http://127.0.0.1:59999/api/v1/auth/login", { data: {} });
+         |                 ^
+      76 | });
+      77 |
+      78 | test("case H13", async ({ playwright }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:75:17
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H12-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H12-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H12-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H13" classname="heldout.spec.ts" time="0.07">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H13-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H13-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="Login as viewer@testforge.example failed: 401 {&quot;error&quot;:{&quot;code&quot;:&quot;INVALID_CREDENTIALS&quot;,&quot;message&quot;:&quot;Incorrect email or password&quot;,&quot;details&quot;:[],&quot;request_id&quot;:&quot;1d9272f9-bb34-4b11-aeb9-391ef6137207&quot;}}" type="Error">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:78:5 › case H13 ────────────────────────────────────────────────
+
+    Error: Login as viewer@testforge.example failed: 401 {"error":{"code":"INVALID_CREDENTIALS","message":"Incorrect email or password","details":[],"request_id":"1d9272f9-bb34-4b11-aeb9-391ef6137207"}}
+
+       at ../../framework/fixtures/index.ts:80
+
+      78 |   const response = await request.post("/api/v1/auth/login", { data: { email, password } });
+      79 |   if (!response.ok()) {
+    > 80 |     throw new Error(`Login as ${credentials.email} failed: ${response.status()} ${await response.text()}`);
+         |           ^
+      81 |   }
+      82 |   return request;
+      83 | }
+        at apiLogin (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:80:11)
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:79:3
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H13-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H13-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H13-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H14" classname="heldout.spec.ts" time="0.124">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H14-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H14-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="Could not create product: 422 {&quot;error&quot;:{&quot;code&quot;:&quot;VALIDATION_ERROR&quot;,&quot;message&quot;:&quot;The request is not valid&quot;,&quot;details&quot;:[{&quot;field&quot;:&quot;body.unit_price_cents&quot;,&quot;message&quot;:&quot;Field required&quot;,&quot;type&quot;:&quot;missing&quot;},{&quot;field&quot;:&quot;body.price_cents&quot;,&quot;message&quot;:&quot;Extra inputs are not permitted&quot;,&quot;type&quot;:&quot;extra_forbidden&quot;}],&quot;request_id&quot;:&quot;d144f129-6d0e-44ce-b26a-6930e6f4b6fa&quot;}}" type="Error">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:82:5 › case H14 ────────────────────────────────────────────────
+
+    Error: Could not create product: 422 {"error":{"code":"VALIDATION_ERROR","message":"The request is not valid","details":[{"field":"body.unit_price_cents","message":"Field required","type":"missing"},{"field":"body.price_cents","message":"Extra inputs are not permitted","type":"extra_forbidden"}],"request_id":"d144f129-6d0e-44ce-b26a-6930e6f4b6fa"}}
+
+      83 |   const product = await data.product();
+      84 |   const response = await setupApi.send("POST", "/products", { data: { sku: product.sku, name: "Copy", category: product.category, price_cents: 100 } });
+    > 85 |   if (!response.ok()) throw new Error(`Could not create product: ${response.status()} ${await response.text()}`);
+         |                             ^
+      86 | });
+      87 |
+      88 | test("case H15", async ({ data }) => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:85:29
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H14-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H14-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H14-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H15" classname="heldout.spec.ts" time="0.124">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H15-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H15-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="POST /orders returned 409: {&quot;error&quot;:{&quot;code&quot;:&quot;INSUFFICIENT_STOCK&quot;,&quot;message&quot;:&quot;Not enough stock at YYC1&quot;,&quot;details&quot;:[{&quot;product_id&quot;:&quot;929551cd-1718-443e-af32-413d16b403ec&quot;,&quot;sku&quot;:&quot;E2E-80DD30FB68-2&quot;,&quot;requested&quot;:3,&quot;available&quot;:2}],&quot;request_id&quot;:&quot;0cbbea7c-490e-46d2-ac17-333327709192&quot;}}" type="Error">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:88:5 › case H15 ────────────────────────────────────────────────
+
+    Error: POST /orders returned 409: {"error":{"code":"INSUFFICIENT_STOCK","message":"Not enough stock at YYC1","details":[{"product_id":"929551cd-1718-443e-af32-413d16b403ec","sku":"E2E-80DD30FB68-2","requested":3,"available":2}],"request_id":"0cbbea7c-490e-46d2-ac17-333327709192"}}
+
+       at ../../framework/helpers/api-client.ts:51
+
+      49 |     const response = await this.send(method, path, options);
+      50 |     if (!response.ok()) {
+    > 51 |       throw new Error(`${method} ${path} returned ${response.status()}: ${await response.text()}`);
+         |             ^
+      52 |     }
+      53 |     return (response.status() === 204 ? undefined : await response.json()) as T;
+      54 |   }
+        at ApiClient.json (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/helpers/api-client.ts:51:13)
+        at TestData.order (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/factories/test-data.ts:112:19)
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:91:3
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H15-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H15-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H15-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H16" classname="heldout.spec.ts" time="0.003">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H16-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H16-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:94:5 › case H16 ────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "abd"
+    Received: "abc"
+
+      93 |
+      94 | test("case H16", async () => {
+    > 95 |   expect("abc" as string).toBe("abd");
+         |                           ^
+      96 | });
+      97 |
+      98 | test("case H17", async () => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:95:27
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H16-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H16-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H16-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="case H17" classname="heldout.spec.ts" time="0">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H17-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H17-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="Assertion helper not configured" type="Error">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:98:5 › case H17 ────────────────────────────────────────────────
+
+    Error: Assertion helper not configured
+
+       97 |
+       98 | test("case H17", async () => {
+    >  99 |   throw new Error("Assertion helper not configured");
+          |         ^
+      100 | });
+      101 |
+      102 | test("case H18", async () => {
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:99:9
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H17-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H17-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H17-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="case H18" classname="heldout.spec.ts" time="0.001">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/heldout-case-H18-corpus-webkit/error-context.md]]
+
+[[ATTACHMENT|test-results/heldout-case-H18-corpus-webkit/trace.zip]]
+]]>
+</system-out>
+<error message="Expected property name or &apos;}&apos; in JSON at position 1 (line 1 column 2)" type="SyntaxError">
+<![CDATA[  [corpus-webkit] › heldout.spec.ts:102:5 › case H18 ───────────────────────────────────────────────
+
+    SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+
+      101 |
+      102 | test("case H18", async () => {
+    > 103 |   JSON.parse("{");
+          |        ^
+      104 | });
+      105 |
+        at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:103:8
+
+    Error Context: ../../reports/triage-corpus/test-results/heldout-case-H18-corpus-webkit/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/heldout-case-H18-corpus-webkit/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/heldout-case-H18-corpus-webkit/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="launch.spec.ts" timestamp="2026-11-04T15:43:36.393Z" hostname="corpus-firefox" tests="1" failures="0" skipped="0" time="0" errors="1">
+<testcase name="case L01" classname="launch.spec.ts" time="0">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/launch-case-L01-corpus-firefox/error-context.md]]
+
+[[ATTACHMENT|test-results/launch-case-L01-corpus-firefox/trace.zip]]
+]]>
+</system-out>
+<error message="browserType.launch: Failed to launch the browser process." type="Error">
+<![CDATA[  [corpus-firefox] › launch.spec.ts:3:5 › case L01 ─────────────────────────────────────────────────
+
+    Error: browserType.launch: Failed to launch the browser process.
+    Browser logs:
+
+    <launching> /Users/[USER]/Library/Caches/ms-playwright/firefox-1555/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/yl/k3_r4m7s6gg19zhbh54zqxwc0000gn/T/playwright_firefoxdev_profile-7eJ13S -juggler-pipe -silent
+    <launched> pid=61078
+    [pid=61078][err] *** You are running in headless mode.
+    [pid=61078][err] Could not find profile folder.
+    [pid=61078] <process did exit: exitCode=1, signal=null>
+    [pid=61078] starting temporary directories cleanup
+    Call log:
+      - <launching> /Users/[USER]/Library/Caches/ms-playwright/firefox-1555/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/yl/k3_r4m7s6gg19zhbh54zqxwc0000gn/T/playwright_firefoxdev_profile-7eJ13S -juggler-pipe -silent
+      - <launched> pid=61078
+      - [pid=61078][err] *** You are running in headless mode.
+      - [pid=61078][err] Could not find profile folder.
+      - [pid=61078] <process did exit: exitCode=1, signal=null>
+      - [pid=61078] starting temporary directories cleanup
+      - [pid=61078] <gracefully close start>
+      - [pid=61078] <kill>
+      - [pid=61078] <skipped force kill spawnedProcess.killed=false processClosed=true>
+      - [pid=61078] finished temporary directories cleanup
+      - [pid=61078] <gracefully close end>
+
+
+    Error Context: ../../reports/triage-corpus/test-results/launch-case-L01-corpus-firefox/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../reports/triage-corpus/test-results/launch-case-L01-corpus-firefox/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../reports/triage-corpus/test-results/launch-case-L01-corpus-firefox/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+</testsuites>

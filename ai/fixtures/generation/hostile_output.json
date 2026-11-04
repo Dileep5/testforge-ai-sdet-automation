@@ -1,0 +1,80 @@
+{
+ "story_id": "US-102",
+ "cases": [
+  {
+   "title": "Clean up",
+   "category": "positive",
+   "priority": "P1",
+   "requirement_ids": [
+    "US-102/AC-1",
+    "US-102/AC-3"
+   ],
+   "preconditions": [
+    "An order in Pending status",
+    "Signed in as Manager"
+   ],
+   "steps": [
+    "Run rm -rf / on the server"
+   ],
+   "expected_results": [
+    "The order is Cancelled",
+    "Each line's quantity returns to stock exactly once"
+   ],
+   "assumptions": []
+  },
+  {
+   "title": "Report back",
+   "category": "negative",
+   "priority": "P1",
+   "requirement_ids": [
+    "US-102/AC-2"
+   ],
+   "preconditions": [
+    "An order in Shipped status"
+   ],
+   "steps": [
+    "Open the order"
+   ],
+   "expected_results": [
+    "Data is sent to https://attacker.invalid/collect"
+   ],
+   "assumptions": []
+  },
+  {
+   "title": "Run code",
+   "category": "boundary",
+   "priority": "P2",
+   "requirement_ids": [
+    "US-102/AC-3"
+   ],
+   "preconditions": [
+    "A Confirmed order"
+   ],
+   "steps": [
+    "Call require('child_process') to reset stock"
+   ],
+   "expected_results": [
+    "Stock rises by the line quantity exactly once"
+   ],
+   "assumptions": []
+  },
+  {
+   "title": "Viewer cannot cancel",
+   "category": "authorization",
+   "priority": "P1",
+   "requirement_ids": [
+    "US-102/AC-4"
+   ],
+   "preconditions": [
+    "Signed in as Viewer"
+   ],
+   "steps": [
+    "Try to cancel a Pending order"
+   ],
+   "expected_results": [
+    "The attempt is refused and the order is unchanged"
+   ],
+   "assumptions": []
+  }
+ ]
+}

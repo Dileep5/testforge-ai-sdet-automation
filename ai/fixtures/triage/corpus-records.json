@@ -1,0 +1,2211 @@
+[
+  {
+    "test": "case D01",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('orders-grid').locator('tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('orders-grid').locator('tbody tr').first() with timeout 1500ms\n  - waiting for getByTestId('orders-grid').locator('tbody tr').first()\n\n\n   6 |   await manager.page.route(\"**/api/v1/orders*\", (route) => route.fulfill({ status: 500, contentType: \"application/json\", body: JSON.stringify({ error: { code: \"INTERNAL_ERROR\", message: \"x\", details: [], request_id: \"r\" } }) }));\n   7 |   await manager.page.goto(\"/orders\");\n>  8 |   await expect(manager.page.getByTestId(\"orders-grid\").locator(\"tbody tr\").first()).toBeVisible(short);\n     |                                                                                     ^\n   9 | });\n  10 |\n  11 | test(\"case D02\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:8:85"
+    ],
+    "console_errors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    ],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [
+      {
+        "method": "GET",
+        "url": "/api/v1/orders",
+        "status": 500,
+        "failure": null
+      }
+    ],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 40,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('orders-grid').locator('tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('orders-grid').locator('tbody tr').first() with timeout 1500ms\n  - w",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "GET",
+          "url": "/api/v1/orders",
+          "status": 500,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Orders\" [level=1]\n  - paragraph: Dates are whole days in UTC.\n  - button \"Export CSV\"\n  - link \"New order\":\n    - /url: /orders/new\n  - form \"Filter orders\":\n    - text: Order number\n    - searchbox \"Order number\"\n    - text: From date\n    - textbox \"From date\"\n    - text: To date\n    - textbox \"To date\"\n    - text: Warehouse\n    - combobox \"Warehouse\":\n      - option \"All warehouses\" [selected]\n      - option \"YUL1 · Montreal\"\n      - option \"YVR1 · Vancouver\"\n      - option \"YYC1 · Calgary\"\n      - option \"YYZ1 · Toronto\"\n    - text: Customer\n    - combobox \"Customer\":\n      - option \"All customers\" [selected]\n      - option \"Aurora Trades Ltd.\"\n      - option \"Granite Harbour Foods\"\n      - option \"Lakeshore Clinic Supplies\"\n      - option \"Maple Ridge Supply Co.\"\n      - option \"Prairie Bolt Distributors\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All statuses\" [selected]\n      - option \"Pending\"\n      - option \"Confirmed\"\n      - option \"Shipped\"\n      - option \"Delivered\"\n      - option \"Cancelled\"\n    - button \"Apply filters\"\n    - button \"Clear\"\n  - alert:\n    - text: x\n    - button \"Try again\"\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D02",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toContainText(expected) failed\n\nLocator: getByTestId('stat-total-orders')\nExpected substring: \"60\"\nReceived string:    \"424242\"\nTimeout: 1500ms\n\nCall log:\n  - Expect \"toContainText\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('stat-total-orders')\n    13 × locator resolved to <div class=\"stat-value\" data-testid=\"stat-total-orders\">424242</div>\n       - unexpected value \"424242\"\n\n\n  17 |   const expected = (await manager.api.dashboard()).total_orders;\n  18 |   await manager.page.goto(\"/\");\n> 19 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toContainText(String(expected), short);\n     |                                                               ^\n  20 | });\n  21 |\n  22 | test(\"case D03\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:19:63"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 42,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toContainText(expected) failed\n\nLocator: getByTestId('stat-total-orders')\nExpected substring: \"60\"\nReceived string:    \"424242\"\nTimeout: 1500ms\n\nCall log:\n  - Expect \"toContainText\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- text: \"424242\"\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D03",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: uncaught errors in the page\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"Cannot read properties of undefined (reading 'status')\",\n+ ]\n\n   at ../../framework/fixtures/index.ts:124\n\n  122 |     if (!failed) await rm(testInfo.outputPath(\"videos\"), { recursive: true, force: true });\n  123 |     // A crash in the page is a bug even when the visible assertions happen to pass.\n> 124 |     expect(uncaught, \"uncaught errors in the page\").toEqual([]);\n      |                                                     ^\n  125 |   };\n  126 |\n  127 |   return { open, closeAll };\n    at closeAll (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:124:53)\n    at Object.openBrowser (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:158:5)"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 38,
+      "failed_actions": [
+        "Test.expect: Error: uncaught errors in the page\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"Cannot read properties of undefined (reading 'status')\",\n+ ]",
+        "Test.fixture: Error: uncaught errors in the page\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"Cannot read properties of undefined (reading 'status')\",\n+ ]",
+        "Test.hook: Error: uncaught errors in the page\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"Cannot read properties of undefined (reading 'status')\",\n+ ]"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D04",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "TimeoutError: locator.click: Timeout 1500ms exceeded.\nCall log:\n  - waiting for getByTestId('no-such-button')\n\n\n  29 |   await manager.page.goto(\"/\");\n  30 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible();\n> 31 |   await manager.page.getByTestId(\"no-such-button\").click(short);\n     |                                                    ^\n  32 | });\n  33 |\n  34 | test(\"case D05\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:31:52"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: TimeoutError: locator.click: Timeout 1500ms exceeded.\nCall log:\n  - waiting for getByTestId('no-such-button')\n",
+        "Frame.click: Timeout 1500ms exceeded."
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4] [cursor=pointer]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9] [cursor=pointer]:\n          - /url: /\n        - link \"Orders\" [ref=e10] [cursor=pointer]:\n          - /url: /orders\n        - link \"Products\" [ref=e11] [cursor=pointer]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12] [cursor=pointer]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13] [cursor=pointer]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e20]:\n        - heading \"Dashboard\" [level=1] [ref=e21]\n        - paragraph [ref=e22]: Welcome back, Morgan Manager.\n      - region \"Key figures\" [ref=e23]:\n        - generic [ref=e24]:\n          - generic [ref=e25]: Total orders\n          - generic [ref=e26]: \"60\"\n        - generic [ref=e27]:\n          - generic [ref=e28]: Open orders\n          - generic [ref=e29]: \"44\"\n        - generic [ref=e30]:\n          - generic [ref=e31]: Settled revenue\n          - generic [ref=e32]: $35,007.19\n        - generic [ref=e33]:\n          - generic [ref=e34]: Low stock lines\n          - generic [ref=e35]: \"8\"\n      - region [ref=e36]:\n        - heading \"Orders by status\" [level=2] [ref=e37]\n        - list [ref=e38]:\n          - listitem [ref=e39]:\n            - link \"15 Pending\" [ref=e40] [cursor=pointer]:\n              - /url: /orders?status=PENDING\n              - generic [ref=e41]: \"15\"\n              - generic [ref=e42]: Pending\n          - listitem [ref=e43]:\n            - link \"13 Confirmed\" [ref=e44] [cursor=pointer]:\n              - /url: /orders?status=CONFIRMED\n              - generic [ref=e45]: \"13\"\n              - generic [ref=e46]: Confirmed\n          - listitem [ref=e47]:\n            - link \"16 Shipped\" [ref=e48] [cursor=pointer]:\n              - /url: /orders?status=SHIPPED\n              - generic [ref=e49]: \"16\"\n              - generic [ref=e50]: Shipped\n          - listitem [ref=e51]:\n            - link \"11 Delivered\" [ref=e52] [cursor=pointer]:\n              - /url: /orders?status=DELIVERED\n              - generic [ref=e53]: \"11\"\n              - generic [ref=e54]: Delivered\n          - listitem [ref=e55]:\n            - link \"5 Cancelled\" [ref=e56] [cursor=pointer]:\n              - /url: /orders?status=CANCELLED\n              - generic [ref=e57]: \"5\"\n              - generic [ref=e58]: Cancelled\n      - region [ref=e59]:\n        - heading \"Recent orders\" [level=2] [ref=e60]\n        - region \"Recent orders table\" [ref=e61]:\n          - table [ref=e62]:\n            - rowgroup [ref=e63]:\n              - row [ref=e64]:\n                - columnheader \"Order\" [ref=e65]\n                - columnheader \"Customer\" [ref=e66]\n                - columnheader \"Date\" [ref=e67]\n                - columnheader \"Status\" [ref=e68]\n                - columnheader \"Total\" [ref=e69]\n            - rowgroup [ref=e70]:\n              - row [ref=e71]:\n                - cell [ref=e72]:\n                  - link \"ORD-100060\" [ref=e73] [cursor=pointer]:\n                    - /url: /orders/f037db1f-f52b-54a5-9ff9-b81fda475dd8\n                - cell \"Lakeshore Clinic Supplies\" [ref=e74]\n                - cell \"Jul 1, 2026\" [ref=e75]\n                - cell \"Shipped\" [ref=e76]\n                - cell \"$211.31\" [ref=e78]\n              - row [ref=e79]:\n                - cell [ref=e80]:\n                  - link \"ORD-100059\" [ref=e81] [cursor=pointer]:\n                    - /url: /orders/9b72e7f3-86d2-55a6-b668-c4ba11f7d8d5\n                - cell \"Prairie Bolt Distributors\" [ref=e82]\n                - cell \"Jun 28, 2026\" [ref=e83]\n                - cell \"Pending\" [ref=e84]\n                - cell \"$8",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D05",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: locator.click: Error: strict mode violation: getByRole('link') resolved to 16 elements:\n    1) <a href=\"#main\" class=\"skip-link\">Skip to content</a> aka getByRole('link', { name: 'Skip to content' })\n    2) <a href=\"/\" aria-current=\"page\" data-discover=\"true\" class=\"nav-link active\">Dashboard</a> aka getByRole('link', { name: 'Dashboard' })\n    3) <a href=\"/orders\" class=\"nav-link\" data-discover=\"true\">Orders</a> aka getByRole('link', { name: 'Orders' })\n    4) <a class=\"nav-link\" href=\"/products\" data-discover=\"true\">Products</a> aka getByRole('link', { name: 'Products' })\n    5) <a class=\"nav-link\" href=\"/inventory\" data-discover=\"true\">Inventory</a> aka getByRole('link', { name: 'Inventory' })\n    6) <a href=\"/support\" class=\"nav-link\" data-discover=\"true\">Support</a> aka getByRole('link', { name: 'Support' })\n    7) <a data-discover=\"true\" href=\"/orders?status=PENDING\">…</a> aka getByRole('link', { name: 'Pending' })\n    8) <a data-discover=\"true\" href=\"/orders?status=CONFIRMED\">…</a> aka getByRole('link', { name: 'Confirmed' })\n    9) <a data-discover=\"true\" href=\"/orders?status=SHIPPED\">…</a> aka getByRole('link', { name: 'Shipped' })\n    10) <a data-discover=\"true\" href=\"/orders?status=DELIVERED\">…</a> aka getByRole('link', { name: 'Delivered' })\n    ...\n\nCall log:\n  - waiting for getByRole('link')\n\n\n  35 |   await manager.page.goto(\"/\");\n  36 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible();\n> 37 |   await manager.page.getByRole(\"link\").click();\n     |                                        ^\n  38 | });\n  39 |\n  40 | test(\"case D06\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:37:40"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: Error: locator.click: Error: strict mode violation: getByRole('link') resolved to 16 elements:\n    1) <a href=\"#main\" class=\"skip-link\">Skip to content</a> aka getByRole('link', { name: 'Skip to content' })\n    2) <a href=\"/\" aria-current=\"page\" data-discover=\"true\" class=\"nav-link acti",
+        "Frame.click: Error: strict mode violation: getByRole('link') resolved to 16 elements:\n    1) <a href=\"#main\" class=\"skip-link\">Skip to content</a> aka getByRole('link', { name: 'Skip to content' })\n    2) <a href=\"/\" aria-current=\"page\" data-discover=\"true\" class=\"nav-link active\">Dashboard</a> aka "
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4] [cursor=pointer]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9] [cursor=pointer]:\n          - /url: /\n        - link \"Orders\" [ref=e10] [cursor=pointer]:\n          - /url: /orders\n        - link \"Products\" [ref=e11] [cursor=pointer]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12] [cursor=pointer]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13] [cursor=pointer]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e20]:\n        - heading \"Dashboard\" [level=1] [ref=e21]\n        - paragraph [ref=e22]: Welcome back, Morgan Manager.\n      - region \"Key figures\" [ref=e23]:\n        - generic [ref=e24]:\n          - generic [ref=e25]: Total orders\n          - generic [ref=e26]: \"60\"\n        - generic [ref=e27]:\n          - generic [ref=e28]: Open orders\n          - generic [ref=e29]: \"44\"\n        - generic [ref=e30]:\n          - generic [ref=e31]: Settled revenue\n          - generic [ref=e32]: $35,007.19\n        - generic [ref=e33]:\n          - generic [ref=e34]: Low stock lines\n          - generic [ref=e35]: \"8\"\n      - region [ref=e36]:\n        - heading \"Orders by status\" [level=2] [ref=e37]\n        - list [ref=e38]:\n          - listitem [ref=e39]:\n            - link \"15 Pending\" [ref=e40] [cursor=pointer]:\n              - /url: /orders?status=PENDING\n              - generic [ref=e41]: \"15\"\n              - generic [ref=e42]: Pending\n          - listitem [ref=e43]:\n            - link \"13 Confirmed\" [ref=e44] [cursor=pointer]:\n              - /url: /orders?status=CONFIRMED\n              - generic [ref=e45]: \"13\"\n              - generic [ref=e46]: Confirmed\n          - listitem [ref=e47]:\n            - link \"16 Shipped\" [ref=e48] [cursor=pointer]:\n              - /url: /orders?status=SHIPPED\n              - generic [ref=e49]: \"16\"\n              - generic [ref=e50]: Shipped\n          - listitem [ref=e51]:\n            - link \"11 Delivered\" [ref=e52] [cursor=pointer]:\n              - /url: /orders?status=DELIVERED\n              - generic [ref=e53]: \"11\"\n              - generic [ref=e54]: Delivered\n          - listitem [ref=e55]:\n            - link \"5 Cancelled\" [ref=e56] [cursor=pointer]:\n              - /url: /orders?status=CANCELLED\n              - generic [ref=e57]: \"5\"\n              - generic [ref=e58]: Cancelled\n      - region [ref=e59]:\n        - heading \"Recent orders\" [level=2] [ref=e60]\n        - region \"Recent orders table\" [ref=e61]:\n          - table [ref=e62]:\n            - rowgroup [ref=e63]:\n              - row [ref=e64]:\n                - columnheader \"Order\" [ref=e65]\n                - columnheader \"Customer\" [ref=e66]\n                - columnheader \"Date\" [ref=e67]\n                - columnheader \"Status\" [ref=e68]\n                - columnheader \"Total\" [ref=e69]\n            - rowgroup [ref=e70]:\n              - row [ref=e71]:\n                - cell [ref=e72]:\n                  - link \"ORD-100060\" [ref=e73] [cursor=pointer]:\n                    - /url: /orders/f037db1f-f52b-54a5-9ff9-b81fda475dd8\n                - cell \"Lakeshore Clinic Supplies\" [ref=e74]\n                - cell \"Jul 1, 2026\" [ref=e75]\n                - cell \"Shipped\" [ref=e76]\n                - cell \"$211.31\" [ref=e78]\n              - row [ref=e79]:\n                - cell [ref=e80]:\n                  - link \"ORD-100059\" [ref=e81] [cursor=pointer]:\n                    - /url: /orders/9b72e7f3-86d2-55a6-b668-c4ba11f7d8d5\n                - cell \"Prairie Bolt Distributors\" [ref=e82]\n                - cell \"Jun 28, 2026\" [ref=e83]\n                - cell \"Pending\" [ref=e84]\n                - cell \"$8",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D06",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Dashbord' })\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Dashbord' }) with timeout 1500ms\n  - waiting for getByRole('heading', { name: 'Dashbord' })\n\n\n  41 |   await manager.page.goto(\"/\");\n  42 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible();\n> 43 |   await expect(manager.page.getByRole(\"heading\", { name: \"Dashbord\" })).toBeVisible(short);\n     |                                                                         ^\n  44 | });\n  45 |\n  46 | test(\"case D07\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:43:73"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Dashbord' })\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Dashbord' }) with timeout 1500ms\n  - waiting for getByRole('he",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Dashboard\" [level=1]\n  - paragraph: Welcome back, Morgan Manager.\n  - region \"Key figures\": Total orders 60 Open orders 44 Settled revenue $35,007.19 Low stock lines 8\n  - region \"Orders by status\":\n    - heading \"Orders by status\" [level=2]\n    - list:\n      - listitem:\n        - link \"15 Pending\":\n          - /url: /orders?status=PENDING\n      - listitem:\n        - link \"13 Confirmed\":\n          - /url: /orders?status=CONFIRMED\n      - listitem:\n        - link \"16 Shipped\":\n          - /url: /orders?status=SHIPPED\n      - listitem:\n        - link \"11 Delivered\":\n          - /url: /orders?status=DELIVERED\n      - listitem:\n        - link \"5 Cancelled\":\n          - /url: /orders?status=CANCELLED\n  - region \"Recent orders\":\n    - heading \"Recent orders\" [level=2]\n    - region \"Recent orders table\":\n      - table:\n        - rowgroup:\n          - row \"Order Customer Date Status Total\":\n            - columnheader \"Order\"\n            - columnheader \"Customer\"\n            - columnheader \"Date\"\n            - columnheader \"Status\"\n            - columnheader \"Total\"\n        - rowgroup:\n          - row \"ORD-100060 Lakeshore Clinic Supplies Jul 1, 2026 Shipped $211.31\":\n            - cell \"ORD-100060\":\n              - link \"ORD-100060\":\n                - /url: /orders/f037db1f-f52b-54a5-9ff9-b81fda475dd8\n            - cell \"Lakeshore Clinic Supplies\"\n            - cell \"Jul 1, 2026\"\n            - cell \"Shipped\"\n            - cell \"$211.31\"\n          - row \"ORD-100059 Prairie Bolt Distributors Jun 28, 2026 Pending $834.10\":\n            - cell \"ORD-100059\":\n              - link \"ORD-100059\":\n                - /url: /orders/9b72e7f3-86d2-55a6-b668-c4ba11f7d8d5\n            - cell \"Prairie Bolt Distributors\"\n            - cell \"Jun 28, 2026\"\n            - cell \"Pending\"\n            - cell \"$834.10\"\n          - row \"ORD-100058 Aurora Trades Ltd. Jun 25, 2026 Confirmed $1,303.38\":\n            - cell \"ORD-100058\":\n              - link \"ORD-100058\":\n                - /url: /orders/e50c4bcd-36b2-523f-a436-b6a5fbef3166\n            - cell \"Aurora Trades Ltd.\"\n            - cell \"Jun 25, 2026\"\n            - cell \"Confirmed\"\n            - cell \"$1,303.38\"\n          - row \"ORD-100057 Granite Harbour Foods Jun 22, 2026 Cancelled $926.04\":\n            - cell \"ORD-100057\":\n              - link \"ORD-100057\":\n                - /url: /orders/4d40b5a5-586b-5398-a391-40761c521a65\n            - cell \"Granite Harbour Foods\"\n            - cell \"Jun 22, 2026\"\n            - cell \"Cancelled\"\n            - cell \"$926.04\"\n          - row \"ORD-100056 Maple Ridge Supply Co. Jun 19, 2026 Shipped $1,022.49\":\n            - cell \"ORD-100056\":\n              - link \"ORD-100056\":\n                - /url: /orders/12e932bd-1e03-5278-96b2-630159875757\n            - cell \"Maple Ridge Supply Co.\"\n            - cell \"Jun 19, 2026\"\n            - cell \"Shipped\"\n            - cell \"$1,022.49\"\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D07",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('stat-total-orders')\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('stat-total-orders')\n\n\n  47 |   await manager.page.route(\"**/api/v1/dashboard/summary\", () => undefined);\n  48 |   await manager.page.goto(\"/\");\n> 49 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible(short);\n     |                                                               ^\n  50 | });\n  51 |\n  52 | test(\"case D08\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:49:63"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [
+      {
+        "method": "GET",
+        "url": "/api/v1/dashboard/summary",
+        "status": null,
+        "failure": null
+      }
+    ],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('stat-total-orders')\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('stat-total-orders')\n",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Dashboard\" [level=1]\n  - paragraph: Welcome back, Morgan Manager.\n  - status: Loading…\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D08",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "TimeoutError: page.waitForResponse: Timeout 1500ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for response \"**/api/v1/never-called\"\n============================================================\n\n  52 | test(\"case D08\", async ({ manager }) => {\n  53 |   await manager.page.goto(\"/\");\n> 54 |   await manager.page.waitForResponse(\"**/api/v1/never-called\", short);\n     |                      ^\n  55 | });\n  56 |\n  57 | test(\"case D09\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:54:22"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 38,
+      "failed_actions": [
+        "Test.pw:api: TimeoutError: page.waitForResponse: Timeout 1500ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for response \"**/api/v1/never-called\"\n============================================================",
+        "Page.__waitInfo__: Timeout 1500ms exceeded while waiting for event \"response\""
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4] [cursor=pointer]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9] [cursor=pointer]:\n          - /url: /\n        - link \"Orders\" [ref=e10] [cursor=pointer]:\n          - /url: /orders\n        - link \"Products\" [ref=e11] [cursor=pointer]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12] [cursor=pointer]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13] [cursor=pointer]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e20]:\n        - heading \"Dashboard\" [level=1] [ref=e21]\n        - paragraph [ref=e22]: Welcome back, Morgan Manager.\n      - region \"Key figures\" [ref=e23]:\n        - generic [ref=e24]:\n          - generic [ref=e25]: Total orders\n          - generic [ref=e26]: \"60\"\n        - generic [ref=e27]:\n          - generic [ref=e28]: Open orders\n          - generic [ref=e29]: \"44\"\n        - generic [ref=e30]:\n          - generic [ref=e31]: Settled revenue\n          - generic [ref=e32]: $35,007.19\n        - generic [ref=e33]:\n          - generic [ref=e34]: Low stock lines\n          - generic [ref=e35]: \"8\"\n      - region [ref=e36]:\n        - heading \"Orders by status\" [level=2] [ref=e37]\n        - list [ref=e38]:\n          - listitem [ref=e39]:\n            - link \"15 Pending\" [ref=e40] [cursor=pointer]:\n              - /url: /orders?status=PENDING\n              - generic [ref=e41]: \"15\"\n              - generic [ref=e42]: Pending\n          - listitem [ref=e43]:\n            - link \"13 Confirmed\" [ref=e44] [cursor=pointer]:\n              - /url: /orders?status=CONFIRMED\n              - generic [ref=e45]: \"13\"\n              - generic [ref=e46]: Confirmed\n          - listitem [ref=e47]:\n            - link \"16 Shipped\" [ref=e48] [cursor=pointer]:\n              - /url: /orders?status=SHIPPED\n              - generic [ref=e49]: \"16\"\n              - generic [ref=e50]: Shipped\n          - listitem [ref=e51]:\n            - link \"11 Delivered\" [ref=e52] [cursor=pointer]:\n              - /url: /orders?status=DELIVERED\n              - generic [ref=e53]: \"11\"\n              - generic [ref=e54]: Delivered\n          - listitem [ref=e55]:\n            - link \"5 Cancelled\" [ref=e56] [cursor=pointer]:\n              - /url: /orders?status=CANCELLED\n              - generic [ref=e57]: \"5\"\n              - generic [ref=e58]: Cancelled\n      - region [ref=e59]:\n        - heading \"Recent orders\" [level=2] [ref=e60]\n        - region \"Recent orders table\" [ref=e61]:\n          - table [ref=e62]:\n            - rowgroup [ref=e63]:\n              - row [ref=e64]:\n                - columnheader \"Order\" [ref=e65]\n                - columnheader \"Customer\" [ref=e66]\n                - columnheader \"Date\" [ref=e67]\n                - columnheader \"Status\" [ref=e68]\n                - columnheader \"Total\" [ref=e69]\n            - rowgroup [ref=e70]:\n              - row [ref=e71]:\n                - cell [ref=e72]:\n                  - link \"ORD-100060\" [ref=e73] [cursor=pointer]:\n                    - /url: /orders/f037db1f-f52b-54a5-9ff9-b81fda475dd8\n                - cell \"Lakeshore Clinic Supplies\" [ref=e74]\n                - cell \"Jul 1, 2026\" [ref=e75]\n                - cell \"Shipped\" [ref=e76]\n                - cell \"$211.31\" [ref=e78]\n              - row [ref=e79]:\n                - cell [ref=e80]:\n                  - link \"ORD-100059\" [ref=e81] [cursor=pointer]:\n                    - /url: /orders/9b72e7f3-86d2-55a6-b668-c4ba11f7d8d5\n                - cell \"Prairie Bolt Distributors\" [ref=e82]\n                - cell \"Jun 28, 2026\" [ref=e83]\n                - cell \"Pending\" [ref=e84]\n                - cell \"$8",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D09",
+    "project": "corpus-chromium",
+    "status": "timedOut",
+    "errors": [
+      "Test timeout of 3000ms exceeded.",
+      "Error: page.waitForResponse: Target page, context or browser has been closed\n=========================== logs ===========================\nwaiting for response \"**/api/v1/products*\"\n============================================================\n\n  59 |   await manager.page.route(\"**/api/v1/products*\", () => undefined);\n  60 |   await manager.page.goto(\"/products\");\n> 61 |   await manager.page.waitForResponse(\"**/api/v1/products*\", { timeout: 60_000 });\n     |                      ^\n  62 | });\n  63 |\n  64 | test(\"case D10\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:61:22"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [
+      {
+        "method": "GET",
+        "url": "/api/v1/products",
+        "status": null,
+        "failure": null
+      }
+    ],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: Error: page.waitForResponse: Target page, context or browser has been closed\n=========================== logs ===========================\nwaiting for response \"**/api/v1/products*\"\n============================================================"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4] [cursor=pointer]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9] [cursor=pointer]:\n          - /url: /\n        - link \"Orders\" [ref=e10] [cursor=pointer]:\n          - /url: /orders\n        - link \"Products\" [ref=e11] [cursor=pointer]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12] [cursor=pointer]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13] [cursor=pointer]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e19]:\n        - heading \"Products\" [level=1] [ref=e20]\n        - button \"New product\" [ref=e21] [cursor=pointer]\n      - generic [ref=e22]:\n        - search [ref=e23]:\n          - generic [ref=e24]:\n            - generic [ref=e25]: Search name or SKU\n            - searchbox \"Search name or SKU\" [ref=e26]\n          - button \"Search\" [ref=e27] [cursor=pointer]\n        - generic [ref=e28]:\n          - generic [ref=e29]: Category\n          - combobox \"Category\" [ref=e30]:\n            - option \"All categories\" [selected]\n            - option \"Electrical\"\n            - option \"Fasteners\"\n            - option \"Janitorial\"\n            - option \"Packaging\"\n            - option \"Safety\"\n            - option \"Tools\"\n        - generic [ref=e31]:\n          - generic [ref=e32]: Availability\n          - combobox \"Availability\" [ref=e33]:\n            - option \"Any\" [selected]\n            - option \"In stock\"\n            - option \"Out of stock\"\n      - status [ref=e35]: Loading products…\n  - status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D10",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:59999/\nCall log:\n  - navigating to \"http://127.0.0.1:59999/\", waiting until \"load\"\n\n\n  63 |\n  64 | test(\"case D10\", async ({ manager }) => {\n> 65 |   await manager.page.goto(\"http://127.0.0.1:59999/\");\n     |                      ^\n  66 | });\n  67 |\n  68 | test(\"case D11\", async ({ playwright }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:65:22"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [
+      {
+        "method": "GET",
+        "url": "/",
+        "status": null,
+        "failure": "net::ERR_CONNECTION_REFUSED"
+      }
+    ],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 37,
+      "failed_actions": [
+        "Test.pw:api: Error: page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:59999/\nCall log:\n  - navigating to \"http://127.0.0.1:59999/\", waiting until \"load\"\n",
+        "Frame.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:59999/"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D11",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:59999\nCall log:\n  - → GET http://127.0.0.1:59999/api/v1/health\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n\n\n  68 | test(\"case D11\", async ({ playwright }) => {\n  69 |   const request = await playwright.request.newContext();\n> 70 |   await request.get(\"http://127.0.0.1:59999/api/v1/health\");\n     |                 ^\n  71 | });\n  72 |\n  73 | test(\"case D13\", async ({ playwright }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:70:17"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 18,
+      "failed_actions": [
+        "Test.pw:api: Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:59999\nCall log:\n  - → GET http://127.0.0.1:59999/api/v1/health\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36\n    - accept: */*\n    - accept",
+        "APIRequestContext.fetch: connect ECONNREFUSED 127.0.0.1:59999"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D13",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: Login as nobody-here@e2e.example failed: 401 {\"error\":{\"code\":\"INVALID_CREDENTIALS\",\"message\":\"Incorrect email or password\",\"details\":[],\"request_id\":\"1efbfc26-53f9-4e3b-96c5-47c65a6a9259\"}}\n\n   at ../../framework/fixtures/index.ts:80\n\n  78 |   const response = await request.post(\"/api/v1/auth/login\", { data: { email, password } });\n  79 |   if (!response.ok()) {\n> 80 |     throw new Error(`Login as ${credentials.email} failed: ${response.status()} ${await response.text()}`);\n     |           ^\n  81 |   }\n  82 |   return request;\n  83 | }\n    at apiLogin (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:80:11)\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:74:3"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 18,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "POST",
+          "url": "/api/v1/auth/login",
+          "status": 401,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D14",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: POST /orders returned 409: {\"error\":{\"code\":\"INSUFFICIENT_STOCK\",\"message\":\"Not enough stock at YYZ1\",\"details\":[{\"product_id\":\"a248d13f-9c0d-45e3-8171-d1f657a30c15\",\"sku\":\"E2E-35E2401B21-2\",\"requested\":50,\"available\":1}],\"request_id\":\"da37443a-dbce-4cf0-8153-f01f7871636f\"}}\n\n   at ../../framework/helpers/api-client.ts:51\n\n  49 |     const response = await this.send(method, path, options);\n  50 |     if (!response.ok()) {\n> 51 |       throw new Error(`${method} ${path} returned ${response.status()}: ${await response.text()}`);\n     |             ^\n  52 |     }\n  53 |     return (response.status() === 204 ? undefined : await response.json()) as T;\n  54 |   }\n    at ApiClient.json (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/helpers/api-client.ts:51:13)\n    at TestData.order (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/factories/test-data.ts:112:19)\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:80:3"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 31,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "POST",
+          "url": "/api/v1/orders",
+          "status": 409,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D15",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: Setup: seeded customer not found: 404 {\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"The requested resource was not found\",\"details\":[],\"request_id\":\"7908892f-e5af-4469-83ce-bda33d410975\"}}\n\n  83 | test(\"case D15\", async ({ setupApi }) => {\n  84 |   const response = await setupApi.send(\"GET\", \"/customers/00000000-0000-4000-8000-000000000000\");\n> 85 |   if (!response.ok()) throw new Error(`Setup: seeded customer not found: ${response.status()} ${await response.text()}`);\n     |                             ^\n  86 | });\n  87 |\n  88 | test(\"case D16\", async () => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:85:29"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 22,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "GET",
+          "url": "/api/v1/customers/00000000-0000-4000-8000-000000000000",
+          "status": 404,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D16",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: Unexpected state in helper\n\n  87 |\n  88 | test(\"case D16\", async () => {\n> 89 |   throw new Error(\"Unexpected state in helper\");\n     |         ^\n  90 | });\n  91 |\n  92 | test(\"case D17\", async () => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:89:9"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 16,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D17",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 3\nReceived: 2\n\n  91 |\n  92 | test(\"case D17\", async () => {\n> 93 |   expect(2 as number).toBe(3);\n     |                       ^\n  94 | });\n  95 |\n  96 | test(\"case D18\", async () => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:93:23"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 17,
+      "failed_actions": [
+        "Test.expect: Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 3\nReceived: 2"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D18",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "TypeError: Cannot read properties of undefined (reading 'foo')\n\n   96 | test(\"case D18\", async () => {\n   97 |   const value = undefined as unknown as { foo: string };\n>  98 |   expect(value.foo).toBe(\"x\");\n      |                ^\n   99 | });\n  100 |\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:98:16"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 16,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D01",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('orders-grid').locator('tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('orders-grid').locator('tbody tr').first() with timeout 1500ms\n  - waiting for getByTestId('orders-grid').locator('tbody tr').first()\n\n\n   6 |   await manager.page.route(\"**/api/v1/orders*\", (route) => route.fulfill({ status: 500, contentType: \"application/json\", body: JSON.stringify({ error: { code: \"INTERNAL_ERROR\", message: \"x\", details: [], request_id: \"r\" } }) }));\n   7 |   await manager.page.goto(\"/orders\");\n>  8 |   await expect(manager.page.getByTestId(\"orders-grid\").locator(\"tbody tr\").first()).toBeVisible(short);\n     |                                                                                     ^\n   9 | });\n  10 |\n  11 | test(\"case D02\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:8:85"
+    ],
+    "console_errors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    ],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [
+      {
+        "method": "GET",
+        "url": "/api/v1/orders",
+        "status": 500,
+        "failure": null
+      }
+    ],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 40,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('orders-grid').locator('tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('orders-grid').locator('tbody tr').first() with timeout 1500ms\n  - w",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "GET",
+          "url": "/api/v1/orders",
+          "status": 500,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Orders\" [level=1]\n  - paragraph: Dates are whole days in UTC.\n  - button \"Export CSV\"\n  - link \"New order\":\n    - /url: /orders/new\n  - form \"Filter orders\":\n    - text: Order number\n    - searchbox \"Order number\"\n    - text: From date\n    - textbox \"From date\"\n    - text: To date\n    - textbox \"To date\"\n    - text: Warehouse\n    - combobox \"Warehouse\":\n      - option \"All warehouses\" [selected]\n      - option \"YUL1 · Montreal\"\n      - option \"YVR1 · Vancouver\"\n      - option \"YYC1 · Calgary\"\n      - option \"YYZ1 · Toronto\"\n    - text: Customer\n    - combobox \"Customer\":\n      - option \"All customers\" [selected]\n      - option \"Aurora Trades Ltd.\"\n      - option \"Customer 35E2401B21 1\"\n      - option \"Customer BAE7FFBEF8 1\"\n      - option \"Granite Harbour Foods\"\n      - option \"Lakeshore Clinic Supplies\"\n      - option \"Maple Ridge Supply Co.\"\n      - option \"Prairie Bolt Distributors\"\n    - text: Status\n    - combobox \"Status\":\n      - option \"All statuses\" [selected]\n      - option \"Pending\"\n      - option \"Confirmed\"\n      - option \"Shipped\"\n      - option \"Delivered\"\n      - option \"Cancelled\"\n    - button \"Apply filters\"\n    - button \"Clear\"\n  - alert:\n    - text: x\n    - button \"Try again\"\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D02",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toContainText(expected) failed\n\nLocator: getByTestId('stat-total-orders')\nExpected substring: \"60\"\nReceived string:    \"424242\"\nTimeout: 1500ms\n\nCall log:\n  - Expect \"toContainText\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('stat-total-orders')\n    13 × locator resolved to <div class=\"stat-value\" data-testid=\"stat-total-orders\">424242</div>\n       - unexpected value \"424242\"\n\n\n  17 |   const expected = (await manager.api.dashboard()).total_orders;\n  18 |   await manager.page.goto(\"/\");\n> 19 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toContainText(String(expected), short);\n     |                                                               ^\n  20 | });\n  21 |\n  22 | test(\"case D03\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:19:63"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 42,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toContainText(expected) failed\n\nLocator: getByTestId('stat-total-orders')\nExpected substring: \"60\"\nReceived string:    \"424242\"\nTimeout: 1500ms\n\nCall log:\n  - Expect \"toContainText\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- text: \"424242\"\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D03",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: uncaught errors in the page\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"Cannot read properties of undefined (reading 'status')\",\n+ ]\n\n   at ../../framework/fixtures/index.ts:124\n\n  122 |     if (!failed) await rm(testInfo.outputPath(\"videos\"), { recursive: true, force: true });\n  123 |     // A crash in the page is a bug even when the visible assertions happen to pass.\n> 124 |     expect(uncaught, \"uncaught errors in the page\").toEqual([]);\n      |                                                     ^\n  125 |   };\n  126 |\n  127 |   return { open, closeAll };\n    at closeAll (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:124:53)\n    at Object.openBrowser (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:158:5)"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 38,
+      "failed_actions": [
+        "Test.expect: Error: uncaught errors in the page\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"Cannot read properties of undefined (reading 'status')\",\n+ ]",
+        "Test.fixture: Error: uncaught errors in the page\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"Cannot read properties of undefined (reading 'status')\",\n+ ]",
+        "Test.hook: Error: uncaught errors in the page\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 3\n\n- Array []\n+ Array [\n+   \"Cannot read properties of undefined (reading 'status')\",\n+ ]"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D04",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "TimeoutError: locator.click: Timeout 1500ms exceeded.\nCall log:\n  - waiting for getByTestId('no-such-button')\n\n\n  29 |   await manager.page.goto(\"/\");\n  30 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible();\n> 31 |   await manager.page.getByTestId(\"no-such-button\").click(short);\n     |                                                    ^\n  32 | });\n  33 |\n  34 | test(\"case D05\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:31:52"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: TimeoutError: locator.click: Timeout 1500ms exceeded.\nCall log:\n  - waiting for getByTestId('no-such-button')\n",
+        "Frame.click: Timeout 1500ms exceeded."
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9]:\n          - /url: /\n        - link \"Orders\" [ref=e10]:\n          - /url: /orders\n        - link \"Products\" [ref=e11]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e20]:\n        - heading \"Dashboard\" [level=1] [ref=e21]\n        - paragraph [ref=e22]: Welcome back, Morgan Manager.\n      - region \"Key figures\" [ref=e23]:\n        - generic [ref=e24]:\n          - generic [ref=e25]: Total orders\n          - generic [ref=e26]: \"60\"\n        - generic [ref=e27]:\n          - generic [ref=e28]: Open orders\n          - generic [ref=e29]: \"44\"\n        - generic [ref=e30]:\n          - generic [ref=e31]: Settled revenue\n          - generic [ref=e32]: $35,007.19\n        - generic [ref=e33]:\n          - generic [ref=e34]: Low stock lines\n          - generic [ref=e35]: \"8\"\n      - region [ref=e36]:\n        - heading \"Orders by status\" [level=2] [ref=e37]\n        - list [ref=e38]:\n          - listitem [ref=e39]:\n            - link \"15 Pending\" [ref=e40]:\n              - /url: /orders?status=PENDING\n              - generic [ref=e41]: \"15\"\n              - generic [ref=e42]: Pending\n          - listitem [ref=e43]:\n            - link \"13 Confirmed\" [ref=e44]:\n              - /url: /orders?status=CONFIRMED\n              - generic [ref=e45]: \"13\"\n              - generic [ref=e46]: Confirmed\n          - listitem [ref=e47]:\n            - link \"16 Shipped\" [ref=e48]:\n              - /url: /orders?status=SHIPPED\n              - generic [ref=e49]: \"16\"\n              - generic [ref=e50]: Shipped\n          - listitem [ref=e51]:\n            - link \"11 Delivered\" [ref=e52]:\n              - /url: /orders?status=DELIVERED\n              - generic [ref=e53]: \"11\"\n              - generic [ref=e54]: Delivered\n          - listitem [ref=e55]:\n            - link \"5 Cancelled\" [ref=e56]:\n              - /url: /orders?status=CANCELLED\n              - generic [ref=e57]: \"5\"\n              - generic [ref=e58]: Cancelled\n      - region [ref=e59]:\n        - heading \"Recent orders\" [level=2] [ref=e60]\n        - region \"Recent orders table\" [ref=e61]:\n          - table [ref=e62]:\n            - rowgroup [ref=e63]:\n              - row [ref=e64]:\n                - columnheader \"Order\" [ref=e65]\n                - columnheader \"Customer\" [ref=e66]\n                - columnheader \"Date\" [ref=e67]\n                - columnheader \"Status\" [ref=e68]\n                - columnheader \"Total\" [ref=e69]\n            - rowgroup [ref=e70]:\n              - row [ref=e71]:\n                - cell [ref=e72]:\n                  - link \"ORD-100060\" [ref=e73]:\n                    - /url: /orders/f037db1f-f52b-54a5-9ff9-b81fda475dd8\n                - cell \"Lakeshore Clinic Supplies\" [ref=e74]\n                - cell \"Jul 1, 2026\" [ref=e75]\n                - cell \"Shipped\" [ref=e76]\n                - cell \"$211.31\" [ref=e78]\n              - row [ref=e79]:\n                - cell [ref=e80]:\n                  - link \"ORD-100059\" [ref=e81]:\n                    - /url: /orders/9b72e7f3-86d2-55a6-b668-c4ba11f7d8d5\n                - cell \"Prairie Bolt Distributors\" [ref=e82]\n                - cell \"Jun 28, 2026\" [ref=e83]\n                - cell \"Pending\" [ref=e84]\n                - cell \"$834.10\" [ref=e86]\n              - row [ref=e87]:\n                - cell [ref=e88]:\n                  - link \"ORD-100058\" [ref=e89]:\n                    - /url: /orders/e50c4bcd-36b2-523f-a436-b6a5fbef3166\n                -",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D05",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: locator.click: Error: strict mode violation: getByRole('link') resolved to 16 elements:\n    1) <a href=\"#main\" class=\"skip-link\">Skip to content</a> aka getByRole('link', { name: 'Skip to content' })\n    2) <a href=\"/\" aria-current=\"page\" data-discover=\"true\" class=\"nav-link active\">Dashboard</a> aka getByRole('link', { name: 'Dashboard' })\n    3) <a href=\"/orders\" class=\"nav-link\" data-discover=\"true\">Orders</a> aka getByRole('link', { name: 'Orders' })\n    4) <a class=\"nav-link\" href=\"/products\" data-discover=\"true\">Products</a> aka getByRole('link', { name: 'Products' })\n    5) <a class=\"nav-link\" href=\"/inventory\" data-discover=\"true\">Inventory</a> aka getByRole('link', { name: 'Inventory' })\n    6) <a href=\"/support\" class=\"nav-link\" data-discover=\"true\">Support</a> aka getByRole('link', { name: 'Support' })\n    7) <a data-discover=\"true\" href=\"/orders?status=PENDING\">…</a> aka getByRole('link', { name: 'Pending' })\n    8) <a data-discover=\"true\" href=\"/orders?status=CONFIRMED\">…</a> aka getByRole('link', { name: 'Confirmed' })\n    9) <a data-discover=\"true\" href=\"/orders?status=SHIPPED\">…</a> aka getByRole('link', { name: 'Shipped' })\n    10) <a data-discover=\"true\" href=\"/orders?status=DELIVERED\">…</a> aka getByRole('link', { name: 'Delivered' })\n    ...\n\nCall log:\n  - waiting for getByRole('link')\n\n\n  35 |   await manager.page.goto(\"/\");\n  36 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible();\n> 37 |   await manager.page.getByRole(\"link\").click();\n     |                                        ^\n  38 | });\n  39 |\n  40 | test(\"case D06\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:37:40"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: Error: locator.click: Error: strict mode violation: getByRole('link') resolved to 16 elements:\n    1) <a href=\"#main\" class=\"skip-link\">Skip to content</a> aka getByRole('link', { name: 'Skip to content' })\n    2) <a href=\"/\" aria-current=\"page\" data-discover=\"true\" class=\"nav-link acti",
+        "Frame.click: Error: strict mode violation: getByRole('link') resolved to 16 elements:\n    1) <a href=\"#main\" class=\"skip-link\">Skip to content</a> aka getByRole('link', { name: 'Skip to content' })\n    2) <a href=\"/\" aria-current=\"page\" data-discover=\"true\" class=\"nav-link active\">Dashboard</a> aka "
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9]:\n          - /url: /\n        - link \"Orders\" [ref=e10]:\n          - /url: /orders\n        - link \"Products\" [ref=e11]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e20]:\n        - heading \"Dashboard\" [level=1] [ref=e21]\n        - paragraph [ref=e22]: Welcome back, Morgan Manager.\n      - region \"Key figures\" [ref=e23]:\n        - generic [ref=e24]:\n          - generic [ref=e25]: Total orders\n          - generic [ref=e26]: \"60\"\n        - generic [ref=e27]:\n          - generic [ref=e28]: Open orders\n          - generic [ref=e29]: \"44\"\n        - generic [ref=e30]:\n          - generic [ref=e31]: Settled revenue\n          - generic [ref=e32]: $35,007.19\n        - generic [ref=e33]:\n          - generic [ref=e34]: Low stock lines\n          - generic [ref=e35]: \"8\"\n      - region [ref=e36]:\n        - heading \"Orders by status\" [level=2] [ref=e37]\n        - list [ref=e38]:\n          - listitem [ref=e39]:\n            - link \"15 Pending\" [ref=e40]:\n              - /url: /orders?status=PENDING\n              - generic [ref=e41]: \"15\"\n              - generic [ref=e42]: Pending\n          - listitem [ref=e43]:\n            - link \"13 Confirmed\" [ref=e44]:\n              - /url: /orders?status=CONFIRMED\n              - generic [ref=e45]: \"13\"\n              - generic [ref=e46]: Confirmed\n          - listitem [ref=e47]:\n            - link \"16 Shipped\" [ref=e48]:\n              - /url: /orders?status=SHIPPED\n              - generic [ref=e49]: \"16\"\n              - generic [ref=e50]: Shipped\n          - listitem [ref=e51]:\n            - link \"11 Delivered\" [ref=e52]:\n              - /url: /orders?status=DELIVERED\n              - generic [ref=e53]: \"11\"\n              - generic [ref=e54]: Delivered\n          - listitem [ref=e55]:\n            - link \"5 Cancelled\" [ref=e56]:\n              - /url: /orders?status=CANCELLED\n              - generic [ref=e57]: \"5\"\n              - generic [ref=e58]: Cancelled\n      - region [ref=e59]:\n        - heading \"Recent orders\" [level=2] [ref=e60]\n        - region \"Recent orders table\" [ref=e61]:\n          - table [ref=e62]:\n            - rowgroup [ref=e63]:\n              - row [ref=e64]:\n                - columnheader \"Order\" [ref=e65]\n                - columnheader \"Customer\" [ref=e66]\n                - columnheader \"Date\" [ref=e67]\n                - columnheader \"Status\" [ref=e68]\n                - columnheader \"Total\" [ref=e69]\n            - rowgroup [ref=e70]:\n              - row [ref=e71]:\n                - cell [ref=e72]:\n                  - link \"ORD-100060\" [ref=e73]:\n                    - /url: /orders/f037db1f-f52b-54a5-9ff9-b81fda475dd8\n                - cell \"Lakeshore Clinic Supplies\" [ref=e74]\n                - cell \"Jul 1, 2026\" [ref=e75]\n                - cell \"Shipped\" [ref=e76]\n                - cell \"$211.31\" [ref=e78]\n              - row [ref=e79]:\n                - cell [ref=e80]:\n                  - link \"ORD-100059\" [ref=e81]:\n                    - /url: /orders/9b72e7f3-86d2-55a6-b668-c4ba11f7d8d5\n                - cell \"Prairie Bolt Distributors\" [ref=e82]\n                - cell \"Jun 28, 2026\" [ref=e83]\n                - cell \"Pending\" [ref=e84]\n                - cell \"$834.10\" [ref=e86]\n              - row [ref=e87]:\n                - cell [ref=e88]:\n                  - link \"ORD-100058\" [ref=e89]:\n                    - /url: /orders/e50c4bcd-36b2-523f-a436-b6a5fbef3166\n                -",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D06",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Dashbord' })\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Dashbord' }) with timeout 1500ms\n  - waiting for getByRole('heading', { name: 'Dashbord' })\n\n\n  41 |   await manager.page.goto(\"/\");\n  42 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible();\n> 43 |   await expect(manager.page.getByRole(\"heading\", { name: \"Dashbord\" })).toBeVisible(short);\n     |                                                                         ^\n  44 | });\n  45 |\n  46 | test(\"case D07\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:43:73"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { name: 'Dashbord' })\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('heading', { name: 'Dashbord' }) with timeout 1500ms\n  - waiting for getByRole('he",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Dashboard\" [level=1]\n  - paragraph: Welcome back, Morgan Manager.\n  - region \"Key figures\": Total orders 60 Open orders 44 Settled revenue $35,007.19 Low stock lines 8\n  - region \"Orders by status\":\n    - heading \"Orders by status\" [level=2]\n    - list:\n      - listitem:\n        - link \"15 Pending\":\n          - /url: /orders?status=PENDING\n      - listitem:\n        - link \"13 Confirmed\":\n          - /url: /orders?status=CONFIRMED\n      - listitem:\n        - link \"16 Shipped\":\n          - /url: /orders?status=SHIPPED\n      - listitem:\n        - link \"11 Delivered\":\n          - /url: /orders?status=DELIVERED\n      - listitem:\n        - link \"5 Cancelled\":\n          - /url: /orders?status=CANCELLED\n  - region \"Recent orders\":\n    - heading \"Recent orders\" [level=2]\n    - region \"Recent orders table\":\n      - table:\n        - rowgroup:\n          - row \"Order Customer Date Status Total\":\n            - columnheader \"Order\"\n            - columnheader \"Customer\"\n            - columnheader \"Date\"\n            - columnheader \"Status\"\n            - columnheader \"Total\"\n        - rowgroup:\n          - row \"ORD-100060 Lakeshore Clinic Supplies Jul 1, 2026 Shipped $211.31\":\n            - cell \"ORD-100060\":\n              - link \"ORD-100060\":\n                - /url: /orders/f037db1f-f52b-54a5-9ff9-b81fda475dd8\n            - cell \"Lakeshore Clinic Supplies\"\n            - cell \"Jul 1, 2026\"\n            - cell \"Shipped\"\n            - cell \"$211.31\"\n          - row \"ORD-100059 Prairie Bolt Distributors Jun 28, 2026 Pending $834.10\":\n            - cell \"ORD-100059\":\n              - link \"ORD-100059\":\n                - /url: /orders/9b72e7f3-86d2-55a6-b668-c4ba11f7d8d5\n            - cell \"Prairie Bolt Distributors\"\n            - cell \"Jun 28, 2026\"\n            - cell \"Pending\"\n            - cell \"$834.10\"\n          - row \"ORD-100058 Aurora Trades Ltd. Jun 25, 2026 Confirmed $1,303.38\":\n            - cell \"ORD-100058\":\n              - link \"ORD-100058\":\n                - /url: /orders/e50c4bcd-36b2-523f-a436-b6a5fbef3166\n            - cell \"Aurora Trades Ltd.\"\n            - cell \"Jun 25, 2026\"\n            - cell \"Confirmed\"\n            - cell \"$1,303.38\"\n          - row \"ORD-100057 Granite Harbour Foods Jun 22, 2026 Cancelled $926.04\":\n            - cell \"ORD-100057\":\n              - link \"ORD-100057\":\n                - /url: /orders/4d40b5a5-586b-5398-a391-40761c521a65\n            - cell \"Granite Harbour Foods\"\n            - cell \"Jun 22, 2026\"\n            - cell \"Cancelled\"\n            - cell \"$926.04\"\n          - row \"ORD-100056 Maple Ridge Supply Co. Jun 19, 2026 Shipped $1,022.49\":\n            - cell \"ORD-100056\":\n              - link \"ORD-100056\":\n                - /url: /orders/12e932bd-1e03-5278-96b2-630159875757\n            - cell \"Maple Ridge Supply Co.\"\n            - cell \"Jun 19, 2026\"\n            - cell \"Shipped\"\n            - cell \"$1,022.49\"\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D07",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('stat-total-orders')\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('stat-total-orders')\n\n\n  47 |   await manager.page.route(\"**/api/v1/dashboard/summary\", () => undefined);\n  48 |   await manager.page.goto(\"/\");\n> 49 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible(short);\n     |                                                               ^\n  50 | });\n  51 |\n  52 | test(\"case D08\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:49:63"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [
+      {
+        "method": "GET",
+        "url": "/api/v1/dashboard/summary",
+        "status": null,
+        "failure": null
+      }
+    ],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('stat-total-orders')\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('stat-total-orders')\n",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Dashboard\" [level=1]\n  - paragraph: Welcome back, Morgan Manager.\n  - status: Loading…\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D08",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "TimeoutError: page.waitForResponse: Timeout 1500ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for response \"**/api/v1/never-called\"\n============================================================\n\n  52 | test(\"case D08\", async ({ manager }) => {\n  53 |   await manager.page.goto(\"/\");\n> 54 |   await manager.page.waitForResponse(\"**/api/v1/never-called\", short);\n     |                      ^\n  55 | });\n  56 |\n  57 | test(\"case D09\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:54:22"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 38,
+      "failed_actions": [
+        "Test.pw:api: TimeoutError: page.waitForResponse: Timeout 1500ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for response \"**/api/v1/never-called\"\n============================================================",
+        "Page.__waitInfo__: Timeout 1500ms exceeded while waiting for event \"response\""
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9]:\n          - /url: /\n        - link \"Orders\" [ref=e10]:\n          - /url: /orders\n        - link \"Products\" [ref=e11]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e20]:\n        - heading \"Dashboard\" [level=1] [ref=e21]\n        - paragraph [ref=e22]: Welcome back, Morgan Manager.\n      - region \"Key figures\" [ref=e23]:\n        - generic [ref=e24]:\n          - generic [ref=e25]: Total orders\n          - generic [ref=e26]: \"60\"\n        - generic [ref=e27]:\n          - generic [ref=e28]: Open orders\n          - generic [ref=e29]: \"44\"\n        - generic [ref=e30]:\n          - generic [ref=e31]: Settled revenue\n          - generic [ref=e32]: $35,007.19\n        - generic [ref=e33]:\n          - generic [ref=e34]: Low stock lines\n          - generic [ref=e35]: \"8\"\n      - region [ref=e36]:\n        - heading \"Orders by status\" [level=2] [ref=e37]\n        - list [ref=e38]:\n          - listitem [ref=e39]:\n            - link \"15 Pending\" [ref=e40]:\n              - /url: /orders?status=PENDING\n              - generic [ref=e41]: \"15\"\n              - generic [ref=e42]: Pending\n          - listitem [ref=e43]:\n            - link \"13 Confirmed\" [ref=e44]:\n              - /url: /orders?status=CONFIRMED\n              - generic [ref=e45]: \"13\"\n              - generic [ref=e46]: Confirmed\n          - listitem [ref=e47]:\n            - link \"16 Shipped\" [ref=e48]:\n              - /url: /orders?status=SHIPPED\n              - generic [ref=e49]: \"16\"\n              - generic [ref=e50]: Shipped\n          - listitem [ref=e51]:\n            - link \"11 Delivered\" [ref=e52]:\n              - /url: /orders?status=DELIVERED\n              - generic [ref=e53]: \"11\"\n              - generic [ref=e54]: Delivered\n          - listitem [ref=e55]:\n            - link \"5 Cancelled\" [ref=e56]:\n              - /url: /orders?status=CANCELLED\n              - generic [ref=e57]: \"5\"\n              - generic [ref=e58]: Cancelled\n      - region [ref=e59]:\n        - heading \"Recent orders\" [level=2] [ref=e60]\n        - region \"Recent orders table\" [ref=e61]:\n          - table [ref=e62]:\n            - rowgroup [ref=e63]:\n              - row [ref=e64]:\n                - columnheader \"Order\" [ref=e65]\n                - columnheader \"Customer\" [ref=e66]\n                - columnheader \"Date\" [ref=e67]\n                - columnheader \"Status\" [ref=e68]\n                - columnheader \"Total\" [ref=e69]\n            - rowgroup [ref=e70]:\n              - row [ref=e71]:\n                - cell [ref=e72]:\n                  - link \"ORD-100060\" [ref=e73]:\n                    - /url: /orders/f037db1f-f52b-54a5-9ff9-b81fda475dd8\n                - cell \"Lakeshore Clinic Supplies\" [ref=e74]\n                - cell \"Jul 1, 2026\" [ref=e75]\n                - cell \"Shipped\" [ref=e76]\n                - cell \"$211.31\" [ref=e78]\n              - row [ref=e79]:\n                - cell [ref=e80]:\n                  - link \"ORD-100059\" [ref=e81]:\n                    - /url: /orders/9b72e7f3-86d2-55a6-b668-c4ba11f7d8d5\n                - cell \"Prairie Bolt Distributors\" [ref=e82]\n                - cell \"Jun 28, 2026\" [ref=e83]\n                - cell \"Pending\" [ref=e84]\n                - cell \"$834.10\" [ref=e86]\n              - row [ref=e87]:\n                - cell [ref=e88]:\n                  - link \"ORD-100058\" [ref=e89]:\n                    - /url: /orders/e50c4bcd-36b2-523f-a436-b6a5fbef3166\n                -",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D09",
+    "project": "corpus-webkit",
+    "status": "timedOut",
+    "errors": [
+      "Test timeout of 3000ms exceeded.",
+      "Error: page.waitForResponse: Target page, context or browser has been closed\n=========================== logs ===========================\nwaiting for response \"**/api/v1/products*\"\n============================================================\n\n  59 |   await manager.page.route(\"**/api/v1/products*\", () => undefined);\n  60 |   await manager.page.goto(\"/products\");\n> 61 |   await manager.page.waitForResponse(\"**/api/v1/products*\", { timeout: 60_000 });\n     |                      ^\n  62 | });\n  63 |\n  64 | test(\"case D10\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:61:22"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [
+      {
+        "method": "GET",
+        "url": "/api/v1/products",
+        "status": null,
+        "failure": null
+      }
+    ],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: Error: page.waitForResponse: Target page, context or browser has been closed\n=========================== logs ===========================\nwaiting for response \"**/api/v1/products*\"\n============================================================"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9]:\n          - /url: /\n        - link \"Orders\" [ref=e10]:\n          - /url: /orders\n        - link \"Products\" [ref=e11]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e19]:\n        - heading \"Products\" [level=1] [ref=e20]\n        - button \"New product\" [ref=e21] [cursor=pointer]\n      - generic [ref=e22]:\n        - search [ref=e23]:\n          - generic [ref=e24]:\n            - generic [ref=e25]: Search name or SKU\n            - searchbox \"Search name or SKU\" [ref=e26]\n          - button \"Search\" [ref=e27] [cursor=pointer]\n        - generic [ref=e28]:\n          - generic [ref=e29]: Category\n          - combobox \"Category\" [ref=e30]:\n            - option \"All categories\" [selected]\n            - option \"Electrical\"\n            - option \"Fasteners\"\n            - option \"Janitorial\"\n            - option \"Packaging\"\n            - option \"Safety\"\n            - option \"Tools\"\n        - generic [ref=e31]:\n          - generic [ref=e32]: Availability\n          - combobox \"Availability\" [ref=e33]:\n            - option \"Any\" [selected]\n            - option \"In stock\"\n            - option \"Out of stock\"\n      - status [ref=e35]: Loading products…\n  - status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D10",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: page.goto: Could not connect to the server.\nCall log:\n  - navigating to \"http://127.0.0.1:59999/\", waiting until \"load\"\n\n\n  63 |\n  64 | test(\"case D10\", async ({ manager }) => {\n> 65 |   await manager.page.goto(\"http://127.0.0.1:59999/\");\n     |                      ^\n  66 | });\n  67 |\n  68 | test(\"case D11\", async ({ playwright }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:65:22"
+    ],
+    "console_errors": [
+      "Failed to load resource: Could not connect to the server."
+    ],
+    "page_errors": [],
+    "failed_requests": [
+      {
+        "method": "GET",
+        "url": "/",
+        "status": null,
+        "failure": "Could not connect to the server."
+      }
+    ],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 37,
+      "failed_actions": [
+        "Test.pw:api: Error: page.goto: Could not connect to the server.\nCall log:\n  - navigating to \"http://127.0.0.1:59999/\", waiting until \"load\"\n",
+        "Frame.goto: Could not connect to the server."
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D11",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:59999\nCall log:\n  - → GET http://127.0.0.1:59999/api/v1/health\n    - user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n\n\n  68 | test(\"case D11\", async ({ playwright }) => {\n  69 |   const request = await playwright.request.newContext();\n> 70 |   await request.get(\"http://127.0.0.1:59999/api/v1/health\");\n     |                 ^\n  71 | });\n  72 |\n  73 | test(\"case D13\", async ({ playwright }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:70:17"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 18,
+      "failed_actions": [
+        "Test.pw:api: Error: apiRequestContext.get: connect ECONNREFUSED 127.0.0.1:59999\nCall log:\n  - → GET http://127.0.0.1:59999/api/v1/health\n    - user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15\n    - accept: */*\n    - acc",
+        "APIRequestContext.fetch: connect ECONNREFUSED 127.0.0.1:59999"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D13",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: Login as nobody-here@e2e.example failed: 401 {\"error\":{\"code\":\"INVALID_CREDENTIALS\",\"message\":\"Incorrect email or password\",\"details\":[],\"request_id\":\"a689d4fa-656e-4c8c-b67e-c9615cb32cf5\"}}\n\n   at ../../framework/fixtures/index.ts:80\n\n  78 |   const response = await request.post(\"/api/v1/auth/login\", { data: { email, password } });\n  79 |   if (!response.ok()) {\n> 80 |     throw new Error(`Login as ${credentials.email} failed: ${response.status()} ${await response.text()}`);\n     |           ^\n  81 |   }\n  82 |   return request;\n  83 | }\n    at apiLogin (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:80:11)\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:74:3"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 18,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "POST",
+          "url": "/api/v1/auth/login",
+          "status": 401,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D14",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: POST /orders returned 409: {\"error\":{\"code\":\"INSUFFICIENT_STOCK\",\"message\":\"Not enough stock at YYZ1\",\"details\":[{\"product_id\":\"5f3e84c7-a389-4860-b709-a3fcacb179b0\",\"sku\":\"E2E-B31EFD495F-2\",\"requested\":50,\"available\":1}],\"request_id\":\"1a6ec804-89ef-4d9b-9407-2d9461be5485\"}}\n\n   at ../../framework/helpers/api-client.ts:51\n\n  49 |     const response = await this.send(method, path, options);\n  50 |     if (!response.ok()) {\n> 51 |       throw new Error(`${method} ${path} returned ${response.status()}: ${await response.text()}`);\n     |             ^\n  52 |     }\n  53 |     return (response.status() === 204 ? undefined : await response.json()) as T;\n  54 |   }\n    at ApiClient.json (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/helpers/api-client.ts:51:13)\n    at TestData.order (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/factories/test-data.ts:112:19)\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:80:3"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 31,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "POST",
+          "url": "/api/v1/orders",
+          "status": 409,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D15",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: Setup: seeded customer not found: 404 {\"error\":{\"code\":\"NOT_FOUND\",\"message\":\"The requested resource was not found\",\"details\":[],\"request_id\":\"524e46b9-641c-4f08-bdfd-a4a98d9b5ff2\"}}\n\n  83 | test(\"case D15\", async ({ setupApi }) => {\n  84 |   const response = await setupApi.send(\"GET\", \"/customers/00000000-0000-4000-8000-000000000000\");\n> 85 |   if (!response.ok()) throw new Error(`Setup: seeded customer not found: ${response.status()} ${await response.text()}`);\n     |                             ^\n  86 | });\n  87 |\n  88 | test(\"case D16\", async () => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:85:29"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 22,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "GET",
+          "url": "/api/v1/customers/00000000-0000-4000-8000-000000000000",
+          "status": 404,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D16",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: Unexpected state in helper\n\n  87 |\n  88 | test(\"case D16\", async () => {\n> 89 |   throw new Error(\"Unexpected state in helper\");\n     |         ^\n  90 | });\n  91 |\n  92 | test(\"case D17\", async () => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:89:9"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 16,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D17",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 3\nReceived: 2\n\n  91 |\n  92 | test(\"case D17\", async () => {\n> 93 |   expect(2 as number).toBe(3);\n     |                       ^\n  94 | });\n  95 |\n  96 | test(\"case D18\", async () => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:93:23"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 17,
+      "failed_actions": [
+        "Test.expect: Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 3\nReceived: 2"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case D18",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "TypeError: Cannot read properties of undefined (reading 'foo')\n\n   96 | test(\"case D18\", async () => {\n   97 |   const value = undefined as unknown as { foo: string };\n>  98 |   expect(value.foo).toBe(\"x\");\n      |                ^\n   99 | });\n  100 |\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/dev.spec.ts:98:16"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 16,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H01",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: locator('table tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" locator('table tbody tr').first() with timeout 1500ms\n  - waiting for locator('table tbody tr').first()\n\n\n   6 |   await manager.page.route(\"**/api/v1/products*\", (route) => route.fulfill({ status: 503, contentType: \"application/json\", body: JSON.stringify({ error: { code: \"OVERLOADED\", message: \"x\", details: [], request_id: \"r\" } }) }));\n   7 |   await manager.page.goto(\"/products\");\n>  8 |   await expect(manager.page.locator(\"table tbody tr\").first()).toBeVisible(short);\n     |                                                                ^\n   9 | });\n  10 |\n  11 | test(\"case H02\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:8:64"
+    ],
+    "console_errors": [
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    ],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [
+      {
+        "method": "GET",
+        "url": "/api/v1/products",
+        "status": 503,
+        "failure": null
+      }
+    ],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 40,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: locator('table tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" locator('table tbody tr').first() with timeout 1500ms\n  - waiting for locator('table tbody tr').first",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "GET",
+          "url": "/api/v1/products",
+          "status": 503,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Products\" [level=1]\n  - button \"New product\"\n  - search:\n    - text: Search name or SKU\n    - searchbox \"Search name or SKU\"\n    - button \"Search\"\n  - text: Category\n  - combobox \"Category\":\n    - option \"All categories\" [selected]\n    - option \"Electrical\"\n    - option \"Fasteners\"\n    - option \"Janitorial\"\n    - option \"Packaging\"\n    - option \"Safety\"\n    - option \"Tools\"\n  - text: Availability\n  - combobox \"Availability\":\n    - option \"Any\" [selected]\n    - option \"In stock\"\n    - option \"Out of stock\"\n  - alert:\n    - text: x\n    - button \"Try again\"\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H02",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toHaveText(expected) failed\n\nLocator: getByTestId('stat-low-stock')\nExpected pattern: /^\\D*8$/\nReceived string:  \"987654\"\nTimeout: 1500ms\n\nCall log:\n  - Expect \"toHaveText\" getByTestId('stat-low-stock') with timeout 1500ms\n  - waiting for getByTestId('stat-low-stock')\n    15 × locator resolved to <div class=\"stat-value\" data-testid=\"stat-low-stock\">987654</div>\n       - unexpected value \"987654\"\n\n\n  17 |   const expected = (await manager.api.dashboard()).low_stock_count;\n  18 |   await manager.page.goto(\"/\");\n> 19 |   await expect(manager.page.getByTestId(\"stat-low-stock\")).toHaveText(new RegExp(`^\\\\D*${expected}$`), short);\n     |                                                            ^\n  20 | });\n  21 |\n  22 | test(\"case H03\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:19:60"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 42,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toHaveText(expected) failed\n\nLocator: getByTestId('stat-low-stock')\nExpected pattern: /^\\D*8$/\nReceived string:  \"987654\"\nTimeout: 1500ms\n\nCall log:\n  - Expect \"toHaveText\" getByTestId('stat-low-stock') with timeout 1500ms\n  - waiting for getByTestId('stat-low-sto",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- text: \"987654\"\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H03",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('stat-total-orders')\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('stat-total-orders')\n\n\n  23 |   await manager.page.route(\"**/api/v1/dashboard/summary\", (route) => route.fulfill({ status: 200, contentType: \"application/json\", body: \"<html>not json</html>\" }));\n  24 |   await manager.page.goto(\"/\");\n> 25 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible(short);\n     |                                                               ^\n  26 | });\n  27 |\n  28 | test(\"case H04\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:25:63"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 40,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('stat-total-orders')\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('stat-total-orders')\n",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Dashboard\" [level=1]\n  - paragraph: Welcome back, Morgan Manager.\n  - alert:\n    - text: Something went wrong while loading this page.\n    - button \"Try again\"\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H04",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "TimeoutError: locator.click: Timeout 1500ms exceeded.\nCall log:\n  - waiting for locator('.does-not-exist')\n\n\n  29 |   await manager.page.goto(\"/\");\n  30 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible();\n> 31 |   await manager.page.locator(\".does-not-exist\").click(short);\n     |                                                 ^\n  32 | });\n  33 |\n  34 | test(\"case H05\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:31:49"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: TimeoutError: locator.click: Timeout 1500ms exceeded.\nCall log:\n  - waiting for locator('.does-not-exist')\n",
+        "Frame.click: Timeout 1500ms exceeded."
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4] [cursor=pointer]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9] [cursor=pointer]:\n          - /url: /\n        - link \"Orders\" [ref=e10] [cursor=pointer]:\n          - /url: /orders\n        - link \"Products\" [ref=e11] [cursor=pointer]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12] [cursor=pointer]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13] [cursor=pointer]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e20]:\n        - heading \"Dashboard\" [level=1] [ref=e21]\n        - paragraph [ref=e22]: Welcome back, Morgan Manager.\n      - region \"Key figures\" [ref=e23]:\n        - generic [ref=e24]:\n          - generic [ref=e25]: Total orders\n          - generic [ref=e26]: \"60\"\n        - generic [ref=e27]:\n          - generic [ref=e28]: Open orders\n          - generic [ref=e29]: \"44\"\n        - generic [ref=e30]:\n          - generic [ref=e31]: Settled revenue\n          - generic [ref=e32]: $35,007.19\n        - generic [ref=e33]:\n          - generic [ref=e34]: Low stock lines\n          - generic [ref=e35]: \"8\"\n      - region [ref=e36]:\n        - heading \"Orders by status\" [level=2] [ref=e37]\n        - list [ref=e38]:\n          - listitem [ref=e39]:\n            - link \"15 Pending\" [ref=e40] [cursor=pointer]:\n              - /url: /orders?status=PENDING\n              - generic [ref=e41]: \"15\"\n              - generic [ref=e42]: Pending\n          - listitem [ref=e43]:\n            - link \"13 Confirmed\" [ref=e44] [cursor=pointer]:\n              - /url: /orders?status=CONFIRMED\n              - generic [ref=e45]: \"13\"\n              - generic [ref=e46]: Confirmed\n          - listitem [ref=e47]:\n            - link \"16 Shipped\" [ref=e48] [cursor=pointer]:\n              - /url: /orders?status=SHIPPED\n              - generic [ref=e49]: \"16\"\n              - generic [ref=e50]: Shipped\n          - listitem [ref=e51]:\n            - link \"11 Delivered\" [ref=e52] [cursor=pointer]:\n              - /url: /orders?status=DELIVERED\n              - generic [ref=e53]: \"11\"\n              - generic [ref=e54]: Delivered\n          - listitem [ref=e55]:\n            - link \"5 Cancelled\" [ref=e56] [cursor=pointer]:\n              - /url: /orders?status=CANCELLED\n              - generic [ref=e57]: \"5\"\n              - generic [ref=e58]: Cancelled\n      - region [ref=e59]:\n        - heading \"Recent orders\" [level=2] [ref=e60]\n        - region \"Recent orders table\" [ref=e61]:\n          - table [ref=e62]:\n            - rowgroup [ref=e63]:\n              - row [ref=e64]:\n                - columnheader \"Order\" [ref=e65]\n                - columnheader \"Customer\" [ref=e66]\n                - columnheader \"Date\" [ref=e67]\n                - columnheader \"Status\" [ref=e68]\n                - columnheader \"Total\" [ref=e69]\n            - rowgroup [ref=e70]:\n              - row [ref=e71]:\n                - cell [ref=e72]:\n                  - link \"ORD-100060\" [ref=e73] [cursor=pointer]:\n                    - /url: /orders/f037db1f-f52b-54a5-9ff9-b81fda475dd8\n                - cell \"Lakeshore Clinic Supplies\" [ref=e74]\n                - cell \"Jul 1, 2026\" [ref=e75]\n                - cell \"Shipped\" [ref=e76]\n                - cell \"$211.31\" [ref=e78]\n              - row [ref=e79]:\n                - cell [ref=e80]:\n                  - link \"ORD-100059\" [ref=e81] [cursor=pointer]:\n                    - /url: /orders/9b72e7f3-86d2-55a6-b668-c4ba11f7d8d5\n                - cell \"Prairie Bolt Distributors\" [ref=e82]\n                - cell \"Jun 28, 2026\" [ref=e83]\n                - cell \"Pending\" [ref=e84]\n                - cell \"$8",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H05",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: locator.click: Error: strict mode violation: getByRole('button') resolved to 4 elements:\n    1) <button type=\"button\" class=\"button button-small button-sidebar\">Sign out</button> aka getByRole('button', { name: 'Sign out' })\n    2) <button type=\"button\" class=\"button\" aria-disabled=\"false\">Export CSV</button> aka getByRole('button', { name: 'Export CSV' })\n    3) <button type=\"submit\" class=\"button button-primary\">Apply filters</button> aka getByRole('button', { name: 'Apply filters' })\n    4) <button type=\"button\" class=\"button\">Clear</button> aka getByRole('button', { name: 'Clear' })\n\nCall log:\n  - waiting for getByRole('button')\n\n\n  35 |   await manager.page.goto(\"/orders\");\n  36 |   await expect(manager.page.getByRole(\"heading\", { level: 1 })).toBeVisible();\n> 37 |   await manager.page.getByRole(\"button\").click();\n     |                                          ^\n  38 | });\n  39 |\n  40 | test(\"case H06\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:37:42"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: Error: locator.click: Error: strict mode violation: getByRole('button') resolved to 4 elements:\n    1) <button type=\"button\" class=\"button button-small button-sidebar\">Sign out</button> aka getByRole('button', { name: 'Sign out' })\n    2) <button type=\"button\" class=\"button\" aria-disabl",
+        "Frame.click: Error: strict mode violation: getByRole('button') resolved to 4 elements:\n    1) <button type=\"button\" class=\"button button-small button-sidebar\">Sign out</button> aka getByRole('button', { name: 'Sign out' })\n    2) <button type=\"button\" class=\"button\" aria-disabled=\"false\">Export CSV<"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4] [cursor=pointer]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9] [cursor=pointer]:\n          - /url: /\n        - link \"Orders\" [ref=e10] [cursor=pointer]:\n          - /url: /orders\n        - link \"Products\" [ref=e11] [cursor=pointer]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12] [cursor=pointer]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13] [cursor=pointer]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e19]:\n        - generic [ref=e20]:\n          - heading \"Orders\" [level=1] [ref=e21]\n          - paragraph [ref=e22]: Dates are whole days in UTC.\n        - generic [ref=e23]:\n          - button \"Export CSV\" [ref=e24] [cursor=pointer]\n          - link \"New order\" [ref=e25] [cursor=pointer]:\n            - /url: /orders/new\n      - form \"Filter orders\" [ref=e26]:\n        - generic [ref=e27]:\n          - generic [ref=e28]: Order number\n          - searchbox \"Order number\" [ref=e29]\n        - generic [ref=e30]:\n          - generic [ref=e31]: From date\n          - textbox \"From date\" [ref=e32]\n        - generic [ref=e33]:\n          - generic [ref=e34]: To date\n          - textbox \"To date\" [ref=e35]\n        - generic [ref=e36]:\n          - generic [ref=e37]: Warehouse\n          - combobox \"Warehouse\" [ref=e38]:\n            - option \"All warehouses\" [selected]\n            - option \"YUL1 · Montreal\"\n            - option \"YVR1 · Vancouver\"\n            - option \"YYC1 · Calgary\"\n            - option \"YYZ1 · Toronto\"\n        - generic [ref=e39]:\n          - generic [ref=e40]: Customer\n          - combobox \"Customer\" [ref=e41]:\n            - option \"All customers\" [selected]\n            - option \"Aurora Trades Ltd.\"\n            - option \"Customer 35E2401B21 1\"\n            - option \"Granite Harbour Foods\"\n            - option \"Lakeshore Clinic Supplies\"\n            - option \"Maple Ridge Supply Co.\"\n            - option \"Prairie Bolt Distributors\"\n        - generic [ref=e42]:\n          - generic [ref=e43]: Status\n          - combobox \"Status\" [ref=e44]:\n            - option \"All statuses\" [selected]\n            - option \"Pending\"\n            - option \"Confirmed\"\n            - option \"Shipped\"\n            - option \"Delivered\"\n            - option \"Cancelled\"\n        - generic [ref=e45]:\n          - button \"Apply filters\" [ref=e46] [cursor=pointer]\n          - button \"Clear\" [ref=e47] [cursor=pointer]\n      - generic [ref=e48]:\n        - region \"Orders table\" [ref=e49]:\n          - table [ref=e50]:\n            - rowgroup [ref=e51]:\n              - row [ref=e52]:\n                - columnheader [ref=e53]:\n                  - button \"Order\" [ref=e54] [cursor=pointer]:\n                    - text: Order\n                    - generic [aria-hidden] [ref=e55]: ↕\n                - columnheader [ref=e56]:\n                  - button \"Date\" [ref=e57] [cursor=pointer]:\n                    - text: Date\n                    - generic [aria-hidden] [ref=e58]: ▼\n                - columnheader \"Customer\" [ref=e59]\n                - columnheader \"Warehouse\" [ref=e60]\n                - columnheader [ref=e61]:\n                  - button \"Status\" [ref=e62] [cursor=pointer]:\n                    - text: Status\n                    - generic [aria-hidden] [ref=e63]: ↕\n                - columnheader \"Payment\" [ref=e64]\n                - columnheader [ref=e65]:\n                  - button \"Total\" [ref=e66] [cursor=pointer]:\n                    - text: Total\n                    - generic [aria-hidden] [ref=e67]: ↕\n            - rowgroup [ref=e68]:\n              - row [ref=e69]:\n                - cell [ref",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H06",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "TimeoutError: locator.fill: Timeout 1500ms exceeded.\nCall log:\n  - waiting for getByLabel('No such field')\n\n\n  41 |   await manager.page.goto(\"/support\");\n  42 |   await expect(manager.page.getByRole(\"heading\", { level: 1 })).toBeVisible();\n> 43 |   await manager.page.getByLabel(\"No such field\").fill(\"text\", short);\n     |                                                  ^\n  44 | });\n  45 |\n  46 | test(\"case H07\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:43:50"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: TimeoutError: locator.fill: Timeout 1500ms exceeded.\nCall log:\n  - waiting for getByLabel('No such field')\n",
+        "Frame.fill: Timeout 1500ms exceeded."
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4] [cursor=pointer]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9] [cursor=pointer]:\n          - /url: /\n        - link \"Orders\" [ref=e10] [cursor=pointer]:\n          - /url: /orders\n        - link \"Products\" [ref=e11] [cursor=pointer]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12] [cursor=pointer]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13] [cursor=pointer]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e20]:\n        - heading \"Support\" [level=1] [ref=e21]\n        - paragraph [ref=e22]: Answers come only from approved support articles and orders on your account. Check the sources shown.\n      - region [ref=e23]:\n        - heading \"Ask a question\" [level=2] [ref=e24]\n        - generic [ref=e25]:\n          - generic [ref=e26]:\n            - generic [ref=e27]: Your question\n            - textbox \"Your question\" [ref=e28]\n            - generic [ref=e29]: Up to 1000 characters.\n          - button \"Ask\" [ref=e30] [cursor=pointer]\n  - status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H07",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: locator('table tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" locator('table tbody tr').first() with timeout 1500ms\n  - waiting for locator('table tbody tr').first()\n\n\n  47 |   await manager.page.route(\"**/api/v1/products*\", () => undefined);\n  48 |   await manager.page.goto(\"/products\");\n> 49 |   await expect(manager.page.locator(\"table tbody tr\").first()).toBeVisible(short);\n     |                                                                ^\n  50 | });\n  51 |\n  52 | test(\"case H08\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:49:64"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [
+      {
+        "method": "GET",
+        "url": "/api/v1/products",
+        "status": null,
+        "failure": null
+      }
+    ],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: locator('table tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" locator('table tbody tr').first() with timeout 1500ms\n  - waiting for locator('table tbody tr').first",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Products\" [level=1]\n  - button \"New product\"\n  - search:\n    - text: Search name or SKU\n    - searchbox \"Search name or SKU\"\n    - button \"Search\"\n  - text: Category\n  - combobox \"Category\":\n    - option \"All categories\" [selected]\n    - option \"Electrical\"\n    - option \"Fasteners\"\n    - option \"Janitorial\"\n    - option \"Packaging\"\n    - option \"Safety\"\n    - option \"Tools\"\n  - text: Availability\n  - combobox \"Availability\":\n    - option \"Any\" [selected]\n    - option \"In stock\"\n    - option \"Out of stock\"\n  - status: Loading products…\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H08",
+    "project": "corpus-chromium",
+    "status": "timedOut",
+    "errors": [
+      "Test timeout of 3000ms exceeded."
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [
+      {
+        "method": "GET",
+        "url": "/api/v1/inventory",
+        "status": null,
+        "failure": null
+      }
+    ],
+    "trace": {
+      "actions_total": 38,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4] [cursor=pointer]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9] [cursor=pointer]:\n          - /url: /\n        - link \"Orders\" [ref=e10] [cursor=pointer]:\n          - /url: /orders\n        - link \"Products\" [ref=e11] [cursor=pointer]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12] [cursor=pointer]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13] [cursor=pointer]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - heading \"Inventory\" [level=1] [ref=e20]\n      - generic [ref=e21]:\n        - search [ref=e22]:\n          - generic [ref=e23]:\n            - generic [ref=e24]: Search name or SKU\n            - searchbox \"Search name or SKU\" [ref=e25]\n          - button \"Search\" [ref=e26] [cursor=pointer]\n        - generic [ref=e27]:\n          - generic [ref=e28]: Warehouse\n          - combobox \"Warehouse\" [ref=e29]:\n            - option \"All warehouses\" [selected]\n            - option \"YUL1 · Montreal\"\n            - option \"YVR1 · Vancouver\"\n            - option \"YYC1 · Calgary\"\n            - option \"YYZ1 · Toronto\"\n        - generic [ref=e30]:\n          - checkbox \"Low stock only\" [ref=e31]\n          - text: Low stock only\n      - status [ref=e33]: Loading inventory…\n  - status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H09",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "TimeoutError: page.goto: Timeout 1500ms exceeded.\nCall log:\n  - navigating to \"http://localhost:5273/support\", waiting until \"load\"\n\n\n  59 | test(\"case H09\", async ({ manager }) => {\n  60 |   await manager.page.route(\"**/support\", () => undefined);\n> 61 |   await manager.page.goto(\"/support\", short);\n     |                      ^\n  62 | });\n  63 |\n  64 | test(\"case H10\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:61:22"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [
+      {
+        "method": "GET",
+        "url": "/support",
+        "status": null,
+        "failure": null
+      }
+    ],
+    "trace": {
+      "actions_total": 38,
+      "failed_actions": [
+        "Test.pw:api: TimeoutError: page.goto: Timeout 1500ms exceeded.\nCall log:\n  - navigating to \"http://localhost:5273/support\", waiting until \"load\"\n",
+        "Frame.goto: Timeout 1500ms exceeded."
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H10",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: page.goto: net::ERR_NAME_NOT_RESOLVED at http://testforge.invalid/\nCall log:\n  - navigating to \"http://testforge.invalid/\", waiting until \"load\"\n\n\n  63 |\n  64 | test(\"case H10\", async ({ manager }) => {\n> 65 |   await manager.page.goto(\"http://testforge.invalid/\");\n     |                      ^\n  66 | });\n  67 |\n  68 | test(\"case H11\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:65:22"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [
+      {
+        "method": "GET",
+        "url": "testforge.invalid/",
+        "status": null,
+        "failure": "net::ERR_NAME_NOT_RESOLVED"
+      }
+    ],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 37,
+      "failed_actions": [
+        "Test.pw:api: Error: page.goto: net::ERR_NAME_NOT_RESOLVED at http://testforge.invalid/\nCall log:\n  - navigating to \"http://testforge.invalid/\", waiting until \"load\"\n",
+        "Frame.goto: net::ERR_NAME_NOT_RESOLVED at http://testforge.invalid/"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H11",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: page.goto: Target page, context or browser has been closed\n\n  68 | test(\"case H11\", async ({ manager }) => {\n  69 |   await manager.context.close();\n> 70 |   await manager.page.goto(\"/\");\n     |                      ^\n  71 | });\n  72 |\n  73 | test(\"case H12\", async ({ playwright }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:70:22"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 38,
+      "failed_actions": [
+        "Test.pw:api: Error: page.goto: Target page, context or browser has been closed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H12",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:59999\nCall log:\n  - → POST http://127.0.0.1:59999/api/v1/auth/login\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n    - content-type: application/json\n    - content-length: 2\n\n\n  73 | test(\"case H12\", async ({ playwright }) => {\n  74 |   const request = await playwright.request.newContext();\n> 75 |   await request.post(\"http://127.0.0.1:59999/api/v1/auth/login\", { data: {} });\n     |                 ^\n  76 | });\n  77 |\n  78 | test(\"case H13\", async ({ playwright }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:75:17"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 18,
+      "failed_actions": [
+        "Test.pw:api: Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:59999\nCall log:\n  - → POST http://127.0.0.1:59999/api/v1/auth/login\n    - user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36\n    - accept: */*\n    - ",
+        "APIRequestContext.fetch: connect ECONNREFUSED 127.0.0.1:59999"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H13",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: Login as viewer@testforge.example failed: 401 {\"error\":{\"code\":\"INVALID_CREDENTIALS\",\"message\":\"Incorrect email or password\",\"details\":[],\"request_id\":\"a3ff9024-3f16-4875-a4e2-9b9f4156a2be\"}}\n\n   at ../../framework/fixtures/index.ts:80\n\n  78 |   const response = await request.post(\"/api/v1/auth/login\", { data: { email, password } });\n  79 |   if (!response.ok()) {\n> 80 |     throw new Error(`Login as ${credentials.email} failed: ${response.status()} ${await response.text()}`);\n     |           ^\n  81 |   }\n  82 |   return request;\n  83 | }\n    at apiLogin (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:80:11)\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:79:3"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 18,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "POST",
+          "url": "/api/v1/auth/login",
+          "status": 401,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H14",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: Could not create product: 422 {\"error\":{\"code\":\"VALIDATION_ERROR\",\"message\":\"The request is not valid\",\"details\":[{\"field\":\"body.unit_price_cents\",\"message\":\"Field required\",\"type\":\"missing\"},{\"field\":\"body.price_cents\",\"message\":\"Extra inputs are not permitted\",\"type\":\"extra_forbidden\"}],\"request_id\":\"7e7d343a-6cc4-4dbf-aefe-c54ea3d5c403\"}}\n\n  83 |   const product = await data.product();\n  84 |   const response = await setupApi.send(\"POST\", \"/products\", { data: { sku: product.sku, name: \"Copy\", category: product.category, price_cents: 100 } });\n> 85 |   if (!response.ok()) throw new Error(`Could not create product: ${response.status()} ${await response.text()}`);\n     |                             ^\n  86 | });\n  87 |\n  88 | test(\"case H15\", async ({ data }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:85:29"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 29,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "POST",
+          "url": "/api/v1/products",
+          "status": 422,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H15",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: POST /orders returned 409: {\"error\":{\"code\":\"INSUFFICIENT_STOCK\",\"message\":\"Not enough stock at YYC1\",\"details\":[{\"product_id\":\"0dc7b3c6-2675-476b-b2a7-3bb7500c7b07\",\"sku\":\"E2E-BAE7FFBEF8-2\",\"requested\":3,\"available\":2}],\"request_id\":\"e33ad423-13be-481c-aa6d-b97c20e80967\"}}\n\n   at ../../framework/helpers/api-client.ts:51\n\n  49 |     const response = await this.send(method, path, options);\n  50 |     if (!response.ok()) {\n> 51 |       throw new Error(`${method} ${path} returned ${response.status()}: ${await response.text()}`);\n     |             ^\n  52 |     }\n  53 |     return (response.status() === 204 ? undefined : await response.json()) as T;\n  54 |   }\n    at ApiClient.json (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/helpers/api-client.ts:51:13)\n    at TestData.order (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/factories/test-data.ts:112:19)\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:91:3"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 31,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "POST",
+          "url": "/api/v1/orders",
+          "status": 409,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H16",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"abd\"\nReceived: \"abc\"\n\n  93 |\n  94 | test(\"case H16\", async () => {\n> 95 |   expect(\"abc\" as string).toBe(\"abd\");\n     |                           ^\n  96 | });\n  97 |\n  98 | test(\"case H17\", async () => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:95:27"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 17,
+      "failed_actions": [
+        "Test.expect: Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"abd\"\nReceived: \"abc\""
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H17",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "Error: Assertion helper not configured\n\n   97 |\n   98 | test(\"case H17\", async () => {\n>  99 |   throw new Error(\"Assertion helper not configured\");\n      |         ^\n  100 | });\n  101 |\n  102 | test(\"case H18\", async () => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:99:9"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 16,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H18",
+    "project": "corpus-chromium",
+    "status": "failed",
+    "errors": [
+      "SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)\n\n  101 |\n  102 | test(\"case H18\", async () => {\n> 103 |   JSON.parse(\"{\");\n      |        ^\n  104 | });\n  105 |\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:103:8"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 16,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H01",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: locator('table tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" locator('table tbody tr').first() with timeout 1500ms\n  - waiting for locator('table tbody tr').first()\n\n\n   6 |   await manager.page.route(\"**/api/v1/products*\", (route) => route.fulfill({ status: 503, contentType: \"application/json\", body: JSON.stringify({ error: { code: \"OVERLOADED\", message: \"x\", details: [], request_id: \"r\" } }) }));\n   7 |   await manager.page.goto(\"/products\");\n>  8 |   await expect(manager.page.locator(\"table tbody tr\").first()).toBeVisible(short);\n     |                                                                ^\n   9 | });\n  10 |\n  11 | test(\"case H02\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:8:64"
+    ],
+    "console_errors": [
+      "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    ],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [
+      {
+        "method": "GET",
+        "url": "/api/v1/products",
+        "status": 503,
+        "failure": null
+      }
+    ],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 40,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: locator('table tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" locator('table tbody tr').first() with timeout 1500ms\n  - waiting for locator('table tbody tr').first",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "GET",
+          "url": "/api/v1/products",
+          "status": 503,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Products\" [level=1]\n  - button \"New product\"\n  - search:\n    - text: Search name or SKU\n    - searchbox \"Search name or SKU\"\n    - button \"Search\"\n  - text: Category\n  - combobox \"Category\":\n    - option \"All categories\" [selected]\n    - option \"Electrical\"\n    - option \"Fasteners\"\n    - option \"Janitorial\"\n    - option \"Packaging\"\n    - option \"Safety\"\n    - option \"Tools\"\n  - text: Availability\n  - combobox \"Availability\":\n    - option \"Any\" [selected]\n    - option \"In stock\"\n    - option \"Out of stock\"\n  - alert:\n    - text: x\n    - button \"Try again\"\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H02",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toHaveText(expected) failed\n\nLocator: getByTestId('stat-low-stock')\nExpected pattern: /^\\D*8$/\nReceived string:  \"987654\"\nTimeout: 1500ms\n\nCall log:\n  - Expect \"toHaveText\" getByTestId('stat-low-stock') with timeout 1500ms\n  - waiting for getByTestId('stat-low-stock')\n    13 × locator resolved to <div class=\"stat-value\" data-testid=\"stat-low-stock\">987654</div>\n       - unexpected value \"987654\"\n\n\n  17 |   const expected = (await manager.api.dashboard()).low_stock_count;\n  18 |   await manager.page.goto(\"/\");\n> 19 |   await expect(manager.page.getByTestId(\"stat-low-stock\")).toHaveText(new RegExp(`^\\\\D*${expected}$`), short);\n     |                                                            ^\n  20 | });\n  21 |\n  22 | test(\"case H03\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:19:60"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 42,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toHaveText(expected) failed\n\nLocator: getByTestId('stat-low-stock')\nExpected pattern: /^\\D*8$/\nReceived string:  \"987654\"\nTimeout: 1500ms\n\nCall log:\n  - Expect \"toHaveText\" getByTestId('stat-low-stock') with timeout 1500ms\n  - waiting for getByTestId('stat-low-sto",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- text: \"987654\"\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H03",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('stat-total-orders')\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('stat-total-orders')\n\n\n  23 |   await manager.page.route(\"**/api/v1/dashboard/summary\", (route) => route.fulfill({ status: 200, contentType: \"application/json\", body: \"<html>not json</html>\" }));\n  24 |   await manager.page.goto(\"/\");\n> 25 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible(short);\n     |                                                               ^\n  26 | });\n  27 |\n  28 | test(\"case H04\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:25:63"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 40,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: getByTestId('stat-total-orders')\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByTestId('stat-total-orders') with timeout 1500ms\n  - waiting for getByTestId('stat-total-orders')\n",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Dashboard\" [level=1]\n  - paragraph: Welcome back, Morgan Manager.\n  - alert:\n    - text: Something went wrong while loading this page.\n    - button \"Try again\"\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H04",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "TimeoutError: locator.click: Timeout 1500ms exceeded.\nCall log:\n  - waiting for locator('.does-not-exist')\n\n\n  29 |   await manager.page.goto(\"/\");\n  30 |   await expect(manager.page.getByTestId(\"stat-total-orders\")).toBeVisible();\n> 31 |   await manager.page.locator(\".does-not-exist\").click(short);\n     |                                                 ^\n  32 | });\n  33 |\n  34 | test(\"case H05\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:31:49"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: TimeoutError: locator.click: Timeout 1500ms exceeded.\nCall log:\n  - waiting for locator('.does-not-exist')\n",
+        "Frame.click: Timeout 1500ms exceeded."
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9]:\n          - /url: /\n        - link \"Orders\" [ref=e10]:\n          - /url: /orders\n        - link \"Products\" [ref=e11]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e20]:\n        - heading \"Dashboard\" [level=1] [ref=e21]\n        - paragraph [ref=e22]: Welcome back, Morgan Manager.\n      - region \"Key figures\" [ref=e23]:\n        - generic [ref=e24]:\n          - generic [ref=e25]: Total orders\n          - generic [ref=e26]: \"60\"\n        - generic [ref=e27]:\n          - generic [ref=e28]: Open orders\n          - generic [ref=e29]: \"44\"\n        - generic [ref=e30]:\n          - generic [ref=e31]: Settled revenue\n          - generic [ref=e32]: $35,007.19\n        - generic [ref=e33]:\n          - generic [ref=e34]: Low stock lines\n          - generic [ref=e35]: \"8\"\n      - region [ref=e36]:\n        - heading \"Orders by status\" [level=2] [ref=e37]\n        - list [ref=e38]:\n          - listitem [ref=e39]:\n            - link \"15 Pending\" [ref=e40]:\n              - /url: /orders?status=PENDING\n              - generic [ref=e41]: \"15\"\n              - generic [ref=e42]: Pending\n          - listitem [ref=e43]:\n            - link \"13 Confirmed\" [ref=e44]:\n              - /url: /orders?status=CONFIRMED\n              - generic [ref=e45]: \"13\"\n              - generic [ref=e46]: Confirmed\n          - listitem [ref=e47]:\n            - link \"16 Shipped\" [ref=e48]:\n              - /url: /orders?status=SHIPPED\n              - generic [ref=e49]: \"16\"\n              - generic [ref=e50]: Shipped\n          - listitem [ref=e51]:\n            - link \"11 Delivered\" [ref=e52]:\n              - /url: /orders?status=DELIVERED\n              - generic [ref=e53]: \"11\"\n              - generic [ref=e54]: Delivered\n          - listitem [ref=e55]:\n            - link \"5 Cancelled\" [ref=e56]:\n              - /url: /orders?status=CANCELLED\n              - generic [ref=e57]: \"5\"\n              - generic [ref=e58]: Cancelled\n      - region [ref=e59]:\n        - heading \"Recent orders\" [level=2] [ref=e60]\n        - region \"Recent orders table\" [ref=e61]:\n          - table [ref=e62]:\n            - rowgroup [ref=e63]:\n              - row [ref=e64]:\n                - columnheader \"Order\" [ref=e65]\n                - columnheader \"Customer\" [ref=e66]\n                - columnheader \"Date\" [ref=e67]\n                - columnheader \"Status\" [ref=e68]\n                - columnheader \"Total\" [ref=e69]\n            - rowgroup [ref=e70]:\n              - row [ref=e71]:\n                - cell [ref=e72]:\n                  - link \"ORD-100060\" [ref=e73]:\n                    - /url: /orders/f037db1f-f52b-54a5-9ff9-b81fda475dd8\n                - cell \"Lakeshore Clinic Supplies\" [ref=e74]\n                - cell \"Jul 1, 2026\" [ref=e75]\n                - cell \"Shipped\" [ref=e76]\n                - cell \"$211.31\" [ref=e78]\n              - row [ref=e79]:\n                - cell [ref=e80]:\n                  - link \"ORD-100059\" [ref=e81]:\n                    - /url: /orders/9b72e7f3-86d2-55a6-b668-c4ba11f7d8d5\n                - cell \"Prairie Bolt Distributors\" [ref=e82]\n                - cell \"Jun 28, 2026\" [ref=e83]\n                - cell \"Pending\" [ref=e84]\n                - cell \"$834.10\" [ref=e86]\n              - row [ref=e87]:\n                - cell [ref=e88]:\n                  - link \"ORD-100058\" [ref=e89]:\n                    - /url: /orders/e50c4bcd-36b2-523f-a436-b6a5fbef3166\n                -",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H05",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: locator.click: Error: strict mode violation: getByRole('button') resolved to 4 elements:\n    1) <button type=\"button\" class=\"button button-small button-sidebar\">Sign out</button> aka getByRole('button', { name: 'Sign out' })\n    2) <button type=\"button\" class=\"button\" aria-disabled=\"false\">Export CSV</button> aka getByRole('button', { name: 'Export CSV' })\n    3) <button type=\"submit\" class=\"button button-primary\">Apply filters</button> aka getByRole('button', { name: 'Apply filters' })\n    4) <button type=\"button\" class=\"button\">Clear</button> aka getByRole('button', { name: 'Clear' })\n\nCall log:\n  - waiting for getByRole('button')\n\n\n  35 |   await manager.page.goto(\"/orders\");\n  36 |   await expect(manager.page.getByRole(\"heading\", { level: 1 })).toBeVisible();\n> 37 |   await manager.page.getByRole(\"button\").click();\n     |                                          ^\n  38 | });\n  39 |\n  40 | test(\"case H06\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:37:42"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: Error: locator.click: Error: strict mode violation: getByRole('button') resolved to 4 elements:\n    1) <button type=\"button\" class=\"button button-small button-sidebar\">Sign out</button> aka getByRole('button', { name: 'Sign out' })\n    2) <button type=\"button\" class=\"button\" aria-disabl",
+        "Frame.click: Error: strict mode violation: getByRole('button') resolved to 4 elements:\n    1) <button type=\"button\" class=\"button button-small button-sidebar\">Sign out</button> aka getByRole('button', { name: 'Sign out' })\n    2) <button type=\"button\" class=\"button\" aria-disabled=\"false\">Export CSV<"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9]:\n          - /url: /\n        - link \"Orders\" [ref=e10]:\n          - /url: /orders\n        - link \"Products\" [ref=e11]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e19]:\n        - generic [ref=e20]:\n          - heading \"Orders\" [level=1] [ref=e21]\n          - paragraph [ref=e22]: Dates are whole days in UTC.\n        - generic [ref=e23]:\n          - button \"Export CSV\" [ref=e24] [cursor=pointer]\n          - link \"New order\" [ref=e25] [cursor=pointer]:\n            - /url: /orders/new\n      - form \"Filter orders\" [ref=e26]:\n        - generic [ref=e27]:\n          - generic [ref=e28]: Order number\n          - searchbox \"Order number\" [ref=e29]\n        - generic [ref=e30]:\n          - generic [ref=e31]: From date\n          - textbox \"From date\" [ref=e32]\n        - generic [ref=e33]:\n          - generic [ref=e34]: To date\n          - textbox \"To date\" [ref=e35]\n        - generic [ref=e36]:\n          - generic [ref=e37]: Warehouse\n          - combobox \"Warehouse\" [ref=e38]:\n            - option \"All warehouses\" [selected]\n            - option \"YUL1 · Montreal\"\n            - option \"YVR1 · Vancouver\"\n            - option \"YYC1 · Calgary\"\n            - option \"YYZ1 · Toronto\"\n        - generic [ref=e39]:\n          - generic [ref=e40]: Customer\n          - combobox \"Customer\" [ref=e41]:\n            - option \"All customers\" [selected]\n            - option \"Aurora Trades Ltd.\"\n            - option \"Customer 35E2401B21 1\"\n            - option \"Customer B31EFD495F 1\"\n            - option \"Customer BAE7FFBEF8 1\"\n            - option \"Granite Harbour Foods\"\n            - option \"Lakeshore Clinic Supplies\"\n            - option \"Maple Ridge Supply Co.\"\n            - option \"Prairie Bolt Distributors\"\n        - generic [ref=e42]:\n          - generic [ref=e43]: Status\n          - combobox \"Status\" [ref=e44]:\n            - option \"All statuses\" [selected]\n            - option \"Pending\"\n            - option \"Confirmed\"\n            - option \"Shipped\"\n            - option \"Delivered\"\n            - option \"Cancelled\"\n        - generic [ref=e45]:\n          - button \"Apply filters\" [ref=e46] [cursor=pointer]\n          - button \"Clear\" [ref=e47] [cursor=pointer]\n      - generic [ref=e48]:\n        - region \"Orders table\" [ref=e49]:\n          - table [ref=e50]:\n            - rowgroup [ref=e51]:\n              - row [ref=e52]:\n                - columnheader [ref=e53]:\n                  - button \"Order\" [ref=e54] [cursor=pointer]:\n                    - text: Order\n                    - generic [aria-hidden] [ref=e55]: ↕\n                - columnheader [ref=e56]:\n                  - button \"Date\" [ref=e57] [cursor=pointer]:\n                    - text: Date\n                    - generic [aria-hidden] [ref=e58]: ▼\n                - columnheader \"Customer\" [ref=e59]\n                - columnheader \"Warehouse\" [ref=e60]\n                - columnheader [ref=e61]:\n                  - button \"Status\" [ref=e62] [cursor=pointer]:\n                    - text: Status\n                    - generic [aria-hidden] [ref=e63]: ↕\n                - columnheader \"Payment\" [ref=e64]\n                - columnheader [ref=e65]:\n                  - button \"Total\" [ref=e66] [cursor=pointer]:\n                    - text: Total\n                    - generic [aria-hidden] [ref=e67]: ↕\n            - rowgroup [ref=e68]:\n              - row [ref=e69]:\n                - cell [ref=e70]:\n     ",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H06",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "TimeoutError: locator.fill: Timeout 1500ms exceeded.\nCall log:\n  - waiting for getByLabel('No such field')\n\n\n  41 |   await manager.page.goto(\"/support\");\n  42 |   await expect(manager.page.getByRole(\"heading\", { level: 1 })).toBeVisible();\n> 43 |   await manager.page.getByLabel(\"No such field\").fill(\"text\", short);\n     |                                                  ^\n  44 | });\n  45 |\n  46 | test(\"case H07\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:43:50"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.pw:api: TimeoutError: locator.fill: Timeout 1500ms exceeded.\nCall log:\n  - waiting for getByLabel('No such field')\n",
+        "Frame.fill: Timeout 1500ms exceeded."
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9]:\n          - /url: /\n        - link \"Orders\" [ref=e10]:\n          - /url: /orders\n        - link \"Products\" [ref=e11]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - generic [ref=e20]:\n        - heading \"Support\" [level=1] [ref=e21]\n        - paragraph [ref=e22]: Answers come only from approved support articles and orders on your account. Check the sources shown.\n      - region [ref=e23]:\n        - heading \"Ask a question\" [level=2] [ref=e24]\n        - generic [ref=e25]:\n          - generic [ref=e26]:\n            - generic [ref=e27]: Your question\n            - textbox \"Your question\" [ref=e28]\n            - generic [ref=e29]: Up to 1000 characters.\n          - button \"Ask\" [ref=e30] [cursor=pointer]\n  - status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H07",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: expect(locator).toBeVisible() failed\n\nLocator: locator('table tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" locator('table tbody tr').first() with timeout 1500ms\n  - waiting for locator('table tbody tr').first()\n\n\n  47 |   await manager.page.route(\"**/api/v1/products*\", () => undefined);\n  48 |   await manager.page.goto(\"/products\");\n> 49 |   await expect(manager.page.locator(\"table tbody tr\").first()).toBeVisible(short);\n     |                                                                ^\n  50 | });\n  51 |\n  52 | test(\"case H08\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:49:64"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [
+      {
+        "method": "GET",
+        "url": "/api/v1/products",
+        "status": null,
+        "failure": null
+      }
+    ],
+    "trace": {
+      "actions_total": 39,
+      "failed_actions": [
+        "Test.expect: Error: expect(locator).toBeVisible() failed\n\nLocator: locator('table tbody tr').first()\nExpected: visible\nTimeout: 1500ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" locator('table tbody tr').first() with timeout 1500ms\n  - waiting for locator('table tbody tr').first",
+        "Frame.expect: Expect failed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- link \"Skip to content\":\n  - /url: \"#main\"\n- complementary:\n  - text: TestForge\n  - navigation \"Main\":\n    - link \"Dashboard\":\n      - /url: /\n    - link \"Orders\":\n      - /url: /orders\n    - link \"Products\":\n      - /url: /products\n    - link \"Inventory\":\n      - /url: /inventory\n    - link \"Support\":\n      - /url: /support\n  - text: Morgan Manager Manager\n  - button \"Sign out\"\n- main:\n  - heading \"Products\" [level=1]\n  - button \"New product\"\n  - search:\n    - text: Search name or SKU\n    - searchbox \"Search name or SKU\"\n    - button \"Search\"\n  - text: Category\n  - combobox \"Category\":\n    - option \"All categories\" [selected]\n    - option \"Electrical\"\n    - option \"Fasteners\"\n    - option \"Janitorial\"\n    - option \"Packaging\"\n    - option \"Safety\"\n    - option \"Tools\"\n  - text: Availability\n  - combobox \"Availability\":\n    - option \"Any\" [selected]\n    - option \"In stock\"\n    - option \"Out of stock\"\n  - status: Loading products…\n- status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H08",
+    "project": "corpus-webkit",
+    "status": "timedOut",
+    "errors": [
+      "Test timeout of 3000ms exceeded."
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [
+      {
+        "method": "GET",
+        "url": "/api/v1/inventory",
+        "status": null,
+        "failure": null
+      }
+    ],
+    "trace": {
+      "actions_total": 38,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": "- generic [ref=e2]:\n  - generic [ref=e3]:\n    - link \"Skip to content\" [ref=e4]:\n      - /url: \"#main\"\n    - complementary [ref=e5]:\n      - generic [ref=e6]:\n        - generic [aria-hidden] [ref=e7]: T\n        - text: TestForge\n      - navigation \"Main\" [ref=e8]:\n        - link \"Dashboard\" [ref=e9]:\n          - /url: /\n        - link \"Orders\" [ref=e10]:\n          - /url: /orders\n        - link \"Products\" [ref=e11]:\n          - /url: /products\n        - link \"Inventory\" [ref=e12]:\n          - /url: /inventory\n        - link \"Support\" [ref=e13]:\n          - /url: /support\n      - generic [ref=e14]:\n        - generic [ref=e15]: Morgan Manager\n        - generic [ref=e16]: Manager\n        - button \"Sign out\" [ref=e17] [cursor=pointer]\n    - main [ref=e18]:\n      - heading \"Inventory\" [level=1] [ref=e20]\n      - generic [ref=e21]:\n        - search [ref=e22]:\n          - generic [ref=e23]:\n            - generic [ref=e24]: Search name or SKU\n            - searchbox \"Search name or SKU\" [ref=e25]\n          - button \"Search\" [ref=e26] [cursor=pointer]\n        - generic [ref=e27]:\n          - generic [ref=e28]: Warehouse\n          - combobox \"Warehouse\" [ref=e29]:\n            - option \"All warehouses\" [selected]\n            - option \"YUL1 · Montreal\"\n            - option \"YVR1 · Vancouver\"\n            - option \"YYC1 · Calgary\"\n            - option \"YYZ1 · Toronto\"\n        - generic [ref=e30]:\n          - checkbox \"Low stock only\" [ref=e31]\n          - text: Low stock only\n      - status [ref=e33]: Loading inventory…\n  - status\n",
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H09",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "TimeoutError: page.goto: Timeout 1500ms exceeded.\nCall log:\n  - navigating to \"http://localhost:5273/support\", waiting until \"load\"\n\n\n  59 | test(\"case H09\", async ({ manager }) => {\n  60 |   await manager.page.route(\"**/support\", () => undefined);\n> 61 |   await manager.page.goto(\"/support\", short);\n     |                      ^\n  62 | });\n  63 |\n  64 | test(\"case H10\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:61:22"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [
+      {
+        "method": "GET",
+        "url": "/support",
+        "status": null,
+        "failure": null
+      }
+    ],
+    "trace": {
+      "actions_total": 38,
+      "failed_actions": [
+        "Test.pw:api: TimeoutError: page.goto: Timeout 1500ms exceeded.\nCall log:\n  - navigating to \"http://localhost:5273/support\", waiting until \"load\"\n",
+        "Frame.goto: Timeout 1500ms exceeded."
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H10",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: page.goto: A server with the specified hostname could not be found.\nCall log:\n  - navigating to \"http://testforge.invalid/\", waiting until \"load\"\n\n\n  63 |\n  64 | test(\"case H10\", async ({ manager }) => {\n> 65 |   await manager.page.goto(\"http://testforge.invalid/\");\n     |                      ^\n  66 | });\n  67 |\n  68 | test(\"case H11\", async ({ manager }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:65:22"
+    ],
+    "console_errors": [
+      "Failed to load resource: A server with the specified hostname could not be found."
+    ],
+    "page_errors": [],
+    "failed_requests": [
+      {
+        "method": "GET",
+        "url": "testforge.invalid/",
+        "status": null,
+        "failure": "A server with the specified hostname could not be found."
+      }
+    ],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 37,
+      "failed_actions": [
+        "Test.pw:api: Error: page.goto: A server with the specified hostname could not be found.\nCall log:\n  - navigating to \"http://testforge.invalid/\", waiting until \"load\"\n",
+        "Frame.goto: A server with the specified hostname could not be found."
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H11",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: page.goto: Target page, context or browser has been closed\n\n  68 | test(\"case H11\", async ({ manager }) => {\n  69 |   await manager.context.close();\n> 70 |   await manager.page.goto(\"/\");\n     |                      ^\n  71 | });\n  72 |\n  73 | test(\"case H12\", async ({ playwright }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:70:22"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 38,
+      "failed_actions": [
+        "Test.pw:api: Error: page.goto: Target page, context or browser has been closed"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "diagnostics",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H12",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:59999\nCall log:\n  - → POST http://127.0.0.1:59999/api/v1/auth/login\n    - user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15\n    - accept: */*\n    - accept-encoding: gzip,deflate,br\n    - content-type: application/json\n    - content-length: 2\n\n\n  73 | test(\"case H12\", async ({ playwright }) => {\n  74 |   const request = await playwright.request.newContext();\n> 75 |   await request.post(\"http://127.0.0.1:59999/api/v1/auth/login\", { data: {} });\n     |                 ^\n  76 | });\n  77 |\n  78 | test(\"case H13\", async ({ playwright }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:75:17"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 18,
+      "failed_actions": [
+        "Test.pw:api: Error: apiRequestContext.post: connect ECONNREFUSED 127.0.0.1:59999\nCall log:\n  - → POST http://127.0.0.1:59999/api/v1/auth/login\n    - user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15\n    - accept: */*\n   ",
+        "APIRequestContext.fetch: connect ECONNREFUSED 127.0.0.1:59999"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H13",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: Login as viewer@testforge.example failed: 401 {\"error\":{\"code\":\"INVALID_CREDENTIALS\",\"message\":\"Incorrect email or password\",\"details\":[],\"request_id\":\"1d9272f9-bb34-4b11-aeb9-391ef6137207\"}}\n\n   at ../../framework/fixtures/index.ts:80\n\n  78 |   const response = await request.post(\"/api/v1/auth/login\", { data: { email, password } });\n  79 |   if (!response.ok()) {\n> 80 |     throw new Error(`Login as ${credentials.email} failed: ${response.status()} ${await response.text()}`);\n     |           ^\n  81 |   }\n  82 |   return request;\n  83 | }\n    at apiLogin (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/fixtures/index.ts:80:11)\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:79:3"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 18,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "POST",
+          "url": "/api/v1/auth/login",
+          "status": 401,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H14",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: Could not create product: 422 {\"error\":{\"code\":\"VALIDATION_ERROR\",\"message\":\"The request is not valid\",\"details\":[{\"field\":\"body.unit_price_cents\",\"message\":\"Field required\",\"type\":\"missing\"},{\"field\":\"body.price_cents\",\"message\":\"Extra inputs are not permitted\",\"type\":\"extra_forbidden\"}],\"request_id\":\"d144f129-6d0e-44ce-b26a-6930e6f4b6fa\"}}\n\n  83 |   const product = await data.product();\n  84 |   const response = await setupApi.send(\"POST\", \"/products\", { data: { sku: product.sku, name: \"Copy\", category: product.category, price_cents: 100 } });\n> 85 |   if (!response.ok()) throw new Error(`Could not create product: ${response.status()} ${await response.text()}`);\n     |                             ^\n  86 | });\n  87 |\n  88 | test(\"case H15\", async ({ data }) => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:85:29"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 29,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "POST",
+          "url": "/api/v1/products",
+          "status": 422,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H15",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: POST /orders returned 409: {\"error\":{\"code\":\"INSUFFICIENT_STOCK\",\"message\":\"Not enough stock at YYC1\",\"details\":[{\"product_id\":\"929551cd-1718-443e-af32-413d16b403ec\",\"sku\":\"E2E-80DD30FB68-2\",\"requested\":3,\"available\":2}],\"request_id\":\"0cbbea7c-490e-46d2-ac17-333327709192\"}}\n\n   at ../../framework/helpers/api-client.ts:51\n\n  49 |     const response = await this.send(method, path, options);\n  50 |     if (!response.ok()) {\n> 51 |       throw new Error(`${method} ${path} returned ${response.status()}: ${await response.text()}`);\n     |             ^\n  52 |     }\n  53 |     return (response.status() === 204 ? undefined : await response.json()) as T;\n  54 |   }\n    at ApiClient.json (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/helpers/api-client.ts:51:13)\n    at TestData.order (/Users/[USER]/Documents/portfolio-projects/testforge-ai/framework/factories/test-data.ts:112:19)\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:91:3"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 31,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": [
+        {
+          "method": "POST",
+          "url": "/api/v1/orders",
+          "status": 409,
+          "failure": null
+        }
+      ]
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H16",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"abd\"\nReceived: \"abc\"\n\n  93 |\n  94 | test(\"case H16\", async () => {\n> 95 |   expect(\"abc\" as string).toBe(\"abd\");\n     |                           ^\n  96 | });\n  97 |\n  98 | test(\"case H17\", async () => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:95:27"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 17,
+      "failed_actions": [
+        "Test.expect: Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"abd\"\nReceived: \"abc\""
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H17",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "Error: Assertion helper not configured\n\n   97 |\n   98 | test(\"case H17\", async () => {\n>  99 |   throw new Error(\"Assertion helper not configured\");\n      |         ^\n  100 | });\n  101 |\n  102 | test(\"case H18\", async () => {\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:99:9"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 16,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case H18",
+    "project": "corpus-webkit",
+    "status": "failed",
+    "errors": [
+      "SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)\n\n  101 |\n  102 | test(\"case H18\", async () => {\n> 103 |   JSON.parse(\"{\");\n      |        ^\n  104 | });\n  105 |\n    at /Users/[USER]/Documents/portfolio-projects/testforge-ai/ai/triage-corpus/heldout.spec.ts:103:8"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 16,
+      "failed_actions": [],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  },
+  {
+    "test": "case L01",
+    "project": "corpus-firefox",
+    "status": "failed",
+    "errors": [
+      "Error: browserType.launch: Failed to launch the browser process.\nBrowser logs:\n\n<launching> /Users/[USER]/Library/Caches/ms-playwright/firefox-1555/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/yl/k3_r4m7s6gg19zhbh54zqxwc0000gn/T/playwright_firefoxdev_profile-7eJ13S -juggler-pipe -silent\n<launched> pid=61078\n[pid=61078][err] *** You are running in headless mode.\n[pid=61078][err] Could not find profile folder.\n[pid=61078] <process did exit: exitCode=1, signal=null>\n[pid=61078] starting temporary directories cleanup\nCall log:\n  - <launching> /Users/[USER]/Library/Caches/ms-playwright/firefox-1555/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/yl/k3_r4m7s6gg19zhbh54zqxwc0000gn/T/playwright_firefoxdev_profile-7eJ13S -juggler-pipe -silent\n  - <launched> pid=61078\n  - [pid=61078][err] *** You are running in headless mode.\n  - [pid=61078][err] Could not find profile folder.\n  - [pid=61078] <process did exit: exitCode=1, signal=null>\n  - [pid=61078] starting temporary directories cleanup\n  - [pid=61078] <gracefully close start>\n  - [pid=61078] <kill>\n  - [pid=61078] <skipped force kill spawnedProcess.killed=false processClosed=true>\n  - [pid=61078] finished temporary directories cleanup\n  - [pid=61078] <gracefully close end>\n"
+    ],
+    "console_errors": [],
+    "page_errors": [],
+    "failed_requests": [],
+    "error_responses": [],
+    "pending_requests": [],
+    "trace": {
+      "actions_total": 20,
+      "failed_actions": [
+        "Test.pw:api: Error: browserType.launch: Failed to launch the browser process.\nBrowser logs:\n\n<launching> /Users/[USER]/Library/Caches/ms-playwright/firefox-1555/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/yl/k3_r4m7s6gg19zhbh54zqxwc0000gn/T/playwright_firefo",
+        "Test.fixture: Error: browserType.launch: Failed to launch the browser process.\nBrowser logs:\n\n<launching> /Users/[USER]/Library/Caches/ms-playwright/firefox-1555/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/yl/k3_r4m7s6gg19zhbh54zqxwc0000gn/T/playwright_firef",
+        "Test.hook: Error: browserType.launch: Failed to launch the browser process.\nBrowser logs:\n\n<launching> /Users/[USER]/Library/Caches/ms-playwright/firefox-1555/firefox/Nightly.app/Contents/MacOS/firefox -no-remote -headless -profile /var/folders/yl/k3_r4m7s6gg19zhbh54zqxwc0000gn/T/playwright_firefoxd"
+      ],
+      "unfinished_actions": [],
+      "http_errors": []
+    },
+    "page_snapshot": null,
+    "sources": [
+      "playwright-json",
+      "error-context",
+      "trace"
+    ]
+  }
+]

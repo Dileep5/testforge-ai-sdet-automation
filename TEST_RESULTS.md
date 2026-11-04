@@ -2,8 +2,8 @@
 
 Only results from commands that were actually run are recorded here.
 
-**Last updated:** 2026-11-04, Phase 4. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
-PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14. Everything ran locally. **CI has not run.**
+**Last updated:** 2026-11-04, Phase 5. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
+PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). Everything ran locally. **CI has not run. No live LLM has been called.**
 
 ## Summary
 
@@ -11,38 +11,42 @@ Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass o
 
 | Suite | Command | Passed | Failed | Skipped | Flaky |
 | --- | --- | --- | --- | --- | --- |
-| Backend (pytest, real PostgreSQL) | `npm run test:backend` | **181** | 0 | 0 | n/a |
-| Playwright Chromium 156 | `npx playwright test --project=chromium` | **58** | 0 | 0 | 0 |
-| Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **58** | 0 | 0 | 0 |
-| Playwright Firefox 157 | `npm run test:e2e:firefox` | **0: unverified** | 58 at launch, no test body ran | 0 | 0 |
+| Backend (pytest, real PostgreSQL) | `npm run test:backend` | **188** | 0 | 0 | n/a |
+| Playwright Chromium 156 | `npx playwright test --project=chromium` | **64** | 0 | 0 | 0 |
+| Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **64** | 0 | 0 | 0 |
+| Playwright Firefox 157 | `npm run test:e2e:firefox` | **0: unverified** | 64 at launch, no test body ran | 0 | 0 |
 | Framework self-checks | `npx playwright test --project=framework` | 6 | 0 | 0 | 0 |
-| Accessibility, Chromium | `npm run test:a11y` | **80** | 0 | 0 | 0 |
-| Keyboard, WebKit | `npm run test:a11y:keyboard` | **32** | 0 | 0 | 0 |
-| Keyboard, Firefox | `npx playwright test --project=keyboard-firefox` | **0: unverified** | 32 at launch, no test body ran | 0 | 0 |
-| API automation | `npm run test:api` | **147** | 0 | 0 | 0 |
-| OpenAPI contract | `npm run test:contract` | **98** | 0 | 0 | 0 |
+| Accessibility, Chromium | `npm run test:a11y` | **82** | 0 | 0 | 0 |
+| Keyboard, WebKit | `npm run test:a11y:keyboard` | **33** | 0 | 0 | 0 |
+| Keyboard, Firefox | `npx playwright test --project=keyboard-firefox` | **0: unverified** | 33 at launch, no test body ran | 0 | 0 |
+| API automation | `npm run test:api` | **154** | 0 | 0 | 0 |
+| OpenAPI contract | `npm run test:contract` | **100** | 0 | 0 | 0 |
 | PostgreSQL validation | `npm run test:db` | **44** | 0 | 0 | 0 |
-| Security regression | `npm run test:security` | **106** | 0 | 0 | 0 |
+| Security regression | `npm run test:security` | **114** | 0 | 0 | 0 |
 | Reliability | `npm run test:reliability` | **5** | 0 | 0 | 0 |
+| AI package (pytest, offline) | `npm run test:ai` | **305** | 0 | 0 | n/a |
 
 These counts include generated cases, which overstate distinct scenarios. Accessibility and keyboard detail is in
 [ACCESSIBILITY.md](ACCESSIBILITY.md).
 
 | Other check | Result |
 | --- | --- |
-| Backend line coverage | 97% (1,306 statements, 33 missed) |
+| Backend line coverage | 98% (1,338 statements, 33 missed) |
 | TypeScript strict type check (frontend and framework) | Passed |
-| ESLint and Ruff | Passed, 0 warnings |
+| ESLint and Ruff (API and AI package) | Passed, 0 warnings |
 | Frontend production build | Passed |
-| HTML and JUnit reports | Generated (JUnit: 634 tests, 0 failures, 0 skipped, 0 errors) |
-| axe-core | 37 screen states, 0 violations, no rule disabled |
-| k6 scenarios | All 7 ran. See [PERFORMANCE.md](PERFORMANCE.md) |
-| Setup from a clean clone, with the uncommitted Phase 4 changes applied | 181 backend and 634 Playwright passed; type check, lint and build passed; k6 scenarios ran at short durations |
+| HTML and JUnit reports | Generated (JUnit: 666 tests, 0 failures, 0 skipped, 0 errors) |
+| axe-core | 41 screen states, 0 violations, no rule disabled |
+| k6 scenarios | All 7 ran in Phase 4, and were **not rerun in Phase 5**. See [PERFORMANCE.md](PERFORMANCE.md) |
+| Offline chatbot evaluation | Held-out correctness 12/23, refusal recall 41/43. See [AI_EVALUATION.md](AI_EVALUATION.md) |
+| Failure triage, real deliberately caused failures | Held-out 33/36. See [AI_EVALUATION.md](AI_EVALUATION.md#failure-triage-accuracy) |
+| AI safeguards, bugs put back on purpose | 29 of 29 caught |
+| Setup from a clean clone, with the uncommitted Phase 5 changes applied | 188 backend, 305 AI and 666 Playwright passed; type check, lint and build passed; held-out output hash identical |
 | Development database after all runs | Row counts and content hashes identical to before Phase 3 |
 | `npm audit --omit=dev` | No known vulnerabilities |
 | `npm audit` including dev tools | 13 moderate (see limitations) |
 
-**Not done yet, so no results exist:** AI evaluation, Docker, GitHub Actions, secret scanning.
+**Not done yet, so no results exist:** live LLM evaluation, Docker, GitHub Actions, secret scanning in CI.
 
 ## k6 summary
 
@@ -69,11 +73,11 @@ comparison are in [PERFORMANCE.md](PERFORMANCE.md).
 
 | Run | Workers | Passed | Failed | Skipped | Flaky | Duration |
 | --- | --- | --- | --- | --- | --- | --- |
-| Everything except Firefox, together | 4 | 634 | 0 | 0 | 0 | 148s |
-| Everything except Firefox, together | 8 | 634 | 0 | 0 | 0 | 207s |
-| Accessibility and keyboard, each test 3 times | 4 | 336 | 0 | 0 | 0 | 117s |
-| Smoke, Chromium | 4 | 14 | 0 | 0 | 0 | 10s |
-| Critical, Chromium and WebKit | 4 | 62 (31 each) | 0 | 0 | 0 | 40s |
+| Everything except Firefox, together | 4 | 666 | 0 | 0 | 0 | 2.0m |
+| Everything except Firefox, together | 8 | 666 | 0 | 0 | 0 | 2.8m |
+| Accessibility and keyboard, each test 3 times (Phase 4, not rerun) | 4 | 336 | 0 | 0 | 0 | 117s |
+| Smoke, Chromium | 4 | 15 | 0 | 0 | 0 | 9s |
+| Critical, Chromium and WebKit | 4 | 64 (32 each) | 0 | 0 | 0 | 28s |
 
 `reliability` always runs one test at a time, whatever the worker count.
 
@@ -98,6 +102,8 @@ The one failure was in WebKit, in `the low stock filter shows a low row and leav
 **This does not separate an application race from a WebKit or Playwright input problem.** It is also unknown whether this is the same failure as the unidentified one in Phase 3. Search page objects now assert the
 typed value right after filling, so a recurrence fails at the point of loss. No retry was added.
 
+**Phase 5 update:** the failure did not recur in the Phase 5 runs, but those were few, so this says nothing about whether it is gone. The trace, screenshot and video from that failure no longer exist, because Playwright clears `test-results/` at the start of each run. Only its JSON report entry was kept. To keep artifacts from a future failure, copy `test-results/` before running again. The triage tool classifies this failure as timing, medium confidence, with review required. That is not a root cause.
+
 ## Intermittent failures found in Phase 3
 
 Single passes were not enough here. Repeated runs exposed these, and each is now fixed at its cause.
@@ -118,7 +124,7 @@ CI is untested.
 **Firefox remains unverified. Nothing here says the app works in Firefox.** The projects are kept and no
 test is skipped. Firefox should be tested on Linux in CI in Phase 6.
 
-Exact failure, for each of the 90 tests (58 browser and 32 keyboard), when Playwright launches the browser:
+Exact failure, for each of the 97 tests (64 browser and 33 keyboard), when Playwright launches the browser:
 
 ```
 Error: browserType.launch: Failed to launch the browser process.
@@ -150,6 +156,23 @@ Chromium and WebKit launched normally in the same shell. WebKit here is Playwrig
 reports version 27.2 and downloads as its macOS 26 package. It is close to Safari but is not Safari.
 
 No further macOS workarounds were attempted in Phases 3 or 4.
+
+## Bugs found in Phase 5
+
+**No defect was found in the existing application.** These were in code written during Phase 5, or in its tests.
+
+| Defect | Found by | Type |
+| --- | --- | --- |
+| The exfiltration pattern matched the approved support addresses, so the knowledge base refused to load | First run. The load check failed safely | New code |
+| A wider exfiltration pattern matched approved article ACC-004, with the same result | First run after the change | New code |
+| "Show me the orders of another customer" was not recognised as a data request | New security test | New code |
+| The guard's email pattern included a trailing full stop | New chatbot test | New code |
+| A safe-XML rejection escaped as an unhandled error | Writing the entity-attack test | New code |
+| Failure diagnostics did not list pending requests, which timing failures need | Reviewing real artifacts | Framework gap |
+| Corpus case H02 never failed, which made the held-out denominator short by 2 | Test comparing labels with failures | Corpus defect |
+| Corpus case D10 used port 1, which browsers block, so it tested the wrong failure | Reading real artifacts | Corpus defect |
+| The markup test could not test rendering, because the question was refused first | Running it | Test defect |
+| Four test premises were wrong, for example treating `re.compile` as code execution | Running them | Test defect |
 
 ## Bugs found in Phase 4
 
@@ -335,6 +358,7 @@ Earlier Phase 1 verification, including data surviving a PostgreSQL restart, is 
 - **Firefox is unverified,** as described above.
 - **CI has not run.** Timing on a slower machine is untested.
 - **One WebKit failure is unresolved,** as described above.
+- **No live LLM has been called.** Offline chatbot results measure keyword retrieval and rules, and it scored 0/8 on held-out paraphrases. See [AI_EVALUATION.md](AI_EVALUATION.md#limitations).
 - **Accessibility is not proven by these tests.** No screen reader was used. See [ACCESSIBILITY.md](ACCESSIBILITY.md#limitations).
 - **The spec documents statuses that cannot occur,** so the status check is looser than it looks: an
   unexpected 409 on a read would pass it. Specific tests assert exact statuses where they matter.

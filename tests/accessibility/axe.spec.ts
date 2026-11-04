@@ -80,6 +80,21 @@ test.describe("axe: dashboard and orders", { tag: "@accessibility" }, () => {
     await expectAccessiblePage(manager.page, "order-details-delivered");
   });
 
+  test("support page, with an answer and with a refusal", async ({ viewer }) => {
+    const { support } = viewer.app;
+    await support.goto();
+    await expectAccessiblePage(viewer.page, "support");
+    await support.submit.click();
+    await expect(support.question).toHaveAttribute("aria-invalid", "true");
+    await expectAccessiblePage(viewer.page, "support-validation");
+    await support.ask("How long do refunds take?");
+    await expect(support.answer).toBeVisible();
+    await expectAccessiblePage(viewer.page, "support-answer");
+    await support.ask("Do you offer a lifetime warranty?");
+    await expect(support.refusal).toBeVisible();
+    await expectAccessiblePage(viewer.page, "support-refusal");
+  });
+
   test("order status dialog", async ({ manager, data }) => {
     const order = await pendingOrder(data);
     const { orderDetails } = manager.app;

@@ -1,4 +1,4 @@
-import type { Browser, Page, TestInfo } from "@playwright/test";
+import type { Browser, Page, Request, TestInfo } from "@playwright/test";
 
 const MAX_ENTRIES = 200;
 
@@ -7,10 +7,12 @@ export interface PageDiagnostics {
   pageErrors: string[];
   failedRequests: { method: string; url: string; failure: string }[];
   errorResponses: { method: string; url: string; status: number; requestId: string | null }[];
+  /** Requests still waiting when the report was written, which points to a timing failure. */
+  pendingRequests: { method: string; url: string }[];
 }
 
 export function emptyDiagnostics(): PageDiagnostics {
-  return { consoleErrors: [], pageErrors: [], failedRequests: [], errorResponses: [] };
+  return { consoleErrors: [], pageErrors: [], failedRequests: [], errorResponses: [], pendingRequests: [] };
 }
 
 function push<T>(list: T[], item: T): void {
@@ -19,6 +21,16 @@ function push<T>(list: T[], item: T): void {
 
 /** Record what went wrong in the page. Only URLs and statuses are kept: no cookies, headers or bodies. */
 export function watchPage(page: Page, record: PageDiagnostics): void {
+  const pending = new Map<Request, { method: string; url: string }>();
+  const finished = (request: Request) => {
+    pending.delete(request);
+    record.pendingRequests = [...pending.values()].slice(0, MAX_ENTRIES);
+  };
+  page.on("request", (request) => {
+    pending.set(request, { method: request.method(), url: request.url() });
+    record.pendingRequests = [...pending.values()].slice(0, MAX_ENTRIES);
+  });
+  page.on("requestfinished", finished);
   page.on("console", (message) => {
     if (message.type() !== "error") return;
     const { url, lineNumber } = message.location();
@@ -26,6 +38,7 @@ export function watchPage(page: Page, record: PageDiagnostics): void {
   });
   page.on("pageerror", (error) => push(record.pageErrors, error.stack ?? error.message));
   page.on("requestfailed", (request) => {
+    finished(request);
     push(record.failedRequests, { method: request.method(), url: request.url(), failure: request.failure()?.errorText ?? "unknown" });
   });
   page.on("response", (response) => {

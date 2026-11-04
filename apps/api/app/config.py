@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     payment_sim_timeout_ms: int = 1000
     # Requests allowed to wait for a free slot before the API answers 503. See ARCHITECTURE.md.
     max_queued_requests: int = 200
+    # Offline needs no credentials. The OpenAI key is read only by testforge_ai.llm, never here.
+    support_chat_provider: Literal["offline", "openai"] = "offline"
 
     @model_validator(mode="after")
     def _production_requires_secure_cookies(self) -> "Settings":

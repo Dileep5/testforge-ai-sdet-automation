@@ -17,6 +17,8 @@ Results are in [TEST_RESULTS.md](TEST_RESULTS.md). The framework's design is in
 | Reliability | `tests/reliability`, plus `test_concurrency_limit.py` | Real API under a fixed burst | Does the API keep answering, and stay correct, under concurrency? |
 | Accessibility | `tests/accessibility` | Production web build in real browsers | What can automated checks find, and can the app be used by keyboard? |
 | Performance | `performance/` (k6) | Real API on its own database | How does it behave under sustained load and overload? |
+| AI | `ai/tests` (pytest), `tests/security/ai-support.spec.ts` | Python package offline, and the real API | Are generated tests and answers validated, and do protections hold if a model misbehaves? |
+| AI evaluation | `ai/evaluation/datasets` | Chatbot, offline by default | How often are answers right, grounded and properly refused? |
 
 Nothing in these layers mocks the API or database. A test fails if the real system misbehaves.
 
@@ -141,6 +143,14 @@ operation, and focus position after errors and actions. Detail and limitations a
 k6 runs 7 scenarios against the real API. Results are compared only between adjacent runs with a matching CPU calibration, because this machine's speed varies. They describe one laptop, and are not compared with production targets. k6 has no pass or fail threshold yet, because no meaningful target exists for this
 machine. A person reads the results. Detail is in [PERFORMANCE.md](PERFORMANCE.md).
 
+## AI
+
+The rule for this layer: **assume the model is wrong or hostile.** Tests replace it with a scripted stand-in that returns invented policies, fake citations and invalid output, and confirm that nothing reaches the user. AI tests remove API keys from their environment and fail on any non-local connection, so they cannot spend money or depend on a provider.
+
+Rule-based checks are used wherever they can decide. A model-graded check exists, is labelled, and decides nothing. The evaluation dataset has development and held-out splits, and tuning refuses the held-out split. Test generation requires human approval, and generated skeletons cannot run. Failure triage is scored on real artifacts from deliberately failing tests, with labels kept apart from anything the classifier reads.
+
+Which protections are deterministic and which are probabilistic is set out in [AI_TESTING.md](AI_TESTING.md#which-protections-can-be-relied-on). Results and their limits are in [AI_EVALUATION.md](AI_EVALUATION.md).
+
 ## Test data and isolation
 
 - Each test creates its own customers, products, users and orders through the real API.
@@ -168,7 +178,7 @@ tests using deliberately wrong input. This is a hand-picked set of risks, not fu
 | --- | --- |
 | Screen reader and other manual accessibility testing | Not scheduled |
 | Long-running soak tests, and load on Linux | Not scheduled |
-| AI test generation and evaluation | Phase 5 |
+| Live LLM evaluation | Opt-in, not run. See [AI_EVALUATION.md](AI_EVALUATION.md#live-evaluation) |
 | CI, Docker, Firefox on Linux | Phase 6 |
 | Dependency and secret scanning in CI | Phase 6 |
 | Penetration testing, TLS, production hardening | Out of scope for a local portfolio app |

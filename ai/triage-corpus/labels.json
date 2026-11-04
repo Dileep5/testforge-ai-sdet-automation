@@ -1,0 +1,182 @@
+{
+ "D01": {
+  "category": "application_regression",
+  "split": "dev",
+  "mechanism": "API returns 500 for the orders list"
+ },
+ "D02": {
+  "category": "application_regression",
+  "split": "dev",
+  "mechanism": "API response tampered: wrong total shown"
+ },
+ "D03": {
+  "category": "application_regression",
+  "split": "dev",
+  "mechanism": "Uncaught exception in the page"
+ },
+ "D04": {
+  "category": "locator_issue",
+  "split": "dev",
+  "mechanism": "Test id that does not exist"
+ },
+ "D05": {
+  "category": "locator_issue",
+  "split": "dev",
+  "mechanism": "Locator matches many elements"
+ },
+ "D06": {
+  "category": "locator_issue",
+  "split": "dev",
+  "mechanism": "Misspelt heading name"
+ },
+ "D07": {
+  "category": "timing_or_synchronization",
+  "split": "dev",
+  "mechanism": "Dashboard request never completes"
+ },
+ "D08": {
+  "category": "timing_or_synchronization",
+  "split": "dev",
+  "mechanism": "Waits for a response that is never sent"
+ },
+ "D09": {
+  "category": "timing_or_synchronization",
+  "split": "dev",
+  "mechanism": "Test timeout while a request hangs"
+ },
+ "D10": {
+  "category": "environment_failure",
+  "split": "dev",
+  "mechanism": "Connection refused navigating"
+ },
+ "D11": {
+  "category": "environment_failure",
+  "split": "dev",
+  "mechanism": "Connection refused from API client"
+ },
+ "D13": {
+  "category": "test_data_issue",
+  "split": "dev",
+  "mechanism": "Setup logs in as a user who does not exist"
+ },
+ "D14": {
+  "category": "test_data_issue",
+  "split": "dev",
+  "mechanism": "Setup orders more than the stock"
+ },
+ "D15": {
+  "category": "test_data_issue",
+  "split": "dev",
+  "mechanism": "Setup needs a seeded record that does not exist"
+ },
+ "D16": {
+  "category": "unknown",
+  "split": "dev",
+  "mechanism": "Bare error thrown by test code"
+ },
+ "D17": {
+  "category": "unknown",
+  "split": "dev",
+  "mechanism": "Plain value comparison with no page involved"
+ },
+ "D18": {
+  "category": "unknown",
+  "split": "dev",
+  "mechanism": "TypeError in test code"
+ },
+ "H01": {
+  "category": "application_regression",
+  "split": "heldout",
+  "mechanism": "API returns 503 for products"
+ },
+ "H02": {
+  "category": "application_regression",
+  "split": "heldout",
+  "mechanism": "API response tampered: wrong figure shown"
+ },
+ "H03": {
+  "category": "application_regression",
+  "split": "heldout",
+  "mechanism": "API returns HTML instead of JSON"
+ },
+ "H04": {
+  "category": "locator_issue",
+  "split": "heldout",
+  "mechanism": "CSS class that does not exist"
+ },
+ "H05": {
+  "category": "locator_issue",
+  "split": "heldout",
+  "mechanism": "Locator matches many buttons"
+ },
+ "H06": {
+  "category": "locator_issue",
+  "split": "heldout",
+  "mechanism": "Label that does not exist"
+ },
+ "H07": {
+  "category": "timing_or_synchronization",
+  "split": "heldout",
+  "mechanism": "Products request never completes"
+ },
+ "H08": {
+  "category": "timing_or_synchronization",
+  "split": "heldout",
+  "mechanism": "Test hangs until timeout while a request is pending"
+ },
+ "H09": {
+  "category": "timing_or_synchronization",
+  "split": "heldout",
+  "mechanism": "Document request never completes"
+ },
+ "H10": {
+  "category": "environment_failure",
+  "split": "heldout",
+  "mechanism": "Host name that cannot resolve (.invalid)"
+ },
+ "H11": {
+  "category": "environment_failure",
+  "split": "heldout",
+  "mechanism": "Browser context closed underneath the test"
+ },
+ "H12": {
+  "category": "environment_failure",
+  "split": "heldout",
+  "mechanism": "Connection refused from API client"
+ },
+ "H13": {
+  "category": "test_data_issue",
+  "split": "heldout",
+  "mechanism": "Setup logs in with the wrong password"
+ },
+ "H14": {
+  "category": "test_data_issue",
+  "split": "heldout",
+  "mechanism": "Setup creates a product with a SKU already taken"
+ },
+ "H15": {
+  "category": "test_data_issue",
+  "split": "heldout",
+  "mechanism": "Setup orders more than the stock"
+ },
+ "H16": {
+  "category": "unknown",
+  "split": "heldout",
+  "mechanism": "Plain string comparison"
+ },
+ "H17": {
+  "category": "unknown",
+  "split": "heldout",
+  "mechanism": "Bare error thrown by test code"
+ },
+ "H18": {
+  "category": "unknown",
+  "split": "heldout",
+  "mechanism": "SyntaxError in test code"
+ },
+ "L01": {
+  "category": "environment_failure",
+  "split": "dev",
+  "mechanism": "Real Firefox launch failure on this machine"
+ }
+}

@@ -48,6 +48,7 @@ const POLICY: Record<string, Actor[] | typeof PUBLIC> = {
   "POST /payments/{payment_id}/settle": OPERATORS,
   "GET /audit-logs": ADMIN,
   "GET /dashboard/summary": ALL_ROLES,
+  "POST /support/chat": ALL_ROLES,
 };
 
 const contract = new OpenApiContract();

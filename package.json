@@ -61,6 +61,12 @@
     "perf:install": "bash scripts/install-k6.sh",
     "perf:migrate": "cd apps/api && DATABASE_URL=postgresql+psycopg://testforge:testforge_local@127.0.0.1:55432/testforge_perf APP_ENV=test .venv/bin/alembic upgrade head",
     "perf": "npm run -s db:start && npm run -s perf:migrate && node scripts/perf.mjs",
+    "ai": "apps/api/.venv/bin/python -m testforge_ai.cli",
+    "test:ai": "cd ai && ../apps/api/.venv/bin/python -m pytest",
+    "lint:ai": "cd ai && ../apps/api/.venv/bin/ruff check . && ../apps/api/.venv/bin/ruff format --check .",
+    "ai:eval": "npm run -s ai -- eval --split dev --out reports/ai/eval-dev.json",
+    "ai:eval:heldout": "npm run -s ai -- eval --split heldout --out reports/ai/eval-heldout.json",
+    "ai:triage:corpus": "playwright test -c playwright.triage.config.ts; npm run -s ai -- triage --json reports/triage-corpus/playwright.json --artifacts-root . --out reports/triage-corpus/triage.json --score heldout",
     "e2e:report": "playwright show-report"
   }
 }

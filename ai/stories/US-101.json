@@ -1,0 +1,15 @@
+{
+  "id": "US-101",
+  "title": "Filter inventory by low stock",
+  "as_a": "Manager",
+  "i_want": "to filter the inventory list to rows at or below their reorder level",
+  "so_that": "I can see what needs restocking",
+  "surface": "both",
+  "allowed_roles": ["Manager", "Admin"],
+  "forbidden_roles": [],
+  "acceptance_criteria": [
+    {"id": "AC-1", "text": "With the filter on, only rows at or below their reorder level are shown."},
+    {"id": "AC-2", "text": "The filter can be combined with a warehouse filter."},
+    {"id": "AC-3", "text": "A list page shows at most 100 rows."}
+  ]
+}

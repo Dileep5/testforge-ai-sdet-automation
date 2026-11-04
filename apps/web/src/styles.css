@@ -209,3 +209,22 @@ th.num .sort-button { flex-direction: row-reverse; }
   .payment-form { grid-template-columns: minmax(0, 1fr); }
   .payment-form .button { margin-top: 0; }
 }
+
+.support-form textarea {
+  width: 100%;
+  min-height: 5rem;
+  font: inherit;
+}
+
+.support-result {
+  margin-top: 1rem;
+}
+
+.support-sources {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.support-sources blockquote {
+  margin: 0.25rem 0 0;
+}

@@ -1,0 +1,5 @@
+# Pinned on top of apps/api/requirements.lock, which supplies pydantic and httpx2.
+defusedxml==0.7.1
+jiter==0.18.0
+openai==3.45.0
+sniffio==1.3.1

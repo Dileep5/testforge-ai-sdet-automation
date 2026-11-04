@@ -16,5 +16,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["framework", "tests", "playwright.config.ts"]
+  "include": ["framework", "tests", "ai/triage-corpus", "playwright.config.ts", "playwright.triage.config.ts"]
 }

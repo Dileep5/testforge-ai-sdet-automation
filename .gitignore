@@ -33,3 +33,4 @@ trace.zip
 *.webm
 *.log
 .DS_Store
+*.egg-info/

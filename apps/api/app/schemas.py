@@ -10,6 +10,7 @@ from pydantic import (
     StringConstraints,
     field_validator,
 )
+from testforge_ai.chatbot.models import MAX_QUESTION_CHARS
 
 from app.models import OrderStatus, PaymentStatus, Role
 
@@ -312,3 +313,10 @@ class ReadinessOut(BaseModel):
     status: Literal["ready", "not_ready"]
     database: Literal["ok", "unavailable"]
     migration: str | None
+
+
+# --- Support chat -----------------------------------------------------------
+
+
+class SupportChatRequest(InputModel):
+    question: str = Field(min_length=1, max_length=MAX_QUESTION_CHARS)

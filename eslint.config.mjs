@@ -3,7 +3,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["performance/**", "scripts/**", "**/node_modules/**", "**/dist/**", "**/.venv/**", "playwright-report/**", "test-results/**", "reports/**", "apps/web/src/api-types.ts"] },
+  { ignores: ["ai/triage-corpus/**", "playwright.triage.config.ts", "ai/testforge_ai.egg-info/**", "performance/**", "scripts/**", "**/node_modules/**", "**/dist/**", "**/.venv/**", "playwright-report/**", "test-results/**", "reports/**", "apps/web/src/api-types.ts"] },
   {
     files: ["framework/**/*.ts", "tests/**/*.ts", "playwright.config.ts"],
     extends: [...tseslint.configs.recommendedTypeChecked],

@@ -1,0 +1,2 @@
+Sure! Here are some great test cases for cancelling an order:
+1. Cancel a pending order.

@@ -1,0 +1,63 @@
+{
+ "story_id": "US-102",
+ "cases": [
+  {
+   "title": "Cancel a Pending order",
+   "category": "positive",
+   "priority": "P1",
+   "requirement_ids": [
+    "US-102/AC-99"
+   ],
+   "preconditions": [
+    "An order in Pending status",
+    "Signed in as Manager"
+   ],
+   "steps": [
+    "Open the order",
+    "Cancel it"
+   ],
+   "expected_results": [
+    "The order is Cancelled",
+    "Each line's quantity returns to stock exactly once"
+   ],
+   "assumptions": []
+  },
+  {
+   "title": "A Shipped order cannot be cancelled",
+   "category": "negative",
+   "priority": "P1",
+   "requirement_ids": [
+    "US-102/AC-2",
+    "US-777/AC-1"
+   ],
+   "preconditions": [
+    "An order in Shipped status"
+   ],
+   "steps": [
+    "Try to cancel the order"
+   ],
+   "expected_results": [
+    "The order stays Shipped"
+   ],
+   "assumptions": []
+  },
+  {
+   "title": "Viewer cannot cancel",
+   "category": "authorization",
+   "priority": "P1",
+   "requirement_ids": [
+    "US-102/AC-4"
+   ],
+   "preconditions": [
+    "Signed in as Viewer"
+   ],
+   "steps": [
+    "Try to cancel a Pending order"
+   ],
+   "expected_results": [
+    "The attempt is refused and the order is unchanged"
+   ],
+   "assumptions": []
+  }
+ ]
+}

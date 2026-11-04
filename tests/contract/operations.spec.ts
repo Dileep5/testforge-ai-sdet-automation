@@ -108,6 +108,7 @@ const SUCCESS: Record<string, { status: number; call: (ctx: Ctx) => Promise<APIR
   [`POST ${p("/payments/{payment_id}/settle")}`]: { status: 200, call: async (ctx) => ctx.admin.send("POST", `/payments/${(await ctx.data.pay(await placedOrder(ctx))).id}/settle`) },
   [`GET ${p("/audit-logs")}`]: { status: 200, call: ({ admin }) => admin.send("GET", "/audit-logs", { params: { page_size: 100 } }) },
   [`GET ${p("/dashboard/summary")}`]: { status: 200, call: ({ admin }) => admin.send("GET", "/dashboard/summary") },
+  [`POST ${p("/support/chat")}`]: { status: 200, call: ({ admin }) => admin.send("POST", "/support/chat", { data: { question: "How long do refunds take?" } }) },
 };
 
 test.describe("response contracts", { tag: "@contract" }, () => {
@@ -213,6 +214,8 @@ async function requestCase(operation: Operation, { data }: Ctx): Promise<Request
   switch (operation.key) {
     case `POST ${p("/auth/login")}`:
       return { anonymous: true, body: () => ({ ...SEED_USERS.viewer }) };
+    case `POST ${p("/support/chat")}`:
+      return { body: () => ({ question: "How long do refunds take?" }) };
     case `POST ${p("/users")}`:
       return { body: () => ({ email: `${data.unique("u").toLowerCase()}@e2e.example`, full_name: "Contract", password: "E2E-Long-Password-1", role: "VIEWER", customer_id: null }) };
     case `PATCH ${p("/users/{user_id}")}`:
@@ -247,7 +250,7 @@ test.describe("request contracts", { tag: "@contract" }, () => {
   const withBody = contract.operations.filter((operation) => operation.definition.requestBody);
 
   test("every operation with a body is covered", () => {
-    expect(withBody.length).toBe(10);
+    expect(withBody.length).toBe(11);
   });
 
   for (const operation of withBody) {

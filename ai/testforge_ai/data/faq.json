@@ -1,0 +1,233 @@
+{
+  "version": "2026-11-04.1",
+  "notice": "Synthetic policies for a portfolio project. TestForge is not a real business.",
+  "documents": [
+    {
+      "id": "ORD-001",
+      "topic": "orders",
+      "title": "Order statuses",
+      "text": "An order moves through Pending, Confirmed, Shipped and Delivered. A Pending order has been placed but not yet confirmed. A Delivered or Cancelled order is final and its status cannot change.",
+      "facts": {}
+    },
+    {
+      "id": "ORD-002",
+      "topic": "orders",
+      "title": "Checking your order status",
+      "text": "You can see your order status on the Orders page after signing in. Open an order to see its status history and payments. If you give support an order number such as ORD-100001, support can look up the status of that order when it belongs to your account.",
+      "facts": {}
+    },
+    {
+      "id": "ORD-003",
+      "topic": "orders",
+      "title": "Cancelling an order",
+      "text": "A Pending or Confirmed order can be cancelled. A Shipped or Delivered order cannot be cancelled. Customers ask their account manager to cancel an order, because only Managers and Administrators can change an order status.",
+      "facts": {}
+    },
+    {
+      "id": "ORD-004",
+      "topic": "orders",
+      "title": "Changing an order",
+      "text": "The items on an order cannot be changed after it is created. To change items, cancel the order while it is still eligible and place a new one.",
+      "facts": {}
+    },
+    {
+      "id": "ORD-005",
+      "topic": "orders",
+      "title": "Tax and pricing on orders",
+      "text": "Tax is calculated from the rate of the warehouse that fulfils the order. Prices and tax are fixed when the order is created, so later price changes do not alter an existing order.",
+      "facts": {}
+    },
+    {
+      "id": "PAY-001",
+      "topic": "orders",
+      "title": "Order payments",
+      "text": "A payment can be authorized, settled, declined or timed out. A declined payment can be tried again with another payment method. An order that is Cancelled has its authorized payment voided.",
+      "facts": {}
+    },
+    {
+      "id": "RET-001",
+      "topic": "returns",
+      "title": "Return window",
+      "text": "Items can be returned within 30 days of delivery. The 30 days start on the delivery date shown on the order.",
+      "facts": {
+        "return_window_days": "30"
+      }
+    },
+    {
+      "id": "RET-002",
+      "topic": "returns",
+      "title": "Condition of returned items",
+      "text": "Returned items must be unused and in their original packaging. Items that arrive at the warehouse used or without packaging are sent back to the customer.",
+      "facts": {}
+    },
+    {
+      "id": "RET-003",
+      "topic": "returns",
+      "title": "Items that cannot be returned",
+      "text": "Clearance items and custom-cut items cannot be returned. This applies unless the item arrived damaged.",
+      "facts": {}
+    },
+    {
+      "id": "RET-004",
+      "topic": "returns",
+      "title": "Starting a return",
+      "text": "To start a return, email returns@testforge.example with your order number and the items you want to return. The returns team replies with a return authorization number, which must be written on the outside of the box.",
+      "facts": {}
+    },
+    {
+      "id": "RET-005",
+      "topic": "returns",
+      "title": "Damaged or incorrect items",
+      "text": "Report damaged or incorrect items within 7 days of delivery. TestForge replaces the item or refunds it in full, and pays the return shipping.",
+      "facts": {
+        "damage_report_days": "7"
+      }
+    },
+    {
+      "id": "REF-001",
+      "topic": "refunds",
+      "title": "Refund timing",
+      "text": "Refunds are issued to the original payment method within 5 business days after the warehouse inspects the returned items. Your bank may take longer to show the refund.",
+      "facts": {
+        "refund_business_days": "5"
+      }
+    },
+    {
+      "id": "REF-002",
+      "topic": "refunds",
+      "title": "Shipping costs on refunds",
+      "text": "Original shipping charges are not refunded unless the item arrived damaged or incorrect. The customer pays return shipping for all other returns.",
+      "facts": {}
+    },
+    {
+      "id": "REF-003",
+      "topic": "refunds",
+      "title": "Refunds for cancelled orders",
+      "text": "When a settled order is cancelled, the full amount is refunded to the original payment method within 5 business days.",
+      "facts": {
+        "refund_business_days": "5"
+      }
+    },
+    {
+      "id": "SHP-001",
+      "topic": "shipping",
+      "title": "Where we ship",
+      "text": "TestForge ships only to addresses in Canada. We do not ship internationally.",
+      "facts": {}
+    },
+    {
+      "id": "SHP-002",
+      "topic": "shipping",
+      "title": "Standard delivery times",
+      "text": "Standard delivery takes 3 to 7 business days from the day an order is marked Shipped.",
+      "facts": {}
+    },
+    {
+      "id": "SHP-003",
+      "topic": "shipping",
+      "title": "Expedited delivery",
+      "text": "Expedited delivery takes 1 to 2 business days from the day an order is marked Shipped. Its fee is quoted by your account manager before the order is placed.",
+      "facts": {}
+    },
+    {
+      "id": "SHP-004",
+      "topic": "shipping",
+      "title": "Shipping warehouses",
+      "text": "Orders ship from one of four warehouses: YYZ1, YVR1, YUL1 and YYC1. A single order ships from one warehouse.",
+      "facts": {}
+    },
+    {
+      "id": "SHP-005",
+      "topic": "shipping",
+      "title": "Changing a delivery address",
+      "text": "A delivery address can be changed by your account manager until the order is marked Shipped. It cannot be changed after that.",
+      "facts": {}
+    },
+    {
+      "id": "INV-001",
+      "topic": "inventory",
+      "title": "How availability works",
+      "text": "Stock is tracked separately for each warehouse. A product can be available in one warehouse and out of stock in another.",
+      "facts": {}
+    },
+    {
+      "id": "INV-002",
+      "topic": "inventory",
+      "title": "Low stock",
+      "text": "A product is shown as low stock when its quantity is at or below its reorder level. Low stock does not mean that an order will be refused.",
+      "facts": {}
+    },
+    {
+      "id": "INV-003",
+      "topic": "inventory",
+      "title": "Out of stock and backorders",
+      "text": "Backorders are not accepted. An order for more than the available quantity in the chosen warehouse is refused.",
+      "facts": {}
+    },
+    {
+      "id": "INV-004",
+      "topic": "inventory",
+      "title": "Stock reservation",
+      "text": "Stock is taken when an order is created and returned if that order is cancelled. Items in a cart or draft are not reserved.",
+      "facts": {}
+    },
+    {
+      "id": "INV-005",
+      "topic": "inventory",
+      "title": "Restock dates",
+      "text": "Support cannot promise restock dates. Check the Inventory page for current availability in each warehouse.",
+      "facts": {}
+    },
+    {
+      "id": "ACC-001",
+      "topic": "account",
+      "title": "Resetting a password",
+      "text": "Self-service password reset is not available. Ask an Administrator at your company to set a new password for you.",
+      "facts": {}
+    },
+    {
+      "id": "ACC-002",
+      "topic": "account",
+      "title": "Adding a new user",
+      "text": "Only an Administrator can create a user account or change a role.",
+      "facts": {}
+    },
+    {
+      "id": "ACC-003",
+      "topic": "account",
+      "title": "Roles",
+      "text": "There are three roles. An Administrator manages users and can read the audit log. A Manager can change orders, inventory and products. A Viewer has read-only access.",
+      "facts": {}
+    },
+    {
+      "id": "ACC-004",
+      "topic": "account",
+      "title": "What a customer account can see",
+      "text": "A customer account sees only the orders of its own customer. It cannot see the orders of any other customer.",
+      "facts": {}
+    },
+    {
+      "id": "ACC-005",
+      "topic": "account",
+      "title": "Session length",
+      "text": "A sign-in session lasts 8 hours, and then you need to sign in again.",
+      "facts": {
+        "session_hours": "8"
+      }
+    },
+    {
+      "id": "ACC-006",
+      "topic": "account",
+      "title": "Deactivated accounts",
+      "text": "A deactivated account cannot sign in, and its active sessions end immediately. An Administrator can reactivate it.",
+      "facts": {}
+    },
+    {
+      "id": "SUP-001",
+      "topic": "support",
+      "title": "Contacting support",
+      "text": "Email support@testforge.example for help. Support replies between 9 am and 5 pm Eastern time, Monday to Friday.",
+      "facts": {}
+    }
+  ]
+}

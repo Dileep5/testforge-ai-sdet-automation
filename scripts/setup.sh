@@ -9,7 +9,8 @@ if [[ ! -x apps/api/.venv/bin/python ]]; then
   python3 -m venv apps/api/.venv
 fi
 apps/api/.venv/bin/pip install --quiet --upgrade pip
-apps/api/.venv/bin/pip install --quiet -r apps/api/requirements.lock
+apps/api/.venv/bin/pip install --quiet -r apps/api/requirements.lock -r ai/requirements.lock
+apps/api/.venv/bin/pip install --quiet --no-deps -e ai
 
 bash scripts/db-local.sh start
 npm run --silent db:reset

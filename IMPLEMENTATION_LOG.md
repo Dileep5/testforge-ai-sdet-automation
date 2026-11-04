@@ -255,3 +255,49 @@ Exact counts are in [TEST_RESULTS.md](TEST_RESULTS.md). Backend 181; Chromium 58
 - Manual accessibility review, including a screen reader.
 - Firefox on Linux, CI and Docker in Phase 6.
 - Phases 5 to 7.
+
+## Phase 5: AI automation and LLM quality engineering (2026-11-04)
+
+Phase 4 was committed locally as `c1e1ce5`. Phase 5 is uncommitted.
+
+### Built
+
+- **`ai/testforge_ai`:** one Python package with an optional OpenAI provider that needs an explicit opt-in.
+- **Test generation:** structured stories, an offline template generator, validation, traceability, duplicate and assumption detection, human review, and skeletons that cannot run.
+- **Support chatbot:** 31 approved articles, BM25, citations, refusals, guards, a scoped order lookup, `POST /api/v1/support/chat` and a chat page.
+- **Evaluation:** 148 rows split evenly into development and held-out, rule-based metrics with denominators and intervals, and an opt-in model-graded check.
+- **Failure triage:** parsers for JUnit, Playwright JSON, diagnostics and traces, a rule-based classifier, an optional model opinion, and a corpus of 35 deliberately failing cases plus a real Firefox launch failure.
+
+### Application and framework changes
+
+- One new endpoint and page. The route adds no writes, and existing behaviour did not change. The navigation gains a Support link.
+- Failure diagnostics now list pending requests.
+- `npm run setup` also installs the AI package.
+
+### Verified
+
+Exact counts are in [TEST_RESULTS.md](TEST_RESULTS.md). Backend 188; AI 305; Chromium 64; WebKit 64; accessibility 82; keyboard WebKit 33; Firefox 0 of 97 (launch failure); API 154; contract 100; PostgreSQL 44; security 114; reliability 5; framework 6. All except Firefox, together: 666 at 4 and at 8 workers, retries off. Also verified from a clean copy. The development database was unchanged, by content hash.
+
+### Results that matter
+
+- Offline chatbot, held-out: 12/23 correct, 8/23 falsely refused, 41/43 refusal recall, 0/8 paraphrases. It scored 23/23 correct on development, so it overfits.
+- Triage: 33/36 on held-out, on failures its author deliberately caused.
+- Nothing was tuned after the held-out results were seen. One later pattern change left the held-out output hash unchanged.
+
+### Failures and how each was resolved
+
+Listed in [TEST_RESULTS.md](TEST_RESULTS.md#bugs-found-in-phase-5). No defect was found in the existing application.
+
+### Operator notes
+
+- An `OPENAI_API_KEY` is set in the development shell. **It was not used,** and live evaluation was not run, because that needs your opt-in and costs money. The regression run removed it from its environment.
+- Real traces contain session cookies and login passwords for the synthetic accounts. They stay under ignored folders. Committed triage fixtures are redacted records, checked for these values.
+- Playwright clears `test-results/` on each run, so the Phase 4 WebKit trace, screenshot and video no longer exist.
+- k6 and the 3-times accessibility repeat were not rerun. The admission code did not change, but the chat route has not been load tested.
+
+### Remains
+
+- A live model evaluation, when you choose to run one, followed by new held-out questions for any further tuning.
+- Firefox on Linux, CI and Docker in Phase 6.
+- Phases 6 and 7.
+

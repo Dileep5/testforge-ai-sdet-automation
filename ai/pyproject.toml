@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "testforge-ai-tools"
+version = "0.1.0"
+description = "AI test generation, FAQ chatbot, LLM evaluation and failure triage for TestForge"
+requires-python = ">=3.12"
+
+[project.scripts]
+testforge-ai = "testforge_ai.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["testforge_ai*"]
+
+[tool.setuptools.package-data]
+testforge_ai = ["data/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "C4", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106", "S107", "S603", "S607", "E501"]

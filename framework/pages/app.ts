@@ -8,6 +8,7 @@ import { NewOrderPage } from "./new-order-page";
 import { OrderDetailsPage } from "./order-details-page";
 import { OrdersPage } from "./orders-page";
 import { ProductDetailsPage, ProductsPage } from "./products-page";
+import { SupportPage } from "./support-page";
 
 /** Every page object for one browser page, so tests never construct them by hand. */
 export class App {
@@ -22,6 +23,7 @@ export class App {
   readonly inventory: InventoryPage;
   readonly users: UsersPage;
   readonly audit: AuditLogPage;
+  readonly support: SupportPage;
 
   constructor(readonly page: Page) {
     this.nav = new NavigationComponent(page);
@@ -35,5 +37,6 @@ export class App {
     this.inventory = new InventoryPage(page);
     this.users = new UsersPage(page);
     this.audit = new AuditLogPage(page);
+    this.support = new SupportPage(page);
   }
 }

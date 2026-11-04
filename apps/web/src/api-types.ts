@@ -394,6 +394,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/support/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Chat
+         * @description Answer from approved support articles, and from orders the signed-in user may see.
+         */
+        post: operations["chat_api_v1_support_chat_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users": {
         parameters: {
             query?: never;
@@ -493,6 +513,61 @@ export interface components {
              */
             id: string;
         };
+        /** ChatResponse */
+        ChatResponse: {
+            /**
+             * Answer
+             * @description Generated text. Set only when status=answered.
+             */
+            answer?: string | null;
+            /**
+             * Citations
+             * @default []
+             */
+            citations: components["schemas"]["Citation"][];
+            /**
+             * Evidence
+             * @description Retrieved text, separate from the answer.
+             * @default []
+             */
+            evidence: components["schemas"]["Evidence"][];
+            /**
+             * Guard Failures
+             * @default []
+             */
+            guard_failures: string[];
+            /** Kb Version */
+            kb_version: string;
+            /**
+             * Latency Ms
+             * @default 0
+             */
+            latency_ms: number;
+            /**
+             * Message
+             * @description Fixed text explaining a refusal or a question.
+             */
+            message?: string | null;
+            /** Mode */
+            mode: string;
+            /** Model */
+            model?: string | null;
+            /** Refusal Reason */
+            refusal_reason?: ("no_evidence" | "conflicting_evidence" | "prompt_injection" | "data_request" | "order_not_available" | "output_rejected" | "provider_error" | "tool_error" | "invalid_input") | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "answered" | "refused" | "needs_clarification";
+            usage?: components["schemas"]["TokenUsage"] | null;
+        };
+        /** Citation */
+        Citation: {
+            /** Quote */
+            quote: string;
+            /** Source Id */
+            source_id: string;
+        };
         /** CustomerCreate */
         CustomerCreate: {
             /** Code */
@@ -567,6 +642,26 @@ export interface components {
         /** ErrorResponse */
         ErrorResponse: {
             error: components["schemas"]["ErrorBody"];
+        };
+        /**
+         * Evidence
+         * @description Text a person approved, or a value read by a backend tool. Never written by the model.
+         */
+        Evidence: {
+            /**
+             * Kind
+             * @default faq
+             * @enum {string}
+             */
+            kind: "faq" | "live_order";
+            /** Score */
+            score: number;
+            /** Source Id */
+            source_id: string;
+            /** Text */
+            text: string;
+            /** Title */
+            title: string;
         };
         /** HealthOut */
         HealthOut: {
@@ -1052,6 +1147,18 @@ export interface components {
              * Format: date-time
              */
             session_expires_at: string;
+        };
+        /** SupportChatRequest */
+        SupportChatRequest: {
+            /** Question */
+            question: string;
+        };
+        /** TokenUsage */
+        TokenUsage: {
+            /** Input Tokens */
+            input_tokens: number;
+            /** Output Tokens */
+            output_tokens: number;
         };
         /** UserCreate */
         UserCreate: {
@@ -3472,6 +3579,93 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RoleOut"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    chat_api_v1_support_chat_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupportChatRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatResponse"];
                 };
             };
             /** @description Bad Request */
