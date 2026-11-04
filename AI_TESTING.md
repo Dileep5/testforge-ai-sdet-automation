@@ -206,7 +206,7 @@ Run with no API key in the environment. Playwright retries were off.
 
 | Suite | Command | Passed | Failed | Skipped |
 | --- | --- | --- | --- | --- |
-| AI package, total, including Phase 6 sanitizer and CI policy tests | `npm run test:ai` | **350** | 0 | 0 |
+| AI package, total, including sanitizer, CI policy and install script tests | `npm run test:ai` | **360** | 0 | 0 |
 | Adversarial filters, hostile model, limits, redaction | `test_adversarial.py` | 74 | 0 | 0 |
 | Chatbot, guards, order tool | `test_chatbot.py` | 54 | 0 | 0 |
 | Test generation | `test_generation.py` | 42 | 0 | 0 |
@@ -221,7 +221,7 @@ Run with no API key in the environment. Playwright retries were off.
 | API tests of the route | `tests/api/support.spec.ts` | 7 | 0 | 0 |
 | Security tests of the route | `tests/security/ai-support.spec.ts` | 7 | 0 | 0 |
 
-These counts include parametrised cases, which overstate distinct scenarios. The per-file rows are from Phase 5, when the total was 305.
+These counts include parametrised cases, which overstate distinct scenarios. The per-file rows below the total are from when it was 305. The latest CI run, before the install script tests, passed 353.
 
 ## Limitations
 

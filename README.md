@@ -1,47 +1,119 @@
 # TestForge AI
 
-An enterprise SDET and test automation portfolio project, built around a real application under test.
+A test automation portfolio project: a real commerce application, and the tests, tools and CI that check it across browsers, APIs, the database, security, accessibility, performance and AI features.
 
-> **Status: Phases 1 to 6 of 7 built, and CI is [green once](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41902669074).** All 14 jobs succeeded at commit `d3da95b`, on Linux: Chromium, Firefox and WebKit, backend 197 (97% coverage), AI 353, Docker 666 of 666, and 22 of 22 performance gates, with retries off. One green run does not show stability. **One WebKit failure is unresolved, Firefox cannot launch on the development Mac, and no live LLM has been called.** See [TEST_RESULTS.md](TEST_RESULTS.md#first-green-github-actions-run), [CI_CD.md](CI_CD.md), [DOCKER.md](DOCKER.md) and [AI_EVALUATION.md](AI_EVALUATION.md).
+**In the latest verified run, all 14 CI jobs passed on Linux, with retries off.** That is one snapshot and not a stability guarantee, and [known limitations](#known-limitations) are listed below. All data is synthetic, and the application is not meant for production.
 
-## The application
+## What problem this addresses
 
-A synthetic B2B commerce and order management system. All companies, people and products are
-fictional, and payments are simulated: no card data is accepted and no real money moves.
+Test suites often look healthy while proving little: they mock the system they claim to test, pass on a retry, skip quietly, or report numbers nobody can trace. This project is an attempt to do the opposite:
+
+- Tests run against a real API and database, not mocks.
+- Retries are off, and a CI job fails if a test is skipped or goes missing.
+- Known bugs were deliberately put back to check that tests catch them.
+- Reported results link to the run that produced them, and failures are recorded alongside successes.
+
+## Verified evidence
+
+From [CI run 41910311071](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41910311071) and [WebKit soak run 41913178899](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41913178899), on Ubuntu 24.04 runners with 2 cores, at commit `3c1a6fd`, on 2026-11-04. Each count is passed, with 0 failed, 0 skipped and 0 flaky.
+
+| Suite | Passed |
+| --- | --- |
+| Chromium / Firefox / WebKit | 65 / 65 / 65 |
+| Framework self-checks | 6 |
+| Backend, pytest with 97% line coverage | 197 |
+| AI tools | 353 |
+| API | 154 |
+| OpenAPI contract | 100 |
+| PostgreSQL | 44 |
+| Security regression | 114 |
+| Reliability | 5 |
+| Accessibility (axe, semantics, keyboard) in Chromium | 82 |
+| Keyboard in Firefox / WebKit | 33 / 33 |
+| All except contract, in Docker | 666 |
+| k6 performance gates | 22 of 22 |
+| WebKit, each test 5 times, at 2 and at 4 workers | 650 |
+
+Counts include parametrised cases, so they overstate distinct scenarios. Full results, including the failed runs before these, are in [TEST_RESULTS.md](TEST_RESULTS.md).
+
+**Testing found real problems.** Examples: a payment button that did nothing on plain HTTP away from localhost, found only by running in Docker; a deadlock between database connections and worker threads under load; and 10 accessibility defects. All are fixed and recorded, with how each was found.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  subgraph Tests
+    PW[Playwright: browsers, API, contract, SQL, security, a11y]
+    PY[pytest: backend, AI tools]
+    K6[k6: load and overload]
+  end
+  subgraph Application
+    WEB[React web app] --> API[FastAPI API]
+    API --> DB[(PostgreSQL)]
+    API --> BOT[Support chatbot library]
+  end
+  subgraph AI[AI tools, offline by default]
+    GEN[Test case generator and review]
+    EVAL[Chatbot evaluation]
+    TRI[Failure triage]
+  end
+  PW --> WEB
+  PW --> API
+  PW --> DB
+  PY --> API
+  K6 --> API
+  EVAL --> BOT
+  PW -. failure artifacts .-> TRI
+```
+
+**Stack:** React 19, TypeScript, Vite · FastAPI, Pydantic v2, SQLAlchemy 2, Alembic · PostgreSQL 17 · Playwright, pytest, k6, axe-core · Docker Compose, GitHub Actions · ESLint, Ruff, hadolint, actionlint, gitleaks, pip-audit.
+
+**The application under test** is a fictional B2B order system: roles enforced in the backend, customer-scoped buyers, products, per-warehouse inventory with version checks, multi-line orders with row locks, simulated payments with idempotency keys, an audit log and a support chat page. No real payment or personal data is involved.
+
+Design details are in [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Test automation capabilities
 
 | Area | What it does |
 | --- | --- |
-| Auth | Server-side sessions in an HttpOnly, SameSite=Lax cookie. Only a hash of the token is stored. |
-| Roles | Admin, Manager and Viewer, enforced in the backend. Customer-scoped buyers see only their own orders; other customers' orders return 404. |
-| Products | Search, filter, sort, paginate, create, edit, soft delete. |
-| Inventory | Stock per warehouse, with version checks so a stale edit cannot overwrite a newer one. |
-| Orders | Multi-line orders in one transaction, row locks that prevent overselling, a status state machine, filtered grid, CSV export. |
-| Payments | Deterministic simulated approve, decline and timeout, idempotency keys, settlement. |
-| Audit | Business actions are recorded in the same transaction as the change they describe. |
-| Support | A chat page that answers from approved articles with citations, and from orders the user may see. Offline by default. |
+| **Browser** | Page objects and isolated fixtures in strict TypeScript, with data created per test through the real API |
+| **API** | Valid and invalid requests for each endpoint, typed from the OpenAPI spec |
+| **Contract** | Every response is validated against the generated spec, with breaking-change detection |
+| **Database** | Read-only SQL assertions as a SELECT-only role, covering totals, rollback, integrity and audit |
+| **Security regression** | Authorization for each operation and role, IDOR, sessions, injection and idempotency abuse, against the local app only |
+| **Accessibility** | axe across 41 screen states, plus keyboard, focus and semantics tests |
+| **Performance** | 7 k6 scenarios with pass or fail gates, including overload and recovery |
+| **Failure evidence** | Each run keeps its own traces, screenshots, video and diagnostics. A sanitizer removes credentials before anything can be published |
+| **CI** | Separate jobs, pinned Actions and images, read-only permissions, secret and dependency scans, and a gate that treats skipped jobs as failures |
 
-## Stack
+Coverage by layer is in [TEST_STRATEGY.md](TEST_STRATEGY.md), with [ACCESSIBILITY.md](ACCESSIBILITY.md), [PERFORMANCE.md](PERFORMANCE.md), [CI_CD.md](CI_CD.md) and [DOCKER.md](DOCKER.md) for each area.
 
-React 19, TypeScript and Vite · FastAPI, Pydantic v2, SQLAlchemy 2 and Alembic · PostgreSQL 17 ·
-pytest · Playwright with strict TypeScript · ESLint and Ruff.
+## AI-assisted testing and evaluation
 
-## Getting started
+**Everything verified here runs offline, and no real language model has been called.** The offline tools are deterministic, so they test the surrounding workflow and safeguards, and they do not show how well an LLM would perform. An OpenAI provider exists, but it needs an explicit opt-in, and has only run against a local fake server.
 
-Prerequisites: Node 22 or newer, and Python 3.12 or newer. PostgreSQL does not need to be installed:
-the `embedded-postgres` dev dependency provides server binaries, and the data lives in `.local/`.
-To use your own PostgreSQL binaries instead, set `PG_BIN` to their directory.
+| Tool | Offline behaviour | Tested safeguards |
+| --- | --- | --- |
+| **Test case generation** | Templates, not AI, that restate acceptance criteria as candidate tests | Rejects invalid output and fabricated requirements. Requires human approval, and exports skeletons that cannot run |
+| **Support chatbot** | Keyword retrieval that quotes approved, synthetic articles | Checks citations against sources, refuses without evidence, and enforces order access in the backend |
+| **Evaluation** | 148 questions, split into development and held-out sets | Rule-based metrics with denominators and intervals. Tuning cannot read the held-out set |
+| **Failure triage** | Rules over real Playwright artifacts | Output is advice only, with evidence and a review flag. It cannot change tests |
+
+**The results are modest, and are reported as they are.** The offline chatbot got 12 of 23 held-out answers right, and 0 of 8 paraphrases, having scored 23 of 23 on the set it was tuned on. It refused correctly on 41 of 43 held-out questions that needed refusing. Triage classified 33 of 36 held-out failures correctly, but one author wrote those failures and the rules, so that is not real-world accuracy. See [AI_TESTING.md](AI_TESTING.md) and [AI_EVALUATION.md](AI_EVALUATION.md).
+
+## Running it
+
+**You need:** Node 22 or newer (CI uses 24.3.0), and Python 3.12 or newer (CI uses 3.13.5), on macOS or Linux. PostgreSQL is provided locally by a dev dependency. The local setup has been run on macOS arm64. Linux has run through the CI scripts and Docker, and Windows has not been tried.
 
 ```bash
+git clone https://github.com/Dileep5/testforge-ai-sdet-automation.git
+cd testforge-ai-sdet-automation
 npm run setup         # install dependencies, start PostgreSQL, migrate, seed
 npm run e2e:install   # download the Playwright browsers
 npm run dev           # API on :8000, web app on http://localhost:5173
 ```
 
-`Ctrl+C` stops the API and web app. PostgreSQL keeps running until `npm run db:stop`.
-
-### Seed accounts
-
-These fictional accounts are for local development only. Seeding is refused when `APP_ENV=production`.
+**Seed accounts,** fictional and for local use only. Seeding is refused when `APP_ENV=production`.
 
 | Role | Email | Password |
 | --- | --- | --- |
@@ -51,107 +123,47 @@ These fictional accounts are for local development only. Seeding is refused when
 | Viewer, scoped to Maple Ridge | `buyer@mapleridge.example` | `Buyer!Forge2026` |
 | Viewer, scoped to Granite Harbour | `buyer@granite.example` | `Buyer!Forge2026` |
 
-## Running the tests
+**Running tests.** Backend tests need PostgreSQL (`npm run db:start`). Playwright starts what it needs, on its own database and ports.
 
-Backend tests need PostgreSQL running (`npm run db:start`). Playwright starts everything it needs,
-against its own database and ports, so it does not touch development data.
-
-| Command | Purpose |
+| Command | Runs |
 | --- | --- |
-| `npm run test:backend` | Backend tests |
-| `npm run test:backend:coverage` | Backend tests with a coverage report |
-| `npm run test:e2e` | All browsers (not the service suites) |
+| `npm run test:backend`, `test:backend:coverage` | Backend tests |
+| `npm run test:ai`, `ai:eval`, `ai:eval:heldout` | AI tests and chatbot evaluation, with no API key |
 | `npm run test:e2e:chromium`, `test:e2e:webkit`, `test:e2e:firefox` | One browser |
-| `npm run test:e2e:smoke` | Fast core journeys in Chromium |
-| `npm run test:e2e:critical` | Critical paths in Chromium and WebKit |
-| `npm run test:e2e:regression` | Everything tagged for regression |
-| `npm run test:api` | API automation |
-| `npm run test:contract` | OpenAPI contract and breaking-change checks |
-| `npm run test:db` | PostgreSQL validation with read-only SQL |
-| `npm run test:security` | Security regression, against the local app only |
-| `npm run test:reliability` | Bounded concurrent bursts |
-| `npm run test:service` | All five of the above |
-| `npm run test:a11y` | axe, semantics, focus and keyboard tests in Chromium |
-| `npm run test:a11y:keyboard` | Keyboard tests in WebKit |
-| `npm run perf:install`, then `npm run perf` | k6 scenarios on a dedicated database. See [PERFORMANCE.md](PERFORMANCE.md) |
-| `npm run test:ai`, `npm run lint:ai` | AI tests and lint, offline with no key. See [AI_TESTING.md](AI_TESTING.md) |
-| `npm run ai:eval`, `npm run ai:eval:heldout` | Chatbot evaluation. See [AI_EVALUATION.md](AI_EVALUATION.md) |
-| `npm run ai:triage:corpus` | Run deliberately failing tests, then classify them. Failures are expected |
-| `npm run docker:up`, `docker:smoke`, `docker:test` | Docker stacks. Verified on Linux in CI. See [DOCKER.md](DOCKER.md) |
-| `npm run ci:tools`, `ci:policy` | Install pinned scanners, and check the CI and Docker rules. See [CI_CD.md](CI_CD.md) |
-| `npm run typecheck` | Strict type check of the frontend and framework |
-| `npm run lint` / `npm run lint:backend` | ESLint / Ruff |
-| `npm run build` | Frontend production build |
+| `npm run test:e2e:smoke`, `test:e2e:critical` | Core journeys |
+| `npm run test:api`, `test:contract`, `test:db`, `test:security`, `test:reliability` | Service suites |
+| `npm run test:a11y`, `test:a11y:keyboard` | Accessibility and keyboard |
+| `npm run perf:install`, then `npm run perf` | k6, on a dedicated database |
+| `npm run docker:up`, `docker:smoke`, `docker:test` | Docker stacks, which need `docker/.env` for `docker:up`. See [DOCKER.md](DOCKER.md) |
+| `npm run typecheck`, `lint`, `lint:backend`, `lint:ai`, `build` | Static checks and build |
+| `npm run ci:tools`, then `ci:policy` | Scanners, and the CI and Docker rules |
 
-Useful options:
+**When a test fails,** its evidence stays in `reports/runs/<run id>/`, and a later run cannot overwrite it:
 
 ```bash
-E2E_WORKERS=8 npm run test:e2e:chromium                      # parallelism
-npx playwright test --project=chromium --repeat-each=3       # hunt for flakiness
-npx playwright test --grep "rapid typing" --headed           # watch one test
-```
-
-**On this machine, use `npm run test:e2e:chromium` and `test:e2e:webkit`.** Firefox currently fails to
-launch on this Mac, so `npm run test:e2e` reports 64 launch failures here. It passes on Linux in CI. See
-[TEST_RESULTS.md](TEST_RESULTS.md#firefox).
-
-### Investigating a failure
-
-Each run keeps its own folder, `reports/runs/<run id>/`, and failures there keep a trace, screenshots and video. A later run cannot overwrite them. These files hold session cookies and passwords for the synthetic accounts, so publish only the output of `npm run reports:sanitize`.
-
-```bash
-npm run e2e:report                                           # HTML report of the latest run
-npx playwright show-trace reports/runs/<run id>/test-results/<test-name>/trace.zip
-npm run reports:check -- --run <run id>                      # fail on failures, flaky or skipped
+npm run e2e:report                                              # HTML report of the latest run
+npx playwright show-trace reports/runs/<run id>/test-results/<test>/trace.zip
 npm run reports:sanitize -- --run-dir reports/runs/<run id> --out reports/sanitized/<run id>
-npm run reports:prune                                        # tidy old runs, never ones with failures
 ```
 
-Failed browser tests also attach `diagnostics`, with console errors, failed requests and execution metadata.
-
-The trace viewer shows each action with a before and after snapshot of the page, plus console output
-and network calls. A test with two signed-in users has one trace covering both sessions, plus a
-screenshot and video for each.
-
-`OPENAPI_BASE_REF=<ref> npm run test:contract` compares the spec with another revision. A deliberate breaking change
-must be recorded, with its reason, in `apps/api/openapi-accepted-breaking-changes.json`.
-
-To reproduce a failure, run that one test with `--grep`. Tests create their own data, so they do not
-depend on what ran before them. If a failure only appears in parallel, add `--repeat-each=3`.
-
-## Other commands
-
-| Command | Purpose |
-| --- | --- |
-| `npm run db:start`, `db:stop`, `db:status` | Control the local PostgreSQL |
-| `npm run db:reset` | Migrate, then replace all **dev** data with the deterministic seed |
-| `npm run db:destroy` | Delete the local PostgreSQL data directory |
-| `npm run openapi:export` | Regenerate `apps/api/openapi.json` and the frontend types |
-
-The API serves interactive docs at `http://localhost:8000/api/v1/docs`. The committed spec is
-[apps/api/openapi.json](apps/api/openapi.json), and a test fails if it drifts from the code.
-
-## Layout
-
-```
-apps/api      FastAPI app, Alembic migrations, seed data, pytest suite
-apps/web      React app
-framework     Playwright page objects, components, fixtures, factories, helpers and contract checks
-tests/e2e     Playwright browser tests
-tests/api, contract, database, security, reliability    Playwright tests with no browser
-tests/accessibility    axe, semantics, focus and keyboard tests
-performance   k6 scenarios
-ai            AI test generation, support chatbot, LLM evaluation and failure triage
-docker        Dockerfiles, nginx and migration scripts. compose.yaml and compose.test.yaml are at the root
-.github       GitHub Actions workflows
-scripts       Setup, local PostgreSQL, dev runner, E2E API runner, OpenAPI export
-```
-
-The fixture design, page objects, isolation and browser configuration are explained in
-[ARCHITECTURE.md](ARCHITECTURE.md#playwright-framework). What each test layer covers is in
-[TEST_STRATEGY.md](TEST_STRATEGY.md), and results are in [TEST_RESULTS.md](TEST_RESULTS.md),
-[ACCESSIBILITY.md](ACCESSIBILITY.md), [PERFORMANCE.md](PERFORMANCE.md), [AI_TESTING.md](AI_TESTING.md), [AI_EVALUATION.md](AI_EVALUATION.md), [CI_CD.md](CI_CD.md) and [DOCKER.md](DOCKER.md).
+Raw reports contain session cookies and synthetic passwords. They are ignored by git, and only sanitized copies should be shared. To check for flakiness, add `--repeat-each=3` to a Playwright command. Retries are off unless you set `E2E_RETRIES`.
 
 ## Known limitations
 
-See [TEST_RESULTS.md](TEST_RESULTS.md#known-limitations).
+- **No real LLM has been called.** Prompts, the schema against the real API, and model behaviour are all unverified.
+- **The offline chatbot handles rewording poorly,** and is a test vehicle rather than a usable assistant.
+- **Accessibility:** automated checks and keyboard tests only, with no screen reader or manual audit. This does not show WCAG conformance.
+- **Security:** regression tests, not a penetration test. The application is **not production-ready**: there is no TLS, login rate limiting or per-client limit, and the seed passwords are published here.
+- **Flakiness cannot be ruled out.** A rare WebKit failure on macOS, where typed text was lost, remains unexplained. It occurred once, and has not recurred in over 1,800 later WebKit runs, including 650 on Linux.
+- **Firefox cannot launch on the development Mac,** so it is verified on Linux only.
+- **Performance figures describe one laptop or a shared 2-core runner.** They are not capacity figures or service levels, and the gates have thin margins on slow runners.
+- **The sanitizer's latest fix has been verified locally only,** because no GitHub run has failed since. Screenshots and video cannot be text-scanned.
+- **Limited CI history:** two fully green runs and one soak, on one day.
+
+The full list is in [TEST_RESULTS.md](TEST_RESULTS.md#known-limitations).
+
+## Project history and licence
+
+Built in stages, recorded in [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md). Development was AI-assisted, using Claude Code, and commits show this with a `Co-Authored-By` line.
+
+Released under the [MIT License](LICENSE). Third-party packages keep their own licences. No images are published from this repository. Notable dependencies and tools are listed in [TEST_RESULTS.md](TEST_RESULTS.md#third-party-licences).

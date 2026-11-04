@@ -1,6 +1,6 @@
 # Docker
 
-**Status: verified on Linux in one green run, and not on this Mac.** Docker is not installed on the development machine, so this comes only from [run 41902669074](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41902669074), on ubuntu-24.04.
+**Status: verified on Linux in two green CI runs, most recently [run 41910311071](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41910311071), on ubuntu-24.04.** It has not been run on the development Mac, where Docker is not installed.
 
 | Check | Result |
 | --- | --- |
@@ -64,7 +64,7 @@ The `contract` project is **not** in the Docker test run, because its breaking-c
 
 ## Limitations
 
-- **One green run,** as stated above, on Linux only.
+- **Two green runs,** as stated above, on Linux only.
 - **`contract` does not run in Docker,** because it needs git history. It runs natively in CI.
 - **This is not a production deployment.** There is no TLS, `APP_ENV` is `development`, and the seed accounts have published passwords. `SEED_MODE` must be `none` anywhere real.
 - **Digest pins go stale.** Dependabot would propose updates, but it is temporarily off, and has never run. See [CI_CD.md](CI_CD.md#security).

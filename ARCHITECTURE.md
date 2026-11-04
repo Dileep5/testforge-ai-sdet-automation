@@ -138,7 +138,7 @@ impractical.
 | `unchecked` | No contract check, for paths the spec deliberately omits |
 | `observeContract` | Validates every response above against the spec, and fails the test on any violation |
 
-Global teardown writes the operations and statuses reached to `reports/contract/coverage.md`.
+Global teardown writes the operations and statuses reached to `reports/runs/<run id>/contract/coverage.md`.
 
 ### Failure diagnostics
 
@@ -162,7 +162,7 @@ test at a time, so bursts do not add up past the operating system's connection q
 | Setting | Value | Override |
 | --- | --- | --- |
 | Workers | 50% of CPU cores (2 in CI) | `E2E_WORKERS=4` or `E2E_WORKERS=25%` |
-| Retries | 0 locally, 1 in CI | `E2E_RETRIES=0` |
+| Retries | 0 everywhere | `E2E_RETRIES=1`, to diagnose a flaky test |
 | Traces, screenshots, video | Kept for failures only | |
 
 A retried test that passes is reported as flaky, not passed, so retries cannot hide a problem.
@@ -208,7 +208,7 @@ flowchart LR
 
 ## Delivery
 
-Docker and CI have run twice, on GitHub. See [DOCKER.md](DOCKER.md) and [CI_CD.md](CI_CD.md).
+Docker and CI have run on GitHub, with two fully green runs. See [DOCKER.md](DOCKER.md) and [CI_CD.md](CI_CD.md).
 
 - **External PostgreSQL mode:** `EXTERNAL_POSTGRES=1` makes `db-local.sh` only create missing databases on a server someone else runs, such as a CI service container on port 55432, so the default URLs still apply.
 - **External servers mode:** `E2E_EXTERNAL_SERVERS=1` stops Playwright starting the API and web app, and `E2E_API_URL` and `E2E_BASE_URL` say where they are. In Docker, `E2E_SKIP_SEED=1` leaves seeding to a one-shot service.

@@ -21,7 +21,9 @@ Each scan's full result is attached to the HTML report as `axe-<screen>`.
 | Semantics and focus visibility (`semantics.spec.ts`) | Chromium 156 | 19 | 0 | 0 | 0 |
 | Keyboard (`keyboard.spec.ts`) | Chromium 156 | 33 | 0 | 0 | 0 |
 | Keyboard (`keyboard.spec.ts`) | WebKit 27.2 | 33 | 0 | 0 | 0 |
-| Keyboard (`keyboard.spec.ts`) | Firefox 157 | **0: unverified** | 33 at launch, no test body ran | 0 | 0 |
+| Keyboard (`keyboard.spec.ts`) | Firefox 157, macOS | **0** | 33 at launch, no test body ran | 0 | 0 |
+| Keyboard (`keyboard.spec.ts`) | Firefox 157, **Linux CI** | **33** | 0 | 0 | 0 |
+| All accessibility and keyboard, **Linux CI** | Chromium, Firefox, WebKit | **148** | 0 | 0 | 0 |
 
 Retries were off. In Phase 4, before the support page was added, the Chromium and WebKit suites run 3 times over gave 336 passed and 0 failed. That repeat was not run again in Phase 5.
 
@@ -117,7 +119,7 @@ than reaching them with Tab. New tests were added. It is a hand-picked list, not
 
 - **No screen reader was used.** VoiceOver, NVDA and JAWS behaviour is untested, including whether announcements are
   useful.
-- **Firefox is unverified,** because it cannot launch on this machine. Its keyboard project should run in Linux CI in Phase 6.
+- **Firefox is verified on Linux only,** in CI, because it cannot launch on the development Mac.
 - **WebKit is Playwright's build,** not Safari.
 - **Focus indicators are checked for presence,** not for contrast or size against WCAG 2.2.
 - **Reflow is checked on 4 pages at 320px.** Text spacing, 200% zoom and high-contrast modes are untested. Wide tables scroll inside

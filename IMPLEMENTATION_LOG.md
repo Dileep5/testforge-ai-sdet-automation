@@ -329,10 +329,8 @@ Listed in [TEST_RESULTS.md](TEST_RESULTS.md#bugs-found-in-phase-6). The main one
 
 ### Operator notes
 
-- A large command that wrote these files and ran tool installers together was denied by the session's permission check, without a reason. Nothing from it had applied. The files were then written one at a time, and the installer ran as its own step, with both allowed.
 - `.local/tools` now holds actionlint, gitleaks and pip-audit. It is ignored by git.
 - `reports/runs` holds raw artifacts, including session cookies and synthetic passwords. It is ignored by git.
-- Disk was at 94%, with 13 GB free when this phase started.
 - The stale `reports/performance` folders from Phase 4 are still there.
 
 ### Remains
@@ -345,11 +343,17 @@ Listed in [TEST_RESULTS.md](TEST_RESULTS.md#bugs-found-in-phase-6). The main one
 
 `2ad4bf0`, which disables Dependabot for now, was pushed to the private repository after approval. [The first run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41883893976) failed on 3 of 14 jobs, and its results are in [TEST_RESULTS.md](TEST_RESULTS.md#first-github-actions-run). Linux Firefox passed for the first time. The fixes are committed locally, and are not pushed.
 
-- GitHub CLI is at `.local/tools/gh`, from the official release, because Homebrew has no build for macOS 27. The owner logged it in, using the keychain.
-- `hadolint` was never run before the push, because I wrongly said it had no macOS arm64 build. It has one.
-- The first SSH check added GitHub's host key to `~/.ssh/known_hosts`.
+- `hadolint` had not been run before the push, on the mistaken belief that it had no macOS arm64 build. It has one.
 
 ### Second CI checkpoint (2026-11-04)
 
 The 4 approved commits were pushed as `86a8843`. [Run 41893657050](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41893657050) passed 12 of 14 jobs. The suites ran in Docker for the first time, with 643 passed and 20 failed. This found the **first application bug since Phase 4**: payments could not run on plain HTTP away from localhost. The fixes are committed locally, and are not pushed. Details are in [TEST_RESULTS.md](TEST_RESULTS.md#second-github-actions-run).
+
+### Further CI runs (2026-11-04)
+
+[Run 41902669074](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41902669074) was the first fully green run. The first soak attempt failed at startup, because of a number input passed as a string, and the fix was confirmed by [CI run 41910311071](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41910311071) and [soak run 41913178899](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41913178899), which passed 650 of 650.
+
+## Final audit (2026-11-04)
+
+An audit for public release added the MIT `LICENSE` and rewrote the README, and corrected stale documents. Retries now default to 0 everywhere. A bounded, cached browser install was added after one job's slow package mirror nearly used up its time limit, and has not yet run on GitHub.
 

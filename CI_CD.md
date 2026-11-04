@@ -1,6 +1,6 @@
 # CI/CD
 
-**Status: green once.** [Run 41902669074](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41902669074), at commit `d3da95b`, is the first fully green run: all 14 jobs succeeded, including the final gate. It took 15m 10s, and about 51 job minutes. The two earlier runs failed, and those failures are explained in [TEST_RESULTS.md](TEST_RESULTS.md#first-green-github-actions-run). One green run does not show stability.
+**Status: two fully green runs so far.** [CI run 41910311071](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41910311071), at commit `3c1a6fd`, is the latest: all 14 jobs succeeded, including the final gate, in 16m 34s and about 56 job minutes. [WebKit soak run 41913178899](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41913178899) then passed 650 of 650. The earlier failed runs are explained in [TEST_RESULTS.md](TEST_RESULTS.md#first-green-github-actions-run). This history is short, and does not show long-term stability.
 
 ## Jobs
 
@@ -40,7 +40,7 @@ The browser and service jobs wait for `typescript` and `python`, because they ar
 **Other workflows, which run only when started by hand:**
 
 - `performance-stress.yml`: all k6 scenarios at full length.
-- `webkit-soak.yml`: repeats the WebKit suite at 2 and 4 workers, keeping sanitized evidence for 30 days. **It has not run any tests yet:** its first attempt failed at startup. See [TEST_RESULTS.md](TEST_RESULTS.md#webkit-soak-no-tests-ran).
+- `webkit-soak.yml`: repeats the WebKit suite at 2 and 4 workers, keeping sanitized evidence for 30 days. [Its one complete run passed 650 of 650](TEST_RESULTS.md#webkit-soak).
 
 There is deliberately **no workflow for live LLM evaluation.** It is run by hand, as described in [AI_EVALUATION.md](AI_EVALUATION.md#live-evaluation).
 
@@ -60,6 +60,23 @@ There is deliberately **no workflow for live LLM evaluation.** It is run by hand
 - **Versions:** Node from `.nvmrc`, Python from `.python-version`, `npm ci`, and lock files for Python.
 - **Databases:** each job has its own PostgreSQL service container, pinned by digest, with a health check and the same collation as the local cluster. It maps to port 55432, so the default URLs apply. `scripts/create_databases.py` creates the databases.
 - **Browsers:** `npx playwright install --with-deps <browser>`, which is the supported way to get a browser and its Linux system packages.
+
+## Browser install reliability
+
+**What happened:** in the soak, one job spent 33.8 minutes in setup, because its Ubuntu mirror delivered 114 MB in 32 minutes, at 59.5 kB/s. The job finished at 44.8 of its 45-minute limit. Its sibling took 1.6 minutes. Tests were not involved. The browser cache already worked, because the slow part was the Linux packages from `--with-deps`.
+
+| Option | Assessment |
+| --- | --- |
+| Run native jobs in the pinned Playwright image | Most reproducible, with no apt at all, and already proven by the Docker job. But it changes each native job: root containers, Firefox's `HOME` rules, Python setup in a container and different database addresses. None of that can be tested locally, and native jobs usefully differ from the Docker job |
+| Avoid repeated apt, by caching downloaded packages | **Chosen.** A small change, and the test environment stays the same |
+| Bounded timeout with diagnostics | **Chosen, with caching.** It cannot make a slow mirror faster, but it stops one using up the tests' time, and names the cause |
+| Raising the job's time limit | Rejected. It only spends more minutes on a stalled download |
+
+**What changed:** `scripts/install-browsers.sh` keeps downloaded `.deb` files in a cached folder, retries failed downloads, stops after 15 minutes (`BROWSER_INSTALL_LIMIT_MINUTES`) with a clear error, and logs how many packages were cached and how long it took. The save happens straight after install, so a later test failure does not lose the download. No test, count, retry or gate changed.
+
+**Status: not yet verified on GitHub.** Its logic is tested locally against stand-ins for `sudo`, `timeout` and Playwright, and the workflow passes `actionlint`, but apt has not run through it on Linux. On the next run, look for `Package cache: N packages` in each browser job's log. The first run of each browser list fills the cache, and later runs should show packages before installing.
+
+**Remaining risk:** a slow mirror on a cache miss now fails at 15 minutes, as a clear red. That still needs someone to run it again.
 
 ## Artifact retention
 
@@ -117,14 +134,16 @@ Results are in [TEST_RESULTS.md](TEST_RESULTS.md#dependency-and-secret-scans).
 
 ## Setting it up
 
-The repository is private, at `Dileep5/testforge-ai-sdet-automation`, and pushes need the owner's approval. `webkit-soak.yml` and `performance-stress.yml` have not been started. No secrets need configuring. To make `gate` a required check, add a branch protection rule. Artifacts on a public repository can be downloaded by anyone logged in to GitHub.
+No secrets need configuring. `performance-stress.yml` has never been started. For a public repository, set fork pull requests to need approval before workflows run. To make `gate` a required check, add a branch protection rule. Artifacts on a public repository can be downloaded by anyone logged in to GitHub.
 
 ## Limitations
 
-- **Three runs so far, and one green,** so rare or timing-related Linux failures may not have appeared.
+- **A short history:** four complete CI runs, two of them green, so rare or timing-related Linux failures may not have appeared.
+- **Browser install mitigation** has not run on GitHub.
 - **The sanitized upload has run once on GitHub, before its latest fix.** That fix is verified locally only, because it runs only on failure.
 - **Images and video in artifacts cannot be text-scanned,** and those from the second run have not been reviewed one by one.
-- **Dependabot is off,** so pinned versions will go stale until it is turned back on.
+- **Dependabot is off,** so pinned versions will go stale until it is turned back on, by renaming `.github/dependabot.yml.disabled`.
+- **On a public repository,** old run logs and unexpired artifacts become visible too, and fork pull requests can start workflows. See the settings in [Setting it up](#setting-it-up).
 - **Performance gates have thin margins on slow runners.** Refusal p95 reached 541 ms of 1,000 ms, so a slow runner could fail without a regression.
 - **The `min-tests` numbers need updating** when tests are added or removed, and this is deliberate.
 - **`pip-audit` uses `--no-deps`,** because the lock files are unhashed. It checks exactly what is listed in them.

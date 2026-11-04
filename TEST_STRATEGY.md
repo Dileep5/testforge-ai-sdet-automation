@@ -161,14 +161,14 @@ Which protections are deterministic and which are probabilistic is set out in [A
 
 ## Flakiness policy
 
-Tests use auto-waiting and no fixed sleeps. Retries are 0 locally and in the CI workflows, and a flaky or skipped test fails the count gate. A flaky test is treated as a defect in the test or the
+Tests use auto-waiting and no fixed sleeps. Retries are off everywhere by default, and a flaky or skipped test fails the count gate. A flaky test is treated as a defect in the test or the
 application, and its cause is fixed.
 
 Repeating suites finds what single runs miss: Phase 6's keep-alive defect appeared only when each WebKit test ran 5 times. Each run keeps its own evidence, so a rare failure can be studied. Raw artifacts hold credentials, so only a sanitized copy is ever published. See [CI_CD.md](CI_CD.md#artifact-retention).
 
 ## CI quality gates
 
-The CI design, and what keeps a suite from silently disappearing, are in [CI_CD.md](CI_CD.md). It has run twice, and its gate has not yet passed. See [the results](TEST_RESULTS.md#second-github-actions-run).
+The CI design, and what keeps a suite from silently disappearing, are in [CI_CD.md](CI_CD.md). Its latest runs are green. See [the evidence](TEST_RESULTS.md#latest-verified-evidence).
 
 ## Checking the tests themselves
 
@@ -183,5 +183,4 @@ tests using deliberately wrong input. This is a hand-picked set of risks, not fu
 | Screen reader and other manual accessibility testing | Not scheduled |
 | Long-running soak tests, and load on Linux | Not scheduled |
 | Live LLM evaluation | Opt-in, not run. See [AI_EVALUATION.md](AI_EVALUATION.md#live-evaluation) |
-| A green Docker run, and repeated Linux WebKit runs | **Not yet achieved or run** |
 | Penetration testing, TLS, production hardening | Out of scope for a local portfolio app |

@@ -2,10 +2,42 @@
 
 Only results from commands that were actually run are recorded here.
 
-**Last updated:** 2026-11-04, Phase 6 CI verification. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
-PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). **Results are from macOS unless marked Linux. [The first fully green CI run](#first-green-github-actions-run) is below. No live LLM has been called.**
+**Last updated:** 2026-11-04, final audit. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
+PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). **The [latest verified evidence](#latest-verified-evidence) comes first. Other results are from macOS unless marked Linux. No live LLM has been called.**
+
+## Latest verified evidence
+
+**Verified, from GitHub Actions on Ubuntu 24.04 runners with 2 cores, at commit `3c1a6fd1d9b2c989d6e5c89162101de11232130e`, with retries off.**
+
+[CI run 41910311071](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41910311071): **14 of 14 jobs succeeded**, including the final gate, in 16m 34s and about 56 job minutes.
+
+| Suite | Passed | Failed | Skipped | Flaky |
+| --- | --- | --- | --- | --- |
+| Backend, 97% line coverage | **197** | 0 | 0 | n/a |
+| AI | **353** | 0 | 0 | n/a |
+| Chromium | 65 | 0 | 0 | 0 |
+| Firefox | 65 | 0 | 0 | 0 |
+| WebKit | 65 | 0 | 0 | 0 |
+| Framework | 6 | 0 | 0 | 0 |
+| Accessibility 82, keyboard Firefox 33, keyboard WebKit 33 | 148 | 0 | 0 | 0 |
+| API 154, contract 100 | 254 | 0 | 0 | 0 |
+| PostgreSQL 44, security 114, reliability 5 | 163 | 0 | 0 | 0 |
+| **Docker, all of the above browsers and services except contract** | **666** | 0 | 0 | 0 |
+| **Performance gates** | **22 of 22** | 0 | | |
+
+[WebKit soak run 41913178899](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41913178899): **650 of 650 passed, with 0 failed, 0 skipped and 0 flaky.** Each test ran 5 times, for 325 tests at 2 workers and 325 at 4. It took 44m 56s and about 58 job minutes. The test that failed in the historical WebKit failure passed 10 of 10 times.
+
+**Limitations of this evidence:**
+
+- **Two fully green CI runs and one soak, on one day,** do not show long-term stability.
+- **The historical macOS WebKit input failure remains unexplained.** It did not recur, but the soak used a different WebKit build, on a different operating system, and a WebKit-only suite.
+- **The sanitizer's latest fix has been verified locally only.** It runs only when a test fails, and no GitHub run has failed since it was pushed.
+- **A slow Ubuntu package mirror nearly stopped the soak.** One job spent 33.8 minutes in setup, and finished at 44.8 of its 45-minute limit, through infrastructure rather than tests. See [CI_CD.md](CI_CD.md#browser-install-reliability). A mitigation is prepared, and **has not run on GitHub.**
+- **The first attempt at a soak ran no tests.** It failed at startup, with `Unexpected value '5'` at the two `repeat-each` inputs, because a manual input reached a `type: number` input as a string. Wrapping each in `fromJSON` fixed it, as the run above shows.
 
 ## Summary
+
+**The table below is from macOS.**
 
 Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass on a retry.
 
@@ -14,12 +46,12 @@ Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass o
 | Backend (pytest, real PostgreSQL) | `npm run test:backend` | **197** | 0 | 0 | n/a |
 | Playwright Chromium 156 | `npx playwright test --project=chromium` | **65** | 0 | 0 | 0 |
 | Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **65** | 0 | 0 | 0 |
-| Playwright Firefox 157, macOS | `npm run test:e2e:firefox` | **0** | 64 at launch, no test body ran | 0 | 0 |
+| Playwright Firefox 157, macOS, when last run | `npm run test:e2e:firefox` | **0** | 64 at launch, no test body ran | 0 | 0 |
 | Playwright Firefox 157, **Linux CI** | CI `firefox` job | **65** | 0 | 0 | 0 |
 | Framework self-checks | `npx playwright test --project=framework` | 6 | 0 | 0 | 0 |
 | Accessibility, Chromium | `npm run test:a11y` | **82** | 0 | 0 | 0 |
 | Keyboard, WebKit | `npm run test:a11y:keyboard` | **33** | 0 | 0 | 0 |
-| Keyboard, Firefox | `npx playwright test --project=keyboard-firefox` | **0: unverified** | 33 at launch, no test body ran | 0 | 0 |
+| Keyboard, Firefox, macOS | `npx playwright test --project=keyboard-firefox` | **0** | 33 at launch, no test body ran | 0 | 0 |
 | API automation | `npm run test:api` | **154** | 0 | 0 | 0 |
 | OpenAPI contract | `npm run test:contract` | **100** | 0 | 0 | 0 |
 | PostgreSQL validation | `npm run test:db` | **44** | 0 | 0 | 0 |
@@ -49,11 +81,11 @@ These counts include generated cases, which overstate distinct scenarios. Access
 | `npm audit --omit=dev` | No known vulnerabilities |
 | `npm audit` including dev tools | 9 moderate, all from 1 advisory. See [why this changed from 13](#why-the-npm-count-changed-from-13-to-9) |
 
-**Never run, so no results exist:** repeated Linux WebKit runs, live LLM evaluation.
+**Never run, so no results exist:** live LLM evaluation.
 
 ## First green GitHub Actions run
 
-[Run 41902669074](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41902669074), commit `d3da95be4716c2d35f8f5ccb4371e5f82e24daf8`, ubuntu-24.04 on 2 cores, retries off. **All 14 jobs succeeded, including the final gate.** It took 15m 10s, and 50.8 job minutes, or about 57 with each job rounded up.
+[Run 41902669074](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41902669074), commit `d3da95be4716c2d35f8f5ccb4371e5f82e24daf8`, ubuntu-24.04 on 2 cores, retries off. **All 14 jobs succeeded, including the final gate.** The [latest verified evidence](#latest-verified-evidence) is a second green run. It took 15m 10s, and 50.8 job minutes, or about 57 with each job rounded up.
 
 | Native Linux job | Passed | Failed | Skipped | Flaky |
 | --- | --- | --- | --- | --- |
@@ -164,19 +196,19 @@ No application defect was found. Normal-load Linux p95: health 30.5 ms, products
 
 **Artifacts:** `failure-docker-41893657050-1`, 18.2 MB, was the first real sanitized upload, with 20 error contexts, 19 screenshots, 38 videos and 1 trace, and no HTML report or raw `test-results`. A scan of its contents, inside the trace too, and of all job logs and other artifacts found 0 seed passwords, session cookies, keys, tokens, authorization headers or database passwords. It found **1 synthetic test password** (`E2E-Long-Password-1`) in the one kept trace, a test value that is already in this repository. The same fix covers it. Screenshots and videos were not reviewed one by one. Artifacts expire on 2026-11-18.
 
-## WebKit soak: no tests ran
+## WebKit soak
 
-[Run 41909199483](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41909199483), commit `d3da95b`, started by hand with 5 repeats, ended after 50 seconds with **0 jobs and 0 tests, and nothing was billed.** It says nothing about WebKit stability. **The historical input failure is neither confirmed nor ruled out on Linux.**
+[Run 41909199483](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41909199483), the first attempt, ended after 50 seconds with **0 jobs and 0 tests.** GitHub's annotations gave `Unexpected value '5'` at lines 24 and 36, column 20, which are the `repeat-each` inputs of the two jobs. A manual input reached a `type: number` input as a string. `actionlint` did not catch it, and normal CI never passes that input.
 
-GitHub reports only a likely workflow file issue through its API. The exact message is on the run's web page. The likely cause, **not confirmed**, is that the dispatch input reached the reusable workflow's `type: number` input as a string. `actionlint` did not catch it, and `ci.yml` never passes that input. A local fix wraps it in `fromJSON`, and can only be tested by running it on GitHub.
+[Run 41913178899](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41913178899), after the fix, passed **650 of 650**. Its count gate required 325 per job, and each job met that exactly. Nothing failed, so no artifacts were uploaded, and a text scan of its logs found 0 credentials.
 
 ## Status of what remains
 
 | Item | Status |
 | --- | --- |
-| Playwright suites in Docker | **Passed: 666 of 666** in the first green run |
-| Sanitizer fix on GitHub | **Not exercised**, because nothing failed. Verified locally |
-| Repeated Linux WebKit runs | **No tests have run.** The one authorized attempt, [run 41909199483](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41909199483), failed at startup with 0 jobs. See below |
+| Sanitizer fix on GitHub | **Not exercised**, because nothing has failed since. Verified locally |
+| Browser install mitigation | **Prepared, and has not run on GitHub** |
+| Live LLM evaluation | **Not run** |
 
 ## CI simulation on macOS
 
@@ -278,7 +310,7 @@ typed value right after filling, so a recurrence fails at the point of loss. No 
 
 **Update:** the trace, screenshot and video from that failure no longer exist, because Playwright cleared `test-results/` on a later run. Only its JSON report entry survives. Each run now keeps its own folder, so this cannot happen again. The triage tool classifies this failure as timing, medium confidence, with review required, which is not a root cause.
 
-**Phase 6:** WebKit ran about 1,150 more times on macOS, and 64 tests passed once on Linux. **This input failure did not recur, so its root cause remains unknown.** Two other failures occurred, with a different and now fixed cause, listed below. **Repeated Linux runs have not happened.** `webkit-soak.yml` is ready for them.
+**Since then:** WebKit ran about 1,150 more times on macOS, and 650 more on Linux in the soak, plus the normal CI runs. **This input failure did not recur, so its root cause remains unknown.** Two other failures occurred, with a different and now fixed cause, listed below. The soak does not reproduce the original conditions, which were macOS, 8 workers and mixed suites.
 
 ## Intermittent failures found in Phase 3
 
@@ -297,7 +329,7 @@ CI is untested.
 
 ## Firefox
 
-**On Linux, Firefox has passed in three GitHub Actions runs, most recently 98 tests (65 browser and 33 keyboard). On macOS, Firefox still cannot launch,** so it remains unverified there. The projects are kept and no test is skipped.
+**On Linux, Firefox has passed in every GitHub Actions run since it first ran, most recently 98 tests (65 browser and 33 keyboard). On macOS, Firefox still cannot launch,** so it remains unverified there. The projects are kept and no test is skipped.
 
 Exact failure, for each of the 97 tests (64 browser and 33 keyboard), when Playwright launches the browser:
 
@@ -344,7 +376,6 @@ No further macOS workarounds were attempted in Phases 3 or 4.
 | `perf.mjs` used macOS-only commands, which would have crashed on Linux | Reviewing it for CI | Tooling, fixed |
 | The keyboard helper held Option in WebKit on every platform, which is only needed on macOS | Reviewing it for CI | Test defect, fixed but unverified on Linux |
 | Compared with the local cluster's collation, the default image locale could change sorting | Reviewing it for CI | Configuration, avoided with `--locale=C` |
-| A gitleaks allow-list entry I first wrote used a wrong guess at the value | Rereading the file | My mistake, corrected before any run relied on it |
 
 Three bugs put back on purpose first survived, because two sanitizer rules backed each other up and a slot race was never hit. Direct tests now catch all three.
 
@@ -463,7 +494,7 @@ and the final test fixes, and were not repeated afterwards. Bugs outside this li
 ## API coverage
 
 In the Phase 3 run, traffic from the service suites reached **all 35 operations and 129 of the 235 documented
-operation-and-status pairs**. Phase 4 added 503 to the spec, which these tests do not trigger through a real overload: the backend suite and k6 do. A run writes the per-operation table to `reports/contract/coverage.md`.
+operation-and-status pairs**. The figures have since grown, with one more operation: a local run of all suites together reached all 36 operations and 133 of 276. Phase 4 added 503 to the spec, which these tests do not trigger through a real overload: the backend suite and k6 do. A run writes the per-operation table to `reports/contract/coverage.md`.
 
 **The other 106 are mostly not real gaps, and this number should not be read as coverage.** FastAPI adds
 400, 401, 403, 404, 409 and 422 to nearly every operation, including ones that cannot occur, such as 409 on
@@ -499,17 +530,18 @@ The approach for each is in [TEST_STRATEGY.md](TEST_STRATEGY.md).
 | `auth.spec.ts` | 7 | Login, cookie flags, generic errors, server-side logout, expiry, return-to-page, open redirect |
 | `rbac.spec.ts` | 10 | Navigation per role, UI and API refusals, session revocation, customer-scoped Viewer |
 | `orders.spec.ts` | 20 | Totals across UI, API and database, stock races, filters, sort, pagination, CSV, status rules |
-| `payments.spec.ts` | 6 | Approve, decline, timeout, settlement gates, lost-response replay, key reuse |
+| `payments.spec.ts` | 7 | Approve, decline, timeout, settlement gates, lost-response replay, key reuse |
 | `inventory.spec.ts` | 8 | Search, audited updates, validation, stale edits, focus restoration, low stock |
 | `products.spec.ts` | 7 | Filters, numeric sort, exact cents, duplicates, price history, retirement, dashboard |
+| `support.spec.ts` | 6 | Citations, refusals, typed instructions, order scope, markup shown as text |
 | `framework.spec.ts` | 6 | Read-only database, money helpers, namespaces, safe cleanup, CSV parser. No browser |
 
-Tags: 14 `@smoke`, 31 `@critical`, and every browser test is `@regression`. A test can have several.
+Tags: 15 `@smoke`, 32 `@critical`, and every browser test is `@regression`. A test can have several.
 
 ## Backend tests
 
-181 test cases, of which three parametrized functions supply 33, and 20 of those cover every disallowed order status
-transition, so the raw count overstates distinct scenarios. New in Phase 4: deterministic tests of the bounded admission policy.
+197 test cases, of which three parametrized functions supply 33, and 20 of those cover every disallowed order status
+transition, so the raw count overstates distinct scenarios. Deterministic tests cover the bounded admission policy, the queue wait limit and disconnect handling, and one test proves disconnect handling against real uvicorn.
 
 ## Phase 2 mutation results
 
@@ -542,12 +574,29 @@ unnoticed.
 Earlier Phase 1 verification, including data surviving a PostgreSQL restart, is in
 [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md).
 
+## Third-party licences
+
+This project is MIT licensed. No images or packages are published from it, and these are installed or downloaded by whoever runs it. This is a summary of an audit of the lock files, and is not legal advice.
+
+| Item | Licence | How it is used |
+| --- | --- | --- |
+| npm runtime dependencies: React and React Router, with their dependencies | MIT | In the web app |
+| Python runtime dependencies | Mostly MIT, BSD and Apache-2.0 | In the API |
+| `psycopg`, `psycopg-binary` | LGPL-3.0 | Unmodified database driver, installed from PyPI |
+| `caniuse-lite` | CC-BY-4.0 | Development build data |
+| Some development tools, such as `lightningcss` | MPL-2.0 | Development only, unmodified |
+| k6 | AGPL-3.0 | Downloaded by a script to run tests, and never redistributed |
+| hadolint | GPL-3.0 | Downloaded in CI and locally to lint, and never redistributed |
+| PostgreSQL, nginx, Playwright and Python base images | Their own licences | Pulled at build time, and images built from them are not published |
+
+Anyone publishing the Docker images would need to review the licences of what those images contain.
+
 ## Known limitations
 
 **Testing**
 
-- **Firefox is unverified,** as described above.
-- **CI has been green once.** One green run does not show stability. See [the first green run](#first-green-github-actions-run).
+- **Firefox is verified on Linux only.** It cannot launch on the development Mac.
+- **Limited CI history.** Two fully green runs and one soak, on one day. See [the latest evidence](#latest-verified-evidence).
 - **One WebKit failure is unresolved,** as described above.
 - **No live LLM has been called.** Offline chatbot results measure keyword retrieval and rules, and it scored 0/8 on held-out paraphrases. See [AI_EVALUATION.md](AI_EVALUATION.md#limitations).
 - **Accessibility is not proven by these tests.** No screen reader was used. See [ACCESSIBILITY.md](ACCESSIBILITY.md#limitations).
@@ -570,8 +619,7 @@ Earlier Phase 1 verification, including data surviving a PostgreSQL restart, is 
 
 - **The overload bound refuses requests that a patient client could have waited for.** The trade-off and other
   limits are in [PERFORMANCE.md](PERFORMANCE.md#limitations).
-- **More than about 128 simultaneous new connections can be reset by the operating system on this machine** before the
-  API accepts them. Linux has not been measured.
+- **More than about 128 simultaneous new connections can be reset by macOS** before the API accepts them. Linux runners report a listen queue of 4096, though bursts that large have not been measured there.
 - **List pages use offset pagination.** Turning pages while data changes can repeat or skip a row on screen. Only
   the order form's full read uses the cursor.
 - **No login rate limiting or lockout.** Failed logins are audited but not throttled, so the audit table can grow.
@@ -592,6 +640,6 @@ Earlier Phase 1 verification, including data surviving a PostgreSQL restart, is 
 
 - **`npm audit` reports 9 moderate findings, all dev tools.** They come from one `minimatch` advisory, through ESLint and `typescript-eslint`. See [CI_CD.md](CI_CD.md#dependency-findings).
 - **`embedded-postgres` carries a `-beta` version tag,** though it wraps a PostgreSQL 17.11 release. It is for local
-  development only. Its Linux and Intel paths in `scripts/db-local.sh` are untested.
+  development only. Its Linux and Intel paths in `scripts/db-local.sh` are untested, because CI uses a PostgreSQL container.
 - **The test role `testforge_e2e_reader` lives in the local PostgreSQL cluster,** created by Playwright's global setup.
   It has no privileges on development tables.

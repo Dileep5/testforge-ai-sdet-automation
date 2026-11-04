@@ -14,7 +14,7 @@ not capacity figures, and must not be compared with production targets.**
 | Database | PostgreSQL 17.11, dedicated `testforge_perf`, reseeded before each scenario |
 | PostgreSQL settings | `max_connections` 100, `shared_buffers` 128MB, `work_mem` 4MB, `effective_cache_size` 4GB, `synchronous_commit` on, `fsync` on |
 | API pool | 10 connections plus 20 overflow, 40 worker threads |
-| Conditions | Date 2026-11-04. On AC power, battery low and charging, other desktop apps open |
+| Conditions | Date 2026-11-04, a laptop in ordinary use |
 
 Because k6, the API and PostgreSQL share one machine, k6 competes with what it measures.
 
