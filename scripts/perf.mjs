@@ -102,7 +102,14 @@ async function summarise(file) {
   const outcomes = {};
   for (const sample of overloadSamples) (outcomes[outcome(sample)] ??= []).push(sample);
   const overloadOutcomes = Object.fromEntries(Object.entries(outcomes).map(([name, items]) => [name, stats(items)]));
-  return { overall: stats(samples), peak_vus: peakVus, overload_outcomes: overloadOutcomes, by_scenario: groupBy("scenario"), by_request: groupBy("name"), timeline };
+  // When errors happened after the peak: right at the start means draining, and later means no recovery.
+  const afterSamples = samples.filter((sample) => sample.scenario === "after");
+  const afterStart = afterSamples.reduce((min, sample) => Math.min(min, sample.time), Infinity);
+  const afterErrors = afterSamples.filter((sample) => sample.status === "0" || Number(sample.status) >= 500);
+  const recovery = afterSamples.length
+    ? { errors: afterErrors.length, last_error_s_after_start: afterErrors.length ? round(Math.max(...afterErrors.map((sample) => sample.time - afterStart)) / 1000, 2) : null }
+    : undefined;
+  return { overall: stats(samples), peak_vus: peakVus, recovery, overload_outcomes: overloadOutcomes, by_scenario: groupBy("scenario"), by_request: groupBy("name"), timeline };
 }
 
 /** Each threshold and its result, from k6's own export. In this format, true means the rule was crossed. */
@@ -237,6 +244,7 @@ async function runScenario(name, admin) {
     console.log(`${overall.requests} requests, ${overall.rps} req/s, p50 ${overall.p50_ms} ms, p95 ${overall.p95_ms} ms, p99 ${overall.p99_ms} ms, errors ${overall.error_rate_pct}%, peak VUs ${vus}`);
     for (const item of summary.thresholds) console.log(`  ${item.passed ? "PASS" : "FAIL"}  ${item.metric}: ${item.rule}`);
     if (Object.keys(k6Messages).length) console.log(`k6 messages ${JSON.stringify(k6Messages).slice(0, 400)}`);
+    if (summary.recovery) console.log(`after the peak: ${JSON.stringify(summary.recovery)}`);
     console.log(`statuses ${JSON.stringify(overall.statuses)}; connections peak ${JSON.stringify(peak)}, after ${JSON.stringify(settled)}`);
     return summary;
   } finally {

@@ -8,6 +8,14 @@ const PEAK_VUS = Number(__ENV.PERF_PEAK_VUS || 300);
 // A client that gives up after this long, as a browser or proxy eventually does.
 const CLIENT_TIMEOUT = "5s";
 
+// Requests already queued when the peak ends finish after it. A queued request waits at most
+// MAX_QUEUE_WAIT_SECONDS (4), and the slowest work holds a slot for 1 second, so 5 seconds is enough.
+// Not scaled by PERF_SCALE: draining takes the same real time however short the scenario is. Without
+// this, the short run's "after" stage started with the queue still full, and measured the leftovers.
+const DRAIN_SECONDS = 5;
+const whole = (duration) => Number.parseInt(duration, 10);
+const afterStart = `${whole(seconds(20)) + whole(seconds(PEAK_VUS / 10)) + whole(seconds(60)) + whole(seconds(5)) + DRAIN_SECONDS}s`;
+
 // New connections arrive at no more than 10 per second, so the macOS listen queue of 128 is not what
 // gets measured: existing connections hold requests open in the API's own queue.
 export const options = {
@@ -31,7 +39,7 @@ export const options = {
     after: {
       executor: "constant-vus",
       vus: 10,
-      startTime: seconds(20 + PEAK_VUS / 10 + 65),
+      startTime: afterStart,
       duration: seconds(40),
       exec: "traffic",
     },
