@@ -2,8 +2,8 @@
 
 Only results from commands that were actually run are recorded here.
 
-**Last updated:** 2026-11-04, Phase 6. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
-PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). **Results are from macOS unless marked Linux. Linux results are from two GitHub Actions runs, below. No live LLM has been called.**
+**Last updated:** 2026-11-04, Phase 6 CI verification. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
+PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). **Results are from macOS unless marked Linux. [The first fully green CI run](#first-green-github-actions-run) is below. No live LLM has been called.**
 
 ## Summary
 
@@ -15,7 +15,7 @@ Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass o
 | Playwright Chromium 156 | `npx playwright test --project=chromium` | **65** | 0 | 0 | 0 |
 | Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **65** | 0 | 0 | 0 |
 | Playwright Firefox 157, macOS | `npm run test:e2e:firefox` | **0** | 64 at launch, no test body ran | 0 | 0 |
-| Playwright Firefox 157, **Linux CI** | CI `firefox` job | **64** | 0 | 0 | 0 |
+| Playwright Firefox 157, **Linux CI** | CI `firefox` job | **65** | 0 | 0 | 0 |
 | Framework self-checks | `npx playwright test --project=framework` | 6 | 0 | 0 | 0 |
 | Accessibility, Chromium | `npm run test:a11y` | **82** | 0 | 0 | 0 |
 | Keyboard, WebKit | `npm run test:a11y:keyboard` | **33** | 0 | 0 | 0 |
@@ -47,9 +47,46 @@ These counts include generated cases, which overstate distinct scenarios. Access
 | Fresh copy with CI commands. See [the simulation](#ci-simulation-on-macos) | Passed |
 | Development database after all runs | Row counts and content hashes identical to before Phase 3 |
 | `npm audit --omit=dev` | No known vulnerabilities |
-| `npm audit` including dev tools | 13 moderate (see limitations) |
+| `npm audit` including dev tools | 9 moderate, all from 1 advisory. See [why this changed from 13](#why-the-npm-count-changed-from-13-to-9) |
 
-**Never run, so no results exist:** a green Docker run, repeated Linux WebKit runs, live LLM evaluation.
+**Never run, so no results exist:** repeated Linux WebKit runs, live LLM evaluation.
+
+## First green GitHub Actions run
+
+[Run 41902669074](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41902669074), commit `d3da95be4716c2d35f8f5ccb4371e5f82e24daf8`, ubuntu-24.04 on 2 cores, retries off. **All 14 jobs succeeded, including the final gate.** It took 15m 10s, and 50.8 job minutes, or about 57 with each job rounded up.
+
+| Native Linux job | Passed | Failed | Skipped | Flaky |
+| --- | --- | --- | --- | --- |
+| Backend (97% coverage) | 197 | 0 | 0 | n/a |
+| AI | 353 | 0 | 0 | n/a |
+| Chromium, plus framework | 65 + 6 | 0 | 0 | 0 |
+| Firefox | 65 | 0 | 0 | 0 |
+| WebKit | 65 | 0 | 0 | 0 |
+| Accessibility 82, keyboard Firefox 33, keyboard WebKit 33 | 148 | 0 | 0 | 0 |
+| API 154, contract 100 | 254 | 0 | 0 | 0 |
+| PostgreSQL 44, security 114, reliability 5 | 163 | 0 | 0 | 0 |
+
+| In Docker, 2 workers, retries off | Passed | Failed | Skipped | Flaky |
+| --- | --- | --- | --- | --- |
+| Framework 6, Chromium 65, Firefox 65, WebKit 65, accessibility 82, keyboard Firefox 33, keyboard WebKit 33, API 154, PostgreSQL 44, security 114, reliability 5 | **666** | 0 | 0 | 0 |
+
+**The payment bug is fixed, and verified on real plain HTTP.** Docker serves `http://web:8080`, which browsers treat as an insecure context. The 19 tests that failed in the previous run all passed, and so did the new regression test in all 3 browsers and the corrected origin test. The key function also passed a direct check of 500,000 keys, with 0 format failures and 0 duplicates.
+
+**Performance: 22 of 22 gates passed.** On this run's runner, p95 was 55.1 ms for health, 123.4 ms for products, 211.9 ms for orders and 1,085.7 ms for mixed. Recovery had 0 errors in 460 requests, at `rate==0`. Refusal p95 was 540.6 ms, against a limit of 1,000 ms. Each run landed on different hardware, and mixed p95 moved from 602 to 697 to 1,086 ms over 3 runs, so these gates could occasionally fail on a slow runner.
+
+**Docker:** images built, both stacks became healthy, migrations and seeding worked, and a record survived a restart.
+
+**Artifacts:** 2 artifacts, with 9 JSON files, and no traces, screenshots, videos or HTML report, because nothing failed. Text scans of these and all job logs found 0 credentials.
+
+**The sanitizer fix has been verified locally only.** It runs only when a test fails, and nothing failed. Locally, it kept all 6 real traces, with 0 credential hits. The only sanitized upload on GitHub so far came before the fix, in the second run, and its 19 screenshots and 38 videos have not been reviewed one by one.
+
+## Why the npm count changed from 13 to 9
+
+The project did not change: `package-lock.json` is identical across all three CI runs, and has not changed since `c1e1ce5`. The first run reported 13 moderate findings, and the next two reported 9. A fresh local audit now also reports 9.
+
+**The advisory was narrowed.** [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249) first covered every `minimatch` below 11.0.1. Its record now reads `>= 7.0.0, < 11.0.1`, and was last updated on 2026-11-04 at 16:50 UTC. So `minimatch` 5.1.9, used by `@redocly/openapi-core`, is no longer affected, which removes 4 findings: `@redocly/openapi-core`, `openapi-typescript`, `@eslint-community/eslint-utils` and `eslint-plugin-playwright`. **The other 9 are unchanged, and nothing was fixed.** `minimatch` 10.2.6, through ESLint and `typescript-eslint`, is still in range.
+
+The first CI run came after that update and still reported 13. That suggests npm's audit data lagged, but this is an inference, because npm's data history cannot be seen.
 
 ## First GitHub Actions run
 
@@ -123,7 +160,7 @@ No application defect was found. Normal-load Linux p95: health 30.5 ms, products
 | 1 security test | It hard-coded `http://localhost:5273` as the app's origin | Test defect | Use the configured origin |
 | 19 of 20 sanitized traces dropped | Error context in a trace is stored with no file extension, so it was treated as binary. It held a source excerpt with a seed password, so the leak check dropped the trace | Sanitizer. It failed safe, but lost evidence | Detect text by content. All 6 traces from 4 real local runs were then kept, with 0 credential hits |
 
-**The fixes are local, and have not run on GitHub.**
+**The fixes were then pushed, and passed in [the first green run](#first-green-github-actions-run), except that the sanitizer fix was not exercised, because nothing failed.**
 
 **Artifacts:** `failure-docker-41893657050-1`, 18.2 MB, was the first real sanitized upload, with 20 error contexts, 19 screenshots, 38 videos and 1 trace, and no HTML report or raw `test-results`. A scan of its contents, inside the trace too, and of all job logs and other artifacts found 0 seed passwords, session cookies, keys, tokens, authorization headers or database passwords. It found **1 synthetic test password** (`E2E-Long-Password-1`) in the one kept trace, a test value that is already in this repository. The same fix covers it. Screenshots and videos were not reviewed one by one. Artifacts expire on 2026-11-18.
 
@@ -131,7 +168,8 @@ No application defect was found. Normal-load Linux p95: health 30.5 ms, products
 
 | Item | Status |
 | --- | --- |
-| Playwright suites in Docker | Ran: 643 passed, 20 failed. Fixes are local, and awaiting approval to push |
+| Playwright suites in Docker | **Passed: 666 of 666** in the first green run |
+| Sanitizer fix on GitHub | **Not exercised**, because nothing failed. Verified locally |
 | Repeated Linux WebKit runs | **Not run**, as instructed. `webkit-soak.yml` is ready |
 
 ## CI simulation on macOS
@@ -169,7 +207,7 @@ Verified with `ai/triage-corpus/artifact-check.spec.ts`, which fails on purpose 
 | Scan | Result |
 | --- | --- |
 | `npm audit --omit=dev` | 0 vulnerabilities |
-| `npm audit`, development tools | 13 moderate, from 1 advisory. None high or critical. See [CI_CD.md](CI_CD.md#dependency-findings) |
+| `npm audit`, development tools | 9 moderate, from 1 advisory (13 before it was narrowed). None high or critical. See [CI_CD.md](CI_CD.md#dependency-findings) |
 | `pip-audit` on both lock files | No known vulnerabilities |
 | gitleaks over all 5 commits, and each source folder | No leaks, after allow-listing exact synthetic values. It first flagged 2 synthetic test passwords, which were checked by hand |
 
@@ -253,7 +291,7 @@ CI is untested.
 
 ## Firefox
 
-**On Linux, all 97 Firefox tests passed in one GitHub Actions run. On macOS, Firefox still cannot launch,** so it remains unverified there. The projects are kept and no test is skipped.
+**On Linux, Firefox has passed in three GitHub Actions runs, most recently 98 tests (65 browser and 33 keyboard). On macOS, Firefox still cannot launch,** so it remains unverified there. The projects are kept and no test is skipped.
 
 Exact failure, for each of the 97 tests (64 browser and 33 keyboard), when Playwright launches the browser:
 
@@ -503,7 +541,7 @@ Earlier Phase 1 verification, including data surviving a PostgreSQL restart, is 
 **Testing**
 
 - **Firefox is unverified,** as described above.
-- **CI has run twice, and its gate is still red,** because of Docker failures whose fixes are not pushed. See [the second run](#second-github-actions-run).
+- **CI has been green once.** One green run does not show stability. See [the first green run](#first-green-github-actions-run).
 - **One WebKit failure is unresolved,** as described above.
 - **No live LLM has been called.** Offline chatbot results measure keyword retrieval and rules, and it scored 0/8 on held-out paraphrases. See [AI_EVALUATION.md](AI_EVALUATION.md#limitations).
 - **Accessibility is not proven by these tests.** No screen reader was used. See [ACCESSIBILITY.md](ACCESSIBILITY.md#limitations).
@@ -546,9 +584,7 @@ Earlier Phase 1 verification, including data surviving a PostgreSQL restart, is 
 
 **Tooling**
 
-- **`npm audit` reports 13 moderate findings, all dev tools.** They come from one `minimatch` issue, reached through
-  ESLint and `openapi-typescript`. These tools do not ship and only read this project's own files. Production
-  dependencies report 0.
+- **`npm audit` reports 9 moderate findings, all dev tools.** They come from one `minimatch` advisory, through ESLint and `typescript-eslint`. See [CI_CD.md](CI_CD.md#dependency-findings).
 - **`embedded-postgres` carries a `-beta` version tag,** though it wraps a PostgreSQL 17.11 release. It is for local
   development only. Its Linux and Intel paths in `scripts/db-local.sh` are untested.
 - **The test role `testforge_e2e_reader` lives in the local PostgreSQL cluster,** created by Playwright's global setup.

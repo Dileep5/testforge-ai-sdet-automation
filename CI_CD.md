@@ -1,6 +1,6 @@
 # CI/CD
 
-**Status: two runs so far, and the final gate has not passed.** In [the second run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41893657050), at `86a8843`, 12 of 14 jobs succeeded, and all native Linux suites passed, including Firefox. Only the Docker job failed, with 643 passed and 20 failed. Fixes are committed locally, and are **not pushed.** Results are in [TEST_RESULTS.md](TEST_RESULTS.md#second-github-actions-run).
+**Status: green once.** [Run 41902669074](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41902669074), at commit `d3da95b`, is the first fully green run: all 14 jobs succeeded, including the final gate. It took 15m 10s, and about 51 job minutes. The two earlier runs failed, and those failures are explained in [TEST_RESULTS.md](TEST_RESULTS.md#first-green-github-actions-run). One green run does not show stability.
 
 ## Jobs
 
@@ -109,10 +109,10 @@ Locally, the run ID is a timestamp plus the process ID. In CI it names the job. 
 
 Results are in [TEST_RESULTS.md](TEST_RESULTS.md#dependency-and-secret-scans).
 
-**The 13 moderate npm findings are one advisory.** [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249) is a denial of service in `minimatch` below 11.0.1 from crafted glob patterns. It reaches this project through two development tools: ESLint and `typescript-eslint` (10.2.6), and `openapi-typescript` (5.1.9).
+**The 9 moderate npm findings are one advisory.** [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249) is a denial of service in `minimatch` from `7.0.0` up to `11.0.1`, through crafted glob patterns. It reaches this project through ESLint and `typescript-eslint`, which use 10.2.6. It was first reported as 13 findings, until the advisory was narrowed, and [the reason is recorded](TEST_RESULTS.md#why-the-npm-count-changed-from-13-to-9). `openapi-typescript` uses 5.1.9, which is no longer in range.
 
 - **Scope:** development only, and not in the production dependencies or the images' runtime. These tools only process glob patterns written in this repository, so an attacker would need to already be able to change the repository.
-- **Not fixed, on purpose:** `npm audit fix --force` proposes **downgrading** ESLint to 4.0.0 and `openapi-typescript` to 6.7.6, which would break the tooling. Forcing `minimatch` 11 is outside what ESLint declares it supports.
+- **Not fixed, on purpose:** `npm audit fix --force` proposes **downgrading** ESLint from 10 to 9.39.5, which it marks as a breaking change. It earlier proposed 4.0.0. Forcing `minimatch` 11 is outside what ESLint declares it supports.
 - **Gate:** production findings fail at any level, and development findings fail at high or above, so a new serious finding still stops CI. The fix is to update when those tools move to a fixed `minimatch`.
 
 ## Setting it up
@@ -121,7 +121,11 @@ The repository is private, at `Dileep5/testforge-ai-sdet-automation`, and pushes
 
 ## Limitations
 
-- **Two runs so far,** so rare or timing-related Linux failures may not have appeared. The sanitized upload has run once on GitHub, before its latest fix.
+- **Three runs so far, and one green,** so rare or timing-related Linux failures may not have appeared.
+- **The sanitized upload has run once on GitHub, before its latest fix.** That fix is verified locally only, because it runs only on failure.
+- **Images and video in artifacts cannot be text-scanned,** and those from the second run have not been reviewed one by one.
+- **Dependabot is off,** so pinned versions will go stale until it is turned back on.
+- **Performance gates have thin margins on slow runners.** Refusal p95 reached 541 ms of 1,000 ms, so a slow runner could fail without a regression.
 - **The `min-tests` numbers need updating** when tests are added or removed, and this is deliberate.
 - **`pip-audit` uses `--no-deps`,** because the lock files are unhashed. It checks exactly what is listed in them.
 - **Shared runners vary,** so performance limits in CI are loose. See [PERFORMANCE.md](PERFORMANCE.md#quality-gates).
