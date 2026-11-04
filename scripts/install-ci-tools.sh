@@ -22,7 +22,7 @@ verify() {
 }
 
 case "$(uname -s)-$(uname -m)" in
-  Darwin-arm64) AL=darwin_arm64; GL=darwin_arm64; HL="" ;;
+  Darwin-arm64) AL=darwin_arm64; GL=darwin_arm64; HL=hadolint-macos-arm64 ;;
   Linux-x86_64) AL=linux_amd64; GL=linux_x64; HL=hadolint-linux-x86_64 ;;
   *) echo "Unsupported platform" >&2; exit 1 ;;
 esac
@@ -41,14 +41,11 @@ curl -fsSL "$base/gitleaks_${GITLEAKS}_checksums.txt" -o "$WORK/gl.txt"
 verify "$asset" gl.txt
 tar -xzf "$WORK/$asset" -C "$DIR" gitleaks
 
-# hadolint publishes no macOS arm64 build in this release, so on a Mac it is not installed.
-if [[ -n "$HL" ]]; then
-  base="https://github.com/hadolint/hadolint/releases/download/v$HADOLINT"
-  curl -fsSL "$base/$HL" -o "$WORK/$HL"
-  curl -fsSL "$base/checksums.sha256" -o "$WORK/hl.txt"
-  verify "$HL" hl.txt
-  install -m 0755 "$WORK/$HL" "$DIR/hadolint"
-fi
+base="https://github.com/hadolint/hadolint/releases/download/v$HADOLINT"
+curl -fsSL "$base/$HL" -o "$WORK/$HL"
+curl -fsSL "$base/checksums.sha256" -o "$WORK/hl.txt"
+verify "$HL" hl.txt
+install -m 0755 "$WORK/$HL" "$DIR/hadolint"
 
 python3 -m venv "$DIR/pip-audit-env"
 "$DIR/pip-audit-env/bin/pip" install --quiet --upgrade pip

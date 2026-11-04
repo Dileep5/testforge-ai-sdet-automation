@@ -20,9 +20,8 @@ COPY apps/api/alembic apps/api/alembic
 COPY apps/api/alembic.ini apps/api/alembic.ini
 COPY apps/api/app apps/api/app
 COPY docker/migrate.sh /usr/local/bin/testforge-migrate
-RUN chmod 0555 /usr/local/bin/testforge-migrate
-
-RUN useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin app
+RUN chmod 0555 /usr/local/bin/testforge-migrate \
+    && useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin app
 USER 10001
 
 WORKDIR /app/apps/api

@@ -13,6 +13,8 @@ COPY apps/web apps/web
 # The security suite checks the production bundle for credentials, so it needs a build to read.
 RUN npm run build --workspace apps/web
 RUN mkdir -p reports && chown -R pwuser:pwuser /app/reports
+# pwuser is defined by the base image, which does not document a fixed numeric id.
+# hadolint ignore=DL3066
 USER pwuser
 ENV E2E_EXTERNAL_SERVERS=1 E2E_SKIP_SEED=1 E2E_RETRIES=0 CI=1
 CMD ["npx", "playwright", "test", "--project=framework", "--project=chromium", "--project=firefox", "--project=webkit", "--project=accessibility", "--project=keyboard-webkit", "--project=keyboard-firefox", "--project=api", "--project=database", "--project=security", "--project=reliability"]
