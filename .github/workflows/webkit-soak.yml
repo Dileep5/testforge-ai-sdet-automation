@@ -25,7 +25,7 @@ jobs:
       workers: 2
       retention-days: 30
 
-  # Runners have 2 cores, so 4 workers deliberately oversubscribes them, as the original failure did.
+  # Runners have 2 cores, so 4 workers deliberately oversubscribes them, to add timing pressure.
   soak-4-workers:
     uses: ./.github/workflows/playwright-job.yml
     with:
