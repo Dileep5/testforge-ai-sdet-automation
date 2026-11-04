@@ -1,6 +1,6 @@
 # Docker
 
-**Status: verified on Linux in two green CI runs, most recently [run 41910311071](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41910311071), on ubuntu-24.04.** It has not been run on the development Mac, where Docker is not installed.
+**Status: verified on Linux in three green CI runs, most recently [run 41933122691](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691), on ubuntu-24.04.** It has not been run on the development Mac, where Docker is not installed.
 
 | Check | Result |
 | --- | --- |
@@ -9,7 +9,7 @@
 | Migrations and seeding | Passed: the API only starts after `migrate` succeeds, and the seeded admin signed in |
 | A record survives `down` and `up`, keeping the volume | Passed |
 | Test stack healthy | Passed |
-| **Playwright suites in the test stack** | **666 passed, 0 failed, 0 skipped, 0 flaky** |
+| **Playwright suites in the test stack** | **672 passed, 0 failed, 0 skipped, 0 flaky** |
 
 Running here found a real bug. The stack serves plain HTTP at `http://web:8080`, where browsers provide no `crypto.randomUUID`, so payments did nothing. The fix is verified on that real plain-HTTP address.
 
@@ -64,7 +64,7 @@ The `contract` project is **not** in the Docker test run, because its breaking-c
 
 ## Limitations
 
-- **Two green runs,** as stated above, on Linux only.
+- **Three green runs,** as stated above, on Linux only.
 - **`contract` does not run in Docker,** because it needs git history. It runs natively in CI.
 - **This is not a production deployment.** There is no TLS, `APP_ENV` is `development`, and the seed accounts have published passwords. `SEED_MODE` must be `none` anywhere real.
-- **Digest pins go stale.** Dependabot would propose updates, but it is temporarily off, and has never run. See [CI_CD.md](CI_CD.md#security).
+- **Digest pins go stale.** Dependabot would propose updates, but it stays off through public release, and has never run. See [CI_CD.md](CI_CD.md#security).

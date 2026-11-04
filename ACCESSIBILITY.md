@@ -23,7 +23,7 @@ Each scan's full result is attached to the HTML report as `axe-<screen>`.
 | Keyboard (`keyboard.spec.ts`) | WebKit 27.2 | 33 | 0 | 0 | 0 |
 | Keyboard (`keyboard.spec.ts`) | Firefox 157, macOS | **0** | 33 at launch, no test body ran | 0 | 0 |
 | Keyboard (`keyboard.spec.ts`) | Firefox 157, **Linux CI** | **33** | 0 | 0 | 0 |
-| All accessibility and keyboard, **Linux CI** | Chromium, Firefox, WebKit | **148** | 0 | 0 | 0 |
+| All accessibility and keyboard, **Linux CI**, and again in Docker | Chromium, Firefox, WebKit | **148** | 0 | 0 | 0 |
 
 Retries were off. In Phase 4, before the support page was added, the Chromium and WebKit suites run 3 times over gave 336 passed and 0 failed. That repeat was not run again in Phase 5.
 

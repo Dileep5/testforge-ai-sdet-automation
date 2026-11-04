@@ -2,42 +2,86 @@
 
 Only results from commands that were actually run are recorded here.
 
-**Last updated:** 2026-11-04, final audit. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
+**Last updated:** 2026-11-04, final verification. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
 PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). **The [latest verified evidence](#latest-verified-evidence) comes first. Other results are from macOS unless marked Linux. No live LLM has been called.**
 
 ## Latest verified evidence
 
-**This is the latest fully green CI run. [A later run](#latest-ci-run-one-job-stopped-before-testing) passed every test it ran, but one job stopped during setup.**
+**Verified, from GitHub Actions on Ubuntu 24.04 runners with 2 cores, at commit `f3061c9c1a902bd42a242a10d045256aebc25c2b`, with retries off.**
 
-**Verified, from GitHub Actions on Ubuntu 24.04 runners with 2 cores, at commit `3c1a6fd1d9b2c989d6e5c89162101de11232130e`, with retries off.**
+[CI run 41933122691](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691): **14 of 14 jobs succeeded**, including the final gate, in 18m 42s and about 49 job minutes.
 
-[CI run 41910311071](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41910311071): **14 of 14 jobs succeeded**, including the final gate, in 16m 34s and about 56 job minutes.
+The same Playwright projects run twice: natively on the runner, and inside the Docker stack, over plain HTTP. The two totals overlap, and should not be added together.
 
-| Suite | Passed | Failed | Skipped | Flaky |
-| --- | --- | --- | --- | --- |
-| Backend, 97% line coverage | **197** | 0 | 0 | n/a |
-| AI | **353** | 0 | 0 | n/a |
-| Chromium | 65 | 0 | 0 | 0 |
-| Firefox | 65 | 0 | 0 | 0 |
-| WebKit | 65 | 0 | 0 | 0 |
-| Framework | 6 | 0 | 0 | 0 |
-| Accessibility 82, keyboard Firefox 33, keyboard WebKit 33 | 148 | 0 | 0 | 0 |
-| API 154, contract 100 | 254 | 0 | 0 | 0 |
-| PostgreSQL 44, security 114, reliability 5 | 163 | 0 | 0 | 0 |
-| **Docker, all of the above browsers and services except contract** | **666** | 0 | 0 | 0 |
-| **Performance gates** | **22 of 22** | 0 | | |
+| Suite | Native Linux | In Docker | Failed | Skipped | Flaky |
+| --- | --- | --- | --- | --- | --- |
+| Chromium | 67 | 67 | 0 | 0 | 0 |
+| Firefox | 67 | 67 | 0 | 0 | 0 |
+| WebKit | 67 | 67 | 0 | 0 | 0 |
+| Framework | 6 | 6 | 0 | 0 | 0 |
+| Accessibility | 82 | 82 | 0 | 0 | 0 |
+| Keyboard, Firefox | 33 | 33 | 0 | 0 | 0 |
+| Keyboard, WebKit | 33 | 33 | 0 | 0 | 0 |
+| API | 154 | 154 | 0 | 0 | 0 |
+| OpenAPI contract | 100 | Not run, as it needs git history | 0 | 0 | 0 |
+| PostgreSQL | 44 | 44 | 0 | 0 | 0 |
+| Security | 114 | 114 | 0 | 0 | 0 |
+| Reliability | 5 | 5 | 0 | 0 | 0 |
+| **Playwright total** | **772** | **672** | **0** | **0** | **0** |
 
-[WebKit soak run 41913178899](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41913178899): **650 of 650 passed, with 0 failed, 0 skipped and 0 flaky.** Each test ran 5 times, for 325 tests at 2 workers and 325 at 4. It took 44m 56s and about 58 job minutes. The test that failed in the historical WebKit failure passed 10 of 10 times.
+| Other suite | Passed | Failed | Skipped |
+| --- | --- | --- | --- |
+| Backend pytest, 97% line coverage (1,417 statements, 42 missed) | **197** | 0 | 0 |
+| AI tools pytest | **376** | 0 | 0 |
+| k6 performance gates | **22 of 22** | 0 | |
 
-**Limitations of this evidence:**
+**Performance on that runner:** p95 was 55.6 ms for health, 125.3 ms for products, 218.2 ms for orders and 1,136.8 ms for mixed, with 0% errors. Recovery had 0 errors in 460 requests, at `rate==0`. Refusal p95 was 506.2 ms, against a limit of 1,000 ms.
 
-- **Two fully green CI runs and one soak, on one day,** do not show long-term stability.
-- **The historical macOS WebKit input failure remains unexplained.** It did not recur, but the soak used a different WebKit build, on a different operating system, and a WebKit-only suite.
-- **The sanitizer's latest fix has been verified locally only.** It runs only when a test fails, and no GitHub run has failed since it was pushed.
-- **A slow Ubuntu package mirror nearly stopped the soak.** One job spent 33.8 minutes in setup, and finished at 44.8 of its 45-minute limit, through infrastructure rather than tests. [A later run failed from the same cause](#latest-ci-run-one-job-stopped-before-testing), with a limit now in place. See [CI_CD.md](CI_CD.md#browser-install-reliability).
-- **The first attempt at a soak ran no tests.** It failed at startup, with `Unexpected value '5'` at the two `repeat-each` inputs, because a manual input reached a `type: number` input as a string. Wrapping each in `fromJSON` fixed it, as the run above shows.
+**The payment fixes passed on real plain HTTP.** Docker serves `http://web:8080`, which browsers treat as an insecure context. The 3 payment recovery and plain-HTTP tests passed there in Chromium, Firefox and WebKit.
 
-## Latest CI run: one job stopped before testing
+**Scans in that run:** gitleaks over 29 commits found no leaks. Production npm dependencies report 0 findings, and Python reports none known. Development tools have 9 moderate findings, none higher. Text scans of all 14 job logs and of the 9 uploaded JSON files found 0 credentials. Nothing failed, so no trace, screenshot, video or HTML report was uploaded.
+
+### Sanitizer self-test
+
+[Run 41935807067](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41935807067), same commit: **both jobs succeeded**, in about 2 minutes. It was started by hand once.
+
+| Check | Result |
+| --- | --- |
+| Dummy secrets, of 9 kinds, in the uploaded copy and job logs | **0 found.** `Cookie` and `Authorization` headers show `[REDACTED]`, and 14 values were replaced |
+| Diagnostic evidence | Kept: the click action, URL, 500 status, a harmless typed value, the error message, the `Accept` header, the screenshot, JUnit and the report |
+| HTML report, which embeds raw traces | Left out |
+| A trace that could not be cleaned | Dropped and reported, and not uploaded |
+| Second job, on a separate runner | Downloaded the artifact, and repeated the checks: `"passed": true` |
+| Retention | 7 days, confirmed from GitHub's API |
+| Uploaded artifact | 8 files, 2,714 bytes, with 1 cleaned trace |
+
+**The scope of this check:** it uses a synthetic run, built to resemble a real one, and proves that the sanitizer works on GitHub on that fixture. Real failing traces with this fix have been sanitized only locally, where all 6 were kept with 0 credential hits. The second job runs on a separate runner, but uses the same checking code. The screenshot is a placeholder, so this says nothing about what real images or video show.
+
+### Historical WebKit soak
+
+[Run 41913178899](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41913178899), on an earlier commit, `3c1a6fd`: **650 of 650 passed, with 0 failed, 0 skipped and 0 flaky.** Each test ran 5 times, for 325 tests at 2 workers and 325 at 4. It took 44m 56s, and **predates the 2 newest browser tests.**
+
+### What this evidence does not show
+
+- **Long-term stability.** There have been 3 fully green CI runs and 1 complete soak, all on one day.
+- **An explanation for the macOS WebKit input failure.** It occurred once, and has not recurred, but the soak used a different WebKit build, on a different operating system, and a WebKit-only suite. [The root cause is unknown](#the-intermittent-webkit-failure-unresolved).
+- **That the package cache is reused.** The cache was [filled successfully, but no run has yet hit it](#browser-package-cache).
+- **Immunity to slow mirrors.** A cache miss can still meet one. See [CI_CD.md](CI_CD.md#browser-install-reliability).
+- **That local runs are immune to overload.** See [the failed local run](#a-failed-local-run-in-the-final-audit).
+- **Anything about a live LLM,** which has not been called.
+
+### Browser package cache
+
+| Item | Result in run 41933122691 |
+| --- | --- |
+| Key | `apt-ubuntu24-1.64.1`, now with the OS in it |
+| Cache hits | **0, and hits remain unverified.** All 4 browser jobs started together on a new key |
+| Saved | **Yes:** by the WebKit job, with 181 packages, 114 MB |
+| Other jobs | Reported `Unable to reserve cache`, a harmless warning, because another job was saving |
+| Install times | 28 s, 30 s, 32 s and 87 s |
+| Handling of a failed install | **Not exercised,** as no install failed. Tested locally only |
+
+## CI run stopped by a slow package mirror
 
 [Run 41928911349](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41928911349), commit `550146d`, took 18m 34s and about 60 job minutes. **It failed: 12 of 14 jobs succeeded.** The Accessibility job's browser install hit the 15-minute limit, because of a slow package mirror, so **its 148 native tests did not run**, and the final gate failed. No test failed.
 
@@ -54,23 +98,23 @@ PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 
 | **Native accessibility and keyboard** | **Did not run** | | | |
 | Performance gates | 22 of 22 | 0 | | |
 
-The same 114 MB of packages took **8 seconds on the WebKit job, and over 15 minutes on the Accessibility job**, which fetched 55 of 181. Two of the 22 browser installs in CI so far have hit a mirror this slow, so it is not rare. The limit worked as designed, and stopped that job about 15 minutes in with a clear error.
+The same 114 MB of packages took **8 seconds on the WebKit job, and over 15 minutes on the Accessibility job**, which fetched 55 of 181. Across all 26 browser installs in CI so far, at least 2 have hit a mirror this slow, so it is not rare. The limit worked as designed, and stopped that job about 15 minutes in with a clear error.
 
-The run also showed flaws in the mitigation, now fixed locally, and **not yet run on GitHub**. See [CI_CD.md](CI_CD.md#browser-install-reliability).
+The run also showed flaws in the mitigation, which were then fixed, and passed in the latest run. See [CI_CD.md](CI_CD.md#browser-install-reliability).
 
 ## Summary
 
-**The table below is from macOS.**
+**The table below is from macOS, and the [latest verified evidence](#latest-verified-evidence) is from Linux.**
 
 Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass on a retry.
 
 | Suite | Command | Passed | Failed | Skipped | Flaky |
 | --- | --- | --- | --- | --- | --- |
 | Backend (pytest, real PostgreSQL) | `npm run test:backend` | **197** | 0 | 0 | n/a |
-| Playwright Chromium 156 | `npx playwright test --project=chromium` | **65** | 0 | 0 | 0 |
-| Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **65** | 0 | 0 | 0 |
+| Playwright Chromium 156 | `npx playwright test --project=chromium` | **67** | 0 | 0 | 0 |
+| Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **67** | 0 | 0 | 0 |
 | Playwright Firefox 157, macOS, when last run | `npm run test:e2e:firefox` | **0** | 64 at launch, no test body ran | 0 | 0 |
-| Playwright Firefox 157, **Linux CI** | CI `firefox` job | **65** | 0 | 0 | 0 |
+| Playwright Firefox 157, **Linux CI** | CI `firefox` job | **67** | 0 | 0 | 0 |
 | Framework self-checks | `npx playwright test --project=framework` | 6 | 0 | 0 | 0 |
 | Accessibility, Chromium | `npm run test:a11y` | **82** | 0 | 0 | 0 |
 | Keyboard, WebKit | `npm run test:a11y:keyboard` | **33** | 0 | 0 | 0 |
@@ -80,7 +124,7 @@ Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass o
 | PostgreSQL validation | `npm run test:db` | **44** | 0 | 0 | 0 |
 | Security regression | `npm run test:security` | **114** | 0 | 0 | 0 |
 | Reliability | `npm run test:reliability` | **5** | 0 | 0 | 0 |
-| AI package (pytest, offline) | `npm run test:ai` | **353** | 0 | 0 | n/a |
+| AI package (pytest, offline) | `npm run test:ai` | **376** | 0 | 0 | n/a |
 
 These counts include generated cases, which overstate distinct scenarios. Accessibility and keyboard detail is in
 [ACCESSIBILITY.md](ACCESSIBILITY.md).
@@ -91,7 +135,7 @@ These counts include generated cases, which overstate distinct scenarios. Access
 | TypeScript strict type check (frontend and framework) | Passed |
 | ESLint and Ruff (API and AI package) | Passed, 0 warnings |
 | Frontend production build | Passed |
-| HTML and JUnit reports | Generated (JUnit: 668 tests, 0 failures, 0 skipped, 0 errors) |
+| HTML and JUnit reports | Generated (JUnit: 672 tests, 0 failures, 0 skipped, 0 errors) |
 | axe-core | 41 screen states, 0 violations, no rule disabled |
 | k6 scenarios, with thresholds | All 7 ran and passed their gates. See [PERFORMANCE.md](PERFORMANCE.md#quality-gates) |
 | Offline chatbot evaluation | Held-out correctness 12/23, refusal recall 41/43. See [AI_EVALUATION.md](AI_EVALUATION.md) |
@@ -133,7 +177,7 @@ These counts include generated cases, which overstate distinct scenarios. Access
 
 **Artifacts:** 2 artifacts, with 9 JSON files, and no traces, screenshots, videos or HTML report, because nothing failed. Text scans of these and all job logs found 0 credentials.
 
-**The sanitizer fix has been verified locally only.** It runs only when a test fails, and nothing failed. Locally, it kept all 6 real traces, with 0 credential hits. The only sanitized upload on GitHub so far came before the fix, in the second run, and its 19 screenshots and 38 videos have not been reviewed one by one.
+**The sanitizer fix was verified locally only at this point.** It runs only when a test fails, and nothing failed. A [later self-test](#sanitizer-self-test) verified it on GitHub, on a synthetic run. Locally, it kept all 6 real traces, with 0 credential hits. The only sanitized upload on GitHub so far came before the fix, in the second run, and its 19 screenshots and 38 videos have not been reviewed one by one.
 
 ## Why the npm count changed from 13 to 9
 
@@ -229,9 +273,9 @@ No application defect was found. Normal-load Linux p95: health 30.5 ms, products
 
 | Item | Status |
 | --- | --- |
-| Sanitizer fix on GitHub | **Not exercised**, because nothing has failed since. Verified locally. `sanitizer-self-test.yml` is ready, and has not been run |
-| Browser install mitigation | **First version ran on GitHub, and needed fixes. The fixed version has not run** |
-| Sanitizer self-test workflow | **Not run** |
+| Package cache hit | **Unverified.** Cache filled, and no run has hit it yet |
+| Failed install handling on GitHub | **Not exercised**, as no install has failed since it changed |
+| Sanitizer on a real failing trace on GitHub, with the latest fix | **Not exercised.** Verified locally on real traces, and on GitHub on a synthetic run |
 | Live LLM evaluation | **Not run** |
 
 ## CI simulation on macOS
@@ -300,7 +344,8 @@ comparison are in [PERFORMANCE.md](PERFORMANCE.md).
 
 | Run | Workers | Passed | Failed | Skipped | Flaky | Duration |
 | --- | --- | --- | --- | --- | --- | --- |
-| Everything except Firefox, together, latest | 4 | 668 | 0 | 0 | 0 | 1.7m |
+| Everything except Firefox, together, latest | 4 | 672 | 0 | 0 | 0 | 1.9m |
+| The same, in one earlier run on an overloaded machine. [See below](#a-failed-local-run-in-the-final-audit) | 4 | 662 | **10** | 0 | 0 | 14.6m |
 | Everything except Firefox, together, before the keep-alive fix | 8 | 666 | 0 | 0 | 0 | 3.8m |
 | WebKit, Chromium, API and security together, 3 times, before the fix | 8 | 396 each | 0 | 0 | 0 | 2.0 to 3.5m |
 | WebKit, each test 5 times, before the fix | 4 | 318 | **2** | 0 | 0 | 5.0m |
@@ -353,9 +398,9 @@ CI is untested.
 
 ## Firefox
 
-**On Linux, Firefox has passed in every GitHub Actions run since it first ran, most recently 98 tests (65 browser and 33 keyboard). On macOS, Firefox still cannot launch,** so it remains unverified there. The projects are kept and no test is skipped.
+**On Linux, Firefox has passed in every GitHub Actions run since it first ran, most recently 100 tests (67 browser and 33 keyboard). On macOS, Firefox still cannot launch,** so it remains unverified there. The projects are kept and no test is skipped.
 
-Exact failure, for each of the 97 tests (64 browser and 33 keyboard), when Playwright launches the browser:
+Exact failure on macOS, for each of the 97 tests (64 browser and 33 keyboard) when last run, when Playwright launches the browser:
 
 ```
 Error: browserType.launch: Failed to launch the browser process.
@@ -631,7 +676,7 @@ Anyone publishing the Docker images would need to review the licences of what th
 **Testing**
 
 - **Firefox is verified on Linux only.** It cannot launch on the development Mac.
-- **Limited CI history.** Two fully green runs and one soak, on one day. See [the latest evidence](#latest-verified-evidence).
+- **Limited CI history.** Three fully green runs and one complete soak, all on one day. See [the latest evidence](#latest-verified-evidence).
 - **One WebKit failure is unresolved,** as described above.
 - **No live LLM has been called.** Offline chatbot results measure keyword retrieval and rules, and it scored 0/8 on held-out paraphrases. See [AI_EVALUATION.md](AI_EVALUATION.md#limitations).
 - **Accessibility is not proven by these tests.** No screen reader was used. See [ACCESSIBILITY.md](ACCESSIBILITY.md#limitations).

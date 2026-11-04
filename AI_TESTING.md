@@ -211,17 +211,21 @@ Run with no API key in the environment. Playwright retries were off.
 | Chatbot, guards, order tool | `test_chatbot.py` | 54 | 0 | 0 |
 | Test generation | `test_generation.py` | 42 | 0 | 0 |
 | Failure triage | `test_triage.py` | 42 | 0 | 0 |
+| CI and Docker policy rules | `test_ci_policy.py` | 30 | 0 | 0 |
+| Artifact sanitizer | `test_sanitize.py` | 21 | 0 | 0 |
+| Sanitizer self-test | `test_sanitizer_self_test.py` | 11 | 0 | 0 |
+| Browser install script | `test_install_browsers.py` | 9 | 0 | 0 |
 | Review, approval, skeleton export | `test_review_export.py` | 39 | 0 | 0 |
 | Evaluation framework | `test_evaluation.py` | 26 | 0 | 0 |
 | Provider and credentials, using a local fake server | `test_llm.py` | 16 | 0 | 0 |
 | Command line | `test_cli.py` | 8 | 0 | 0 |
 | Model-graded judge, using a scripted stand-in | `test_judge.py` | 4 | 0 | 0 |
 | Support route, real PostgreSQL | `apps/api/tests/test_support.py` | 7 | 0 | 0 |
-| Browser tests of the chat page, in each of Chromium and WebKit | `tests/e2e/support.spec.ts` | 6 each | 0 | 0 |
+| Browser tests of the chat page, in each of Chromium, Firefox and WebKit | `tests/e2e/support.spec.ts` | 6 each | 0 | 0 |
 | API tests of the route | `tests/api/support.spec.ts` | 7 | 0 | 0 |
 | Security tests of the route | `tests/security/ai-support.spec.ts` | 7 | 0 | 0 |
 
-These counts include parametrised cases, which overstate distinct scenarios. The per-file rows below the total are from when it was 305. The latest CI run passed 374, before 2 more install script tests.
+These counts include parametrised cases, which overstate distinct scenarios. All 376 passed in [CI run 41933122691](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691).
 
 ## Limitations
 

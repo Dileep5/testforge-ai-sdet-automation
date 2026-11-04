@@ -1,6 +1,8 @@
 # CI/CD
 
-**Status: two fully green runs so far.** [CI run 41910311071](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41910311071), at commit `3c1a6fd`, is the latest: all 14 jobs succeeded, including the final gate, in 16m 34s and about 56 job minutes. [WebKit soak run 41913178899](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41913178899) then passed 650 of 650. The earlier failed runs are explained in [TEST_RESULTS.md](TEST_RESULTS.md#first-green-github-actions-run). This history is short, and does not show long-term stability.
+**Status: the latest run is fully green.** [CI run 41933122691](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691), at commit `f3061c9`, passed all 14 jobs, including the final gate, in 18m 42s and about 49 job minutes. [Sanitizer self-test run 41935807067](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41935807067) also passed. Results are in [TEST_RESULTS.md](TEST_RESULTS.md#latest-verified-evidence).
+
+Of 6 complete CI runs, 3 were green, all on one day, so this history does not show long-term stability. The 3 failed runs came from a linter setting, defects in the Docker test script and an overload test, a real payment bug found by Docker, and a slow package mirror. All are [explained with their fixes](TEST_RESULTS.md#first-github-actions-run).
 
 ## Jobs
 
@@ -40,8 +42,8 @@ The browser and service jobs wait for `typescript` and `python`, because they ar
 **Other workflows, which run only when started by hand:**
 
 - `performance-stress.yml`: all k6 scenarios at full length.
-- `sanitizer-self-test.yml`: proves the sanitizer without failing any application test. See [below](#sanitizer-self-test). **It has not been run.**
-- `webkit-soak.yml`: repeats the WebKit suite at 2 and 4 workers, keeping sanitized evidence for 30 days. [Its one complete run passed 650 of 650](TEST_RESULTS.md#webkit-soak).
+- `sanitizer-self-test.yml`: proves the sanitizer without failing any application test. See [below](#sanitizer-self-test). [Its one run passed](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41935807067).
+- `webkit-soak.yml`: repeats the WebKit suite at 2 and 4 workers, keeping sanitized evidence for 30 days. [Its one complete run passed 650 of 650](TEST_RESULTS.md#webkit-soak), before the 2 newest browser tests.
 
 There is deliberately **no workflow for live LLM evaluation.** It is run by hand, as described in [AI_EVALUATION.md](AI_EVALUATION.md#live-evaluation).
 
@@ -79,24 +81,22 @@ A newer push replaces an unfinished run on the same pull request, because only t
 
 **What changed:** `scripts/install-browsers.sh` keeps downloaded `.deb` files in a cached folder, retries failed downloads, stops after 15 minutes (`BROWSER_INSTALL_LIMIT_MINUTES`) with a clear error, and logs how many packages were cached and how long it took. The save happens straight after install, so a later test failure does not lose the download. No test, count, retry or gate changed.
 
-**What [the first real run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41928911349) showed:**
+**How the shared cache works:** every browser job installs the system packages for all browsers, even if it runs only one, so the set is the same everywhere and one cache serves every job. The key is the OS image plus Playwright's version, currently `apt-ubuntu24-1.64.1`. An older key with the same OS can be restored as a starting point, and apt then fetches only what is missing. Jobs start together, so on a new key they all download, one saves the cache, and the others log `Unable to reserve cache`, which is harmless.
 
-| Observation | Result |
-| --- | --- |
-| The limit | Worked: stopped at 900 seconds, with an error that named the likely cause |
-| A normal install | 20 to 36 seconds |
-| The slow mirror | Recurred. 114 MB took 8 seconds on one job, and over 15 minutes on another |
-| Saving the cache | Worked on 3 jobs |
-| Cache key | **Flaw:** `env.ImageOS` is empty in a composite action, so the OS was missing from the key |
-| Separate caches per browser list | **Flaw:** the Accessibility job could not reuse WebKit's identical packages |
-| Key tied to the whole lock file | **Flaw:** any dependency change emptied the cache |
-| After a failed install | **Flaw:** the sanitize and upload steps also failed, burying the cause |
+| Observation | [First version](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41928911349) | [Latest run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691) |
+| --- | --- | --- |
+| Time limit | Worked: stopped at 900 s, with an error naming the likely cause | Not reached |
+| Install times | 20, 24 and 36 s, and 1 job stopped at 900 s | 28, 30, 32 and 87 s |
+| Slowest 114 MB download | Over 15 minutes, incomplete | 42 s |
+| Cache key | **Flaw:** `env.ImageOS` is empty in a composite action, so the OS was missing | Fixed: `apt-ubuntu24-1.64.1` |
+| Cache sharing | **Flaw:** one cache per browser list, tied to the whole lock file | Fixed: one cache, tied to Playwright's version |
+| Cache saved | 3 separate caches | **1 cache: 181 packages, 114 MB** |
+| Cache hits | None | **None, as all jobs started on a new key** |
+| After a failed install | **Flaw:** later steps also failed, burying the cause | Fixed, and **not exercised**, as nothing failed |
 
-**Fixed, and not yet run on GitHub:** every job now installs the system packages for all browsers, so the set is the same everywhere, and one cache serves every job. The key is the OS image plus Playwright's version, such as `apt-ubuntu24-1.64.1`. The later steps now report that there is nothing to publish. Tests of the script's logic and `actionlint` pass locally, but apt has not run through this version.
+**Still unverified:** that a later run actually hits this cache. The next run should log `Package cache: 181 packages before installing`.
 
-**What to expect:** the first run after these changes still downloads, because the key is new, so a slow mirror can still fail it with a clear error. Once any job succeeds, later runs should show about 180 packages before installing. Look for `Package cache: N packages` in the logs.
-
-**If the slow mirror remains a problem,** the next step is running native jobs in the pinned Playwright image.
+**Remaining slow-mirror risk:** at least 2 of 26 browser installs have met a very slow mirror. A cache hit should avoid most of the download, though apt still updates its package lists, and fetches any package that has changed. A miss, such as after a Playwright upgrade, can still meet a slow mirror, which now fails with a clear error at 15 minutes and needs someone to run it again. **If this remains a problem,** the next step is running native jobs in the pinned Playwright image.
 
 ## Artifact retention
 
@@ -134,7 +134,9 @@ The sanitizer runs only after a failure, so a green run never exercises it. `san
 3. It uploads only the public copy, kept for 7 days.
 4. A second job downloads that artifact, and runs the same checks on what was actually uploaded.
 
-**Status: verified locally only, and not yet run on GitHub.** It checks text and bytes, so it cannot judge what a real screenshot or video shows.
+**Result:** [run 41935807067](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41935807067) passed both jobs. All 9 kinds of dummy secret were gone from the uploaded copy and the logs, and the evidence remained. The artifact held 8 files and 1 cleaned trace, with 7-day retention, and no HTML report or uncleaned trace. Details are in [TEST_RESULTS.md](TEST_RESULTS.md#sanitizer-self-test).
+
+**Its scope:** it proves the sanitizer on a synthetic fixture. Real failing traces with the latest fix have been sanitized only locally. The second job uses a separate runner, but the same checking code. It checks text and bytes, so it cannot judge what a real screenshot or video shows.
 
 ### Verification, with an intentionally failing test
 
@@ -151,7 +153,7 @@ The sanitizer runs only after a failure, so a green run never exercises it. `san
 | Untrusted code | No `pull_request_target`. Inputs reach scripts through environment variables |
 | No live LLM | `TESTFORGE_ALLOW_LIVE_LLM` is `0`, and the policy rejects a key or enabling it |
 | Secret scanning | gitleaks over all history. The allow-list holds only exact synthetic values |
-| Dependencies | `npm audit` and `pip-audit`. Dependabot is **temporarily off** while CI is first verified, because each of its pull requests runs full CI. To turn it on, rename `.github/dependabot.yml.disabled` to `.github/dependabot.yml` |
+| Dependencies | `npm audit` and `pip-audit`. **Dependabot is deliberately off through public release,** because each of its pull requests runs full CI. The plan is to enable it afterwards, with controlled scheduling and a limit on open pull requests, starting from `.github/dependabot.yml.disabled` |
 
 ### Dependency findings
 
@@ -169,11 +171,12 @@ No secrets need configuring. `performance-stress.yml` has never been started. Fo
 
 ## Limitations
 
-- **A short history:** four complete CI runs, two of them green, so rare or timing-related Linux failures may not have appeared.
-- **Browser install mitigation** has not run on GitHub.
-- **The sanitized upload has run once on GitHub, before its latest fix.** That fix is verified locally only, because it runs only on failure.
+- **A short history:** 6 complete CI runs, 3 of them green, on one day, so rare or timing-related Linux failures may not have appeared.
+- **Package cache hits are unverified,** and a slow mirror can still fail a run. See [Browser install reliability](#browser-install-reliability).
+- **Failed install handling has not been exercised on GitHub.**
+- **The latest sanitizer fix has run on GitHub only on a synthetic fixture.** A real failing trace would be the first real test.
 - **Images and video in artifacts cannot be text-scanned,** and those from the second run have not been reviewed one by one.
-- **Dependabot is off,** so pinned versions will go stale until it is turned back on, by renaming `.github/dependabot.yml.disabled`.
+- **Dependabot is off through public release,** so pinned versions will go stale until it is enabled.
 - **On a public repository,** old run logs and unexpired artifacts become visible too, and fork pull requests can start workflows. See the settings in [Setting it up](#setting-it-up).
 - **Performance gates have thin margins on slow runners.** Refusal p95 reached 541 ms of 1,000 ms, so a slow runner could fail without a regression.
 - **The `min-tests` numbers need updating** when tests are added or removed, and this is deliberate.

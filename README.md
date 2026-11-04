@@ -2,7 +2,7 @@
 
 A test automation portfolio project: a real commerce application, and the tests, tools and CI that check it across browsers, APIs, the database, security, accessibility, performance and AI features.
 
-**In the latest verified run, all 14 CI jobs passed on Linux, with retries off.** That is one snapshot and not a stability guarantee, and [known limitations](#known-limitations) are listed below. All data is synthetic, and the application is not meant for production.
+**In the latest verified run, all 14 CI jobs passed on Linux, with retries off.** That is a snapshot and not a stability guarantee, and [known limitations](#known-limitations) are listed below. All data is synthetic, and the application is not meant for production.
 
 ## What problem this addresses
 
@@ -15,26 +15,32 @@ Test suites often look healthy while proving little: they mock the system they c
 
 ## Verified evidence
 
-From [CI run 41910311071](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41910311071) and [WebKit soak run 41913178899](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41913178899), on Ubuntu 24.04 runners with 2 cores, at commit `3c1a6fd`, on 2026-11-04. Each count is passed, with 0 failed, 0 skipped and 0 flaky.
+From [CI run 41933122691](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691), on Ubuntu 24.04 runners with 2 cores, at commit `f3061c9`, on 2026-11-04. All have 0 failed and 0 skipped, and the Playwright suites have 0 flaky.
 
-| Suite | Passed |
+The same Playwright projects run twice, natively and inside Docker, so **the two totals overlap, and should not be added together.**
+
+| Suite | Native Linux | In Docker |
+| --- | --- | --- |
+| Chromium / Firefox / WebKit | 67 / 67 / 67 | 67 / 67 / 67 |
+| Framework self-checks | 6 | 6 |
+| Accessibility (axe, semantics, keyboard) in Chromium | 82 | 82 |
+| Keyboard in Firefox / WebKit | 33 / 33 | 33 / 33 |
+| API | 154 | 154 |
+| OpenAPI contract | 100 | Not in Docker |
+| PostgreSQL | 44 | 44 |
+| Security regression | 114 | 114 |
+| Reliability | 5 | 5 |
+| **Playwright total** | **772** | **672** |
+
+| Other check | Result |
 | --- | --- |
-| Chromium / Firefox / WebKit | 65 / 65 / 65 |
-| Framework self-checks | 6 |
-| Backend, pytest with 97% line coverage | 197 |
-| AI tools | 353 |
-| API | 154 |
-| OpenAPI contract | 100 |
-| PostgreSQL | 44 |
-| Security regression | 114 |
-| Reliability | 5 |
-| Accessibility (axe, semantics, keyboard) in Chromium | 82 |
-| Keyboard in Firefox / WebKit | 33 / 33 |
-| All except contract, in Docker | 666 |
+| Backend, pytest with 97% line coverage | 197 passed |
+| AI tools | 376 passed |
 | k6 performance gates | 22 of 22 |
-| WebKit, each test 5 times, at 2 and at 4 workers | 650 |
+| [Sanitizer self-test](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41935807067), on a synthetic fixture | Both jobs passed |
+| [WebKit soak](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41913178899), each test 5 times, at 2 and at 4 workers, on an earlier commit | 650 of 650 |
 
-Counts include parametrised cases, so they overstate distinct scenarios. Full results, including the failed runs before these, are in [TEST_RESULTS.md](TEST_RESULTS.md).
+Counts include parametrised cases, so they overstate distinct scenarios. Full results, including the failed runs along the way, are in [TEST_RESULTS.md](TEST_RESULTS.md#latest-verified-evidence).
 
 **Testing found real problems.** Examples: a payment button that did nothing on plain HTTP away from localhost, found only by running in Docker; a deadlock between database connections and worker threads under load; and 10 accessibility defects. All are fixed and recorded, with how each was found.
 
@@ -157,8 +163,9 @@ Raw reports contain session cookies and synthetic passwords. They are ignored by
 - **Flakiness cannot be ruled out.** A rare WebKit failure on macOS, where typed text was lost, remains unexplained. It occurred once, and has not recurred in over 1,800 later WebKit runs, including 650 on Linux.
 - **Firefox cannot launch on the development Mac,** so it is verified on Linux only.
 - **Performance figures describe one laptop or a shared 2-core runner.** They are not capacity figures or service levels, and the gates have thin margins on slow runners.
-- **The sanitizer's latest fix has been verified locally only,** because no GitHub run has failed since. Screenshots and video cannot be text-scanned.
-- **Limited CI history:** two fully green runs and one soak, on one day.
+- **The sanitizer's latest fix has run on GitHub only on a synthetic fixture.** Real failing traces have been sanitized with it only locally. Screenshots and video cannot be text-scanned.
+- **Limited CI history:** three fully green runs and one complete soak, on one day. A slow package mirror has twice disrupted browser installs, and the cache meant to reduce this has not yet been seen to hit.
+- **Dependabot is off for now,** so pinned versions need updating by hand.
 
 The full list is in [TEST_RESULTS.md](TEST_RESULTS.md#known-limitations).
 
