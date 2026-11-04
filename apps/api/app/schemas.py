@@ -244,7 +244,8 @@ class OrderSummaryOut(BaseModel):
 class PaymentOut(ORMModel):
     id: UUID
     order_id: UUID
-    idempotency_key: str
+    # idempotency_key is left out on purpose: it is the creating user's secret-like retry token,
+    # and customer-scoped buyers can read their orders' payments.
     method_token: str
     amount_cents: int
     status: PaymentStatus

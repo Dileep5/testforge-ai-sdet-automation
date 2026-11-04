@@ -14,7 +14,12 @@ from app.services import audit
 
 router = APIRouter(prefix="/inventory", tags=["inventory"])
 
-_SORT_COLUMNS = {"sku": Product.sku, "name": Product.name, "quantity": Inventory.quantity}
+_SORT_COLUMNS = {
+    "sku": Product.sku,
+    "name": Product.name,
+    "quantity": Inventory.quantity,
+    "id": Inventory.id,
+}
 
 
 def _load(db: DbSession, inventory_id: UUID) -> Inventory:
@@ -36,8 +41,15 @@ def list_inventory(
     warehouse_id: UUID | None = None,
     product_id: UUID | None = None,
     low_stock: bool = False,
-    sort: Literal["sku", "name", "quantity"] = "sku",
+    sort: Literal["sku", "name", "quantity", "id"] = "sku",
     direction: Literal["asc", "desc"] = "asc",
+    after_id: Annotated[
+        UUID | None,
+        Query(
+            description="Return rows after this id. Needs sort=id, direction=asc. Use this to read "
+            "a whole list safely while it changes: offset pages can repeat or skip rows."
+        ),
+    ] = None,
     page: Annotated[int, Query(ge=1, le=100_000)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
 ) -> Page[InventoryOut]:
@@ -57,6 +69,15 @@ def list_inventory(
         stmt = stmt.where(Inventory.product_id == product_id)
     if low_stock:
         stmt = stmt.where(Inventory.quantity <= Inventory.reorder_level)
+    if after_id:
+        if sort != "id" or direction != "asc":
+            raise AppError(
+                422,
+                "VALIDATION_ERROR",
+                "after_id needs sort=id and direction=asc",
+                [{"field": "query.after_id", "message": "needs sort=id and direction=asc"}],
+            )
+        stmt = stmt.where(Inventory.id > after_id)
     total = db.scalar(select(func.count()).select_from(stmt.subquery())) or 0
     column = _SORT_COLUMNS[sort]
     rows = db.scalars(

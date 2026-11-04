@@ -114,3 +114,34 @@ def test_concurrent_updates_with_same_version_have_one_winner(manager, world, db
     db.expire_all()
     assert _row(db, world).quantity == winner["quantity"]
     assert _row(db, world).version == version + 1
+
+
+def test_cursor_returns_every_remaining_row_once_while_the_list_changes(admin, world, db):
+    # Regression: offset pages repeated or skipped rows when products changed during a full read.
+    def read(after=None):
+        params = {"warehouse_id": str(world.toronto.id), "sort": "id", "page_size": 1}
+        if after:
+            params["after_id"] = after
+        response = admin.get(f"{API}/inventory", params=params)
+        assert response.status_code == 200
+        return response.json()["items"]
+
+    everything = admin.get(
+        f"{API}/inventory", params={"warehouse_id": str(world.toronto.id), "sort": "id"}
+    ).json()["items"]
+    assert len(everything) >= 2
+    first = read()
+    assert first[0]["id"] == everything[0]["id"]
+    assert admin.delete(f"{API}/products/{first[0]['product']['id']}").status_code == 204
+
+    seen = [first[0]["id"]]
+    while page := read(seen[-1]):
+        seen.append(page[0]["id"])
+    assert seen == [row["id"] for row in everything]
+
+
+def test_cursor_needs_id_ascending(viewer, world):
+    params = {"after_id": str(world.toronto.id)}
+    assert_error(viewer.get(f"{API}/inventory", params=params), 422, "VALIDATION_ERROR")
+    response = viewer.get(f"{API}/inventory", params={**params, "sort": "id", "direction": "desc"})
+    assert_error(response, 422, "VALIDATION_ERROR")

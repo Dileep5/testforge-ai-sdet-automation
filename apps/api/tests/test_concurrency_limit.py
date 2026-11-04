@@ -10,7 +10,9 @@ import httpx2 as httpx
 import pytest
 import uvicorn
 
+from app.db import MAX_CONNECTIONS, engine
 from app.main import create_app
+from app.middleware import ConcurrencyLimitMiddleware
 from tests.conftest import API, PASSWORD
 
 CONCURRENT_REQUESTS = 300
@@ -90,3 +92,110 @@ def test_health_answers_even_when_request_slots_are_full(live_server, world):
     assert status == 200
     assert elapsed < 2
     assert Counter(outcomes) == {200: CONCURRENT_REQUESTS}
+
+
+def test_the_api_admits_no_more_requests_than_it_has_database_connections():
+    # The deadlock needs more admitted requests than connections, so this bound is the fix.
+    limits = [
+        layer.kwargs["limit"]
+        for layer in create_app().user_middleware
+        if layer.cls is ConcurrencyLimitMiddleware
+    ]
+    assert limits == [MAX_CONNECTIONS]
+    assert engine.pool.size() + engine.pool._max_overflow == MAX_CONNECTIONS
+
+
+def _http_scope(path: str) -> dict:
+    return {"type": "http", "path": path}
+
+
+async def _noop_receive() -> dict:
+    return {"type": "http.request"}
+
+
+async def _noop_send(_: dict) -> None:
+    return None
+
+
+class _BlockingApp:
+    """Holds every request open until released, so what gets admitted can be counted exactly."""
+
+    def __init__(self) -> None:
+        self.release = asyncio.Event()
+        self.admitted = 0
+        self.peak = 0
+        self.active = 0
+
+    async def __call__(self, scope, receive, send) -> None:
+        self.admitted += 1
+        self.active += 1
+        self.peak = max(self.peak, self.active)
+        await self.release.wait()
+        self.active -= 1
+
+
+async def _settle() -> None:
+    # Each admitted task only needs the event loop, so a few passes let all of them run.
+    for _ in range(50):
+        await asyncio.sleep(0)
+
+
+def test_exactly_the_limit_is_admitted_and_the_rest_queue_until_a_slot_frees():
+    async def run() -> None:
+        inner = _BlockingApp()
+        middleware = ConcurrencyLimitMiddleware(inner, limit=3, exempt_paths=frozenset())
+        tasks = [
+            asyncio.create_task(middleware(_http_scope("/x"), _noop_receive, _noop_send))
+            for _ in range(10)
+        ]
+        await _settle()
+        assert inner.admitted == 3
+        assert inner.peak == 3
+
+        inner.release.set()
+        await asyncio.gather(*tasks)
+        assert inner.admitted == 10
+        assert inner.peak <= 3
+
+    asyncio.run(run())
+
+
+def test_exempt_paths_and_non_http_traffic_bypass_full_slots():
+    async def run() -> None:
+        inner = _BlockingApp()
+        middleware = ConcurrencyLimitMiddleware(inner, limit=1, exempt_paths=frozenset({"/health"}))
+        held = asyncio.create_task(middleware(_http_scope("/x"), _noop_receive, _noop_send))
+        await _settle()
+        queued = asyncio.create_task(middleware(_http_scope("/y"), _noop_receive, _noop_send))
+        health = asyncio.create_task(middleware(_http_scope("/health"), _noop_receive, _noop_send))
+        lifespan = asyncio.create_task(middleware({"type": "lifespan"}, _noop_receive, _noop_send))
+        await _settle()
+        # /x plus the two bypasses are inside; /y is still waiting for the only slot.
+        assert inner.admitted == 3
+        inner.release.set()
+        await asyncio.gather(held, queued, health, lifespan)
+        assert inner.admitted == 4
+
+    asyncio.run(run())
+
+
+def test_a_slot_is_released_when_a_request_fails_or_the_client_disconnects():
+    async def run() -> None:
+        async def failing(scope, receive, send) -> None:
+            raise RuntimeError("boom")
+
+        middleware = ConcurrencyLimitMiddleware(failing, limit=1, exempt_paths=frozenset())
+        for _ in range(3):
+            with pytest.raises(RuntimeError):
+                await middleware(_http_scope("/x"), _noop_receive, _noop_send)
+        assert not middleware.slots.locked()
+
+        inner = _BlockingApp()
+        middleware = ConcurrencyLimitMiddleware(inner, limit=1, exempt_paths=frozenset())
+        held = asyncio.create_task(middleware(_http_scope("/x"), _noop_receive, _noop_send))
+        await _settle()
+        held.cancel()
+        await asyncio.gather(held, return_exceptions=True)
+        assert not middleware.slots.locked()
+
+    asyncio.run(run())

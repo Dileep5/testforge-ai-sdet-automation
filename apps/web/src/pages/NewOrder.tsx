@@ -2,12 +2,11 @@ import { useMemo, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ApiError,
-  fetchAllPages,
+  fetchWarehouseStock,
   post,
   request,
   type Customer,
   type ErrorDetail,
-  type InventoryRow,
   type OrderDetail,
   type Warehouse,
 } from "../api";
@@ -51,7 +50,7 @@ export function NewOrderPage() {
   const stock = useAsync(
     (signal) =>
       warehouseId
-        ? fetchAllPages<InventoryRow>("/inventory", { warehouse_id: warehouseId }, signal)
+        ? fetchWarehouseStock(warehouseId, signal)
         : Promise.resolve(undefined),
     warehouseId,
   );

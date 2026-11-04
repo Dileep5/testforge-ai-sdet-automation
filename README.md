@@ -63,11 +63,17 @@ against its own database and ports, so it does not touch development data.
 | --- | --- |
 | `npm run test:backend` | Backend tests |
 | `npm run test:backend:coverage` | Backend tests with a coverage report |
-| `npm run test:e2e` | All browsers |
+| `npm run test:e2e` | All browsers (not the service suites) |
 | `npm run test:e2e:chromium`, `test:e2e:webkit`, `test:e2e:firefox` | One browser |
 | `npm run test:e2e:smoke` | Fast core journeys in Chromium |
 | `npm run test:e2e:critical` | Critical paths in Chromium and WebKit |
 | `npm run test:e2e:regression` | Everything tagged for regression |
+| `npm run test:api` | API automation |
+| `npm run test:contract` | OpenAPI contract and breaking-change checks |
+| `npm run test:db` | PostgreSQL validation with read-only SQL |
+| `npm run test:security` | Security regression, against the local app only |
+| `npm run test:reliability` | Bounded concurrent bursts |
+| `npm run test:service` | All five of the above |
 | `npm run typecheck` | Strict type check of the frontend and framework |
 | `npm run lint` / `npm run lint:backend` | ESLint / Ruff |
 | `npm run build` | Frontend production build |
@@ -81,7 +87,7 @@ npx playwright test --grep "rapid typing" --headed           # watch one test
 ```
 
 **On this machine, use `npm run test:e2e:chromium` and `test:e2e:webkit`.** Firefox currently fails to
-launch here, so `npm run test:e2e` reports 56 launch failures. See
+launch here, so `npm run test:e2e` reports 57 launch failures and Firefox is unverified. See
 [TEST_RESULTS.md](TEST_RESULTS.md#firefox).
 
 ### Investigating a failure
@@ -97,6 +103,9 @@ The trace viewer shows each action with a before and after snapshot of the page,
 and network calls. A test with two signed-in users has one trace covering both sessions, plus a
 screenshot and video for each. Reports are written to `playwright-report/` and
 `reports/junit/playwright.xml`.
+
+`OPENAPI_BASE_REF=<ref> npm run test:contract` compares the spec with another revision. A deliberate breaking change
+must be recorded, with its reason, in `apps/api/openapi-accepted-breaking-changes.json`.
 
 To reproduce a failure, run that one test with `--grep`. Tests create their own data, so they do not
 depend on what ran before them. If a failure only appears in parallel, add `--repeat-each=3`.
@@ -118,13 +127,15 @@ The API serves interactive docs at `http://localhost:8000/api/v1/docs`. The comm
 ```
 apps/api      FastAPI app, Alembic migrations, seed data, pytest suite
 apps/web      React app
-framework     Playwright page objects, components, fixtures, factories and helpers
-tests/e2e     Playwright tests
+framework     Playwright page objects, components, fixtures, factories, helpers and contract checks
+tests/e2e     Playwright browser tests
+tests/api, contract, database, security, reliability    Playwright tests with no browser
 scripts       Setup, local PostgreSQL, dev runner, E2E API runner, OpenAPI export
 ```
 
 The fixture design, page objects, isolation and browser configuration are explained in
-[ARCHITECTURE.md](ARCHITECTURE.md#playwright-framework).
+[ARCHITECTURE.md](ARCHITECTURE.md#playwright-framework). What each test layer covers is in
+[TEST_STRATEGY.md](TEST_STRATEGY.md), and results are in [TEST_RESULTS.md](TEST_RESULTS.md).
 
 ## Known limitations
 

@@ -16,5 +16,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["framework", "tests/e2e", "playwright.config.ts"]
+  "include": ["framework", "tests", "playwright.config.ts"]
 }

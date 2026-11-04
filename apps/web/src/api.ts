@@ -107,17 +107,21 @@ export async function downloadFile(path: string, filename: string): Promise<void
   URL.revokeObjectURL(url);
 }
 
-/** Fetch every page of a listing, for pick lists that must not silently miss rows. */
-export async function fetchAllPages<T>(
-  path: string,
-  params: Record<string, string | number | boolean | null | undefined>,
-  signal?: AbortSignal,
-): Promise<T[]> {
-  const items: T[] = [];
-  for (let page = 1; ; page++) {
-    const result = await request<Page<T>>(`${path}${query({ ...params, page, page_size: 100 })}`, { signal });
-    items.push(...result.items);
-    if (page >= result.pages) return items;
+/**
+ * Every stock row at a warehouse, in SKU order. This walks a cursor rather than offset pages, because
+ * a product added or retired mid-read would shift offsets and repeat or skip rows.
+ */
+export async function fetchWarehouseStock(warehouseId: string, signal?: AbortSignal): Promise<InventoryRow[]> {
+  const pageSize = 100;
+  const rows: InventoryRow[] = [];
+  for (;;) {
+    const last = rows.at(-1)?.id;
+    const params = { warehouse_id: warehouseId, sort: "id", after_id: last, page_size: pageSize };
+    const { items } = await request<Page<InventoryRow>>(`/inventory${query(params)}`, { signal });
+    rows.push(...items);
+    if (items.length < pageSize) {
+      return rows.sort((a, b) => a.product.sku.localeCompare(b.product.sku));
+    }
   }
 }
 

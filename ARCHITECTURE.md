@@ -24,6 +24,15 @@ pool timeout. `/health` is exempt, so a busy server does not look dead.
 
 The limit is per process. Running several API processes means dividing database connections among them.
 
+The queue is unbounded, and it only applies once the operating system has accepted a connection. Phase 3 measured
+`connect ECONNRESET` from a burst of 300 simultaneous connections on macOS, where the listen queue is capped at 128.
+
+### Reading a whole list
+
+List pages use offset pagination. A full read cannot, because a row added or retired between requests shifts the offsets
+and repeats or skips rows. The order form therefore walks `GET /inventory?sort=id&after_id=...`, which returns each row
+that exists throughout the read exactly once.
+
 ## Test environments
 
 Each kind of test has its own database, so none can damage another's data.
@@ -41,8 +50,10 @@ whose name does not end in `_test`, and Playwright refuses any not ending in `_e
 
 ```
 tests/e2e/*.spec.ts       What should happen, in business terms
+tests/{api,contract,database,security,reliability}    The same, with no browser
         │
 framework/fixtures        Sessions per role, per-test data, read-only database
+framework/contract        OpenAPI validation and breaking-change detection
         │
 framework/pages           One class per screen: actions and locators, no assertions on outcomes
 framework/components      Grid, modal, toast, navigation, shared between pages
@@ -101,7 +112,7 @@ visible assertions passed.
 | Global counts moving during a run | Assertions are scoped to the test's own customer or SKU. Moving lists such as the audit page are checked by shape only, and audit content is checked in the database by entity ID |
 | Cleanup hitting another worker | `TestData` only touches the IDs it recorded creating. A framework test confirms a seeded product is left unchanged |
 | Leftovers between runs | Global setup reseeds `testforge_e2e` at the start of every run |
-| Verification changing data | `ReadOnlyDb` connects with `default_transaction_read_only=on`. A framework test confirms writes are refused |
+| Verification changing data | `ReadOnlyDb` logs in as the SELECT-only role `testforge_e2e_reader`, with read-only mode on as well. Tests confirm writes fail even with that mode switched off |
 
 Cleanup cancels orders that can still be cancelled, retires products and deactivates users. Customers
 have no delete operation, and settled orders stay as history; both last until the next reseed.
@@ -110,10 +121,27 @@ The framework's only direct database write is `expireSession`, which ages one se
 hash of the calling test's own cookie. Waiting out a real session lifetime would make that test
 impractical.
 
-### Browser configuration
+### Service test fixtures
 
-Projects are defined in `playwright.config.ts`: `chromium`, `firefox`, `webkit`, plus a browserless
-`framework` project for checks on the helpers themselves.
+`framework/fixtures/api.ts` extends the browser fixtures for tests with no browser. They call the API directly on :8100.
+
+| Fixture | Provides |
+| --- | --- |
+| `asAdmin`, `asManager`, `asViewer` | A seeded account logged in through `APIRequestContext`, as a typed client |
+| `asBuyer`, `newBuyer` | Customer-scoped Viewers, each with a customer created for this test |
+| `loginAs` | A new session for any credentials |
+| `anonymous` | A client with no session |
+| `withCookie` | A client presenting an exact cookie value, for replaying old or forged tokens |
+| `unchecked` | No contract check, for paths the spec deliberately omits |
+| `observeContract` | Validates every response above against the spec, and fails the test on any violation |
+
+Global teardown writes the operations and statuses reached to `reports/contract/coverage.md`.
+
+### Project configuration
+
+Projects are defined in `playwright.config.ts`: `chromium`, `firefox`, `webkit`, a browserless `framework` project for
+checks on the helpers themselves, and `api`, `contract`, `database`, `security` and `reliability`. `reliability` runs one
+test at a time, so bursts do not add up past the operating system's connection queue.
 
 | Setting | Value | Override |
 | --- | --- | --- |

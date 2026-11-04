@@ -5,7 +5,7 @@ import tseslint from "typescript-eslint";
 export default tseslint.config(
   { ignores: ["**/node_modules/**", "**/dist/**", "**/.venv/**", "playwright-report/**", "test-results/**", "reports/**", "apps/web/src/api-types.ts"] },
   {
-    files: ["framework/**/*.ts", "tests/e2e/**/*.ts", "playwright.config.ts"],
+    files: ["framework/**/*.ts", "tests/**/*.ts", "playwright.config.ts"],
     extends: [...tseslint.configs.recommendedTypeChecked],
     languageOptions: { parserOptions: { project: "./tsconfig.json", tsconfigRootDir: import.meta.dirname } },
     rules: {
@@ -16,7 +16,7 @@ export default tseslint.config(
   },
   {
     // Rules that keep tests reliable. These apply to the page objects as well as the specs.
-    files: ["framework/**/*.ts", "tests/e2e/**/*.ts"],
+    files: ["framework/**/*.ts", "tests/**/*.ts"],
     plugins: { playwright },
     rules: {
       "playwright/no-wait-for-timeout": "error",
@@ -28,7 +28,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["tests/e2e/**/*.ts"],
+    files: ["tests/**/*.ts"],
     plugins: { playwright },
     rules: {
       "playwright/no-focused-test": "error",
@@ -37,7 +37,7 @@ export default tseslint.config(
       "playwright/prefer-web-first-assertions": "error",
       "playwright/no-useless-not": "error",
       "playwright/no-conditional-in-test": "error",
-      "playwright/expect-expect": ["error", { assertFunctionPatterns: ["^expect"] }],
+      "playwright/expect-expect": ["error", { assertFunctionPatterns: ["^expect", "^readApiError$"] }],
     },
   },
   {

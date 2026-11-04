@@ -3,6 +3,7 @@ import { expect, test } from "../../framework/fixtures";
 import { centsToDecimal, expectedTotals, parseMoney } from "../../framework/helpers/money";
 import { expectApiError } from "../../framework/helpers/api-client";
 import { csvHeader, parseCsv } from "../../framework/helpers/csv";
+import { beforeNthRequest } from "../../framework/helpers/network";
 import type { OrderDetail } from "../../framework/helpers/types";
 
 const utcDay = (offsetDays = 0) => new Date(Date.now() + offsetDays * 86_400_000).toISOString().slice(0, 10);
@@ -160,11 +161,28 @@ test.describe("order creation", { tag: "@regression" }, () => {
     expect(await db.countOrdersForCustomer(customer.id)).toBe(1);
   });
 
+  test("the order form lists each product once when the catalog changes while it loads", async ({ manager, data, setupApi }) => {
+    // Regression: a product added mid-read shifted offset pages, so a product appeared twice.
+    await data.products(101, { stock: {} });
+    const customer = await data.customer();
+    const { app, page } = manager;
+    await beforeNthRequest(page, /\/api\/v1\/inventory\?.*warehouse_id=/, 2, async () => {
+      // This SKU sorts before all others, so with offsets it pushes the rest down a row.
+      const added = await setupApi.createProduct({ sku: data.unique("A"), name: "Added mid-read", category: "E2E", unit_price_cents: 1 });
+      data.adopt(`retire ${added.sku}`, () => setupApi.retireProduct(added.id));
+    });
+    await app.newOrder.goto();
+    await app.newOrder.selectCustomer(customer.name);
+    await app.newOrder.selectWarehouse("YVR1");
+    const options = app.newOrder.product(1).locator("option");
+    await expect.poll(() => options.count()).toBeGreaterThan(101);
+    const values = await options.evaluateAll((items) => items.map((item) => (item as HTMLOptionElement).value));
+    expect(values.length - new Set(values).size).toBe(0);
+  });
+
   test("the order form offers a product even when the catalog is larger than one API page", async ({ manager, data }) => {
     // Regression: the form used to load only the first 100 stock rows, silently hiding the rest.
-    const fillers = [];
-    for (let i = 0; i < 101; i++) fillers.push(data.product({ stock: {} }));
-    await Promise.all(fillers);
+    await data.products(101, { stock: {} });
     // One page holds 100 rows, plus the placeholder option. More than that proves all pages loaded.
     const customer = await data.customer();
     const last = await data.product({ stock: { YVR1: 3 } });

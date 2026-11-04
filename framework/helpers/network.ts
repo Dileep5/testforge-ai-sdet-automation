@@ -30,3 +30,16 @@ export async function whileWaitingFor(page: Page, match: ApiMatch, action: () =>
   const [response] = await Promise.all([page.waitForResponse((candidate) => matches(candidate, match)), action()]);
   return response;
 }
+
+/**
+ * Run an action just before the nth matching request is sent, to place a change from another user
+ * at an exact point in a multi-request read. The request itself still goes to the real server.
+ */
+export async function beforeNthRequest(page: Page, url: RegExp, n: number, action: () => Promise<void>): Promise<void> {
+  let seen = 0;
+  await page.route(url, async (route) => {
+    seen += 1;
+    if (seen === n) await action();
+    await route.continue();
+  });
+}

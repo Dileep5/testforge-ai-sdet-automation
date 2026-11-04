@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { Client, types } from "pg";
-import { DATABASE_URL, assertE2eDatabase } from "../config";
+import { DATABASE_URL, READONLY_DATABASE_URL, assertE2eDatabase } from "../config";
 
 // BIGINT columns hold money in cents: read them as numbers, but never lose precision silently.
 types.setTypeParser(types.builtins.INT8, (value) => {
@@ -44,8 +44,8 @@ export interface AuditRow {
 }
 
 /**
- * Checks what was actually persisted. The connection is read-only at the database level, so a
- * verification query cannot change data another worker depends on.
+ * Checks what was actually persisted. The connection uses a SELECT-only role, so a verification
+ * query cannot change data another worker depends on, or anything in another database.
  */
 export class ReadOnlyDb {
   private constructor(private readonly client: Client) {}
@@ -53,7 +53,7 @@ export class ReadOnlyDb {
   static async connect(): Promise<ReadOnlyDb> {
     assertE2eDatabase();
     const client = new Client({
-      connectionString: DATABASE_URL,
+      connectionString: READONLY_DATABASE_URL,
       options: "-c default_transaction_read_only=on -c timezone=UTC",
     });
     await client.connect();

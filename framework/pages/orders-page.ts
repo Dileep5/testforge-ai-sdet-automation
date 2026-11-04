@@ -45,9 +45,12 @@ export class OrdersPage extends BasePage {
     return this.page.getByRole("link", { name: "New order" });
   }
 
+  /** Waits for every request the page makes on load: orders, then its filters' reference data. */
   async goto(query = ""): Promise<void> {
-    await whileWaitingFor(this.page, { method: "GET", path: "/orders" }, async () => {
-      await this.page.goto(`/orders${query}`);
+    await whileWaitingFor(this.page, { method: "GET", path: "/customers" }, async () => {
+      await whileWaitingFor(this.page, { method: "GET", path: "/orders" }, async () => {
+        await this.page.goto(`/orders${query}`);
+      });
     });
   }
 

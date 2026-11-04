@@ -900,10 +900,6 @@
             "title": "Id",
             "type": "string"
           },
-          "idempotency_key": {
-            "title": "Idempotency Key",
-            "type": "string"
-          },
           "method_token": {
             "title": "Method Token",
             "type": "string"
@@ -944,7 +940,6 @@
         "required": [
           "id",
           "order_id",
-          "idempotency_key",
           "method_token",
           "amount_cents",
           "status",
@@ -2377,7 +2372,8 @@
               "enum": [
                 "sku",
                 "name",
-                "quantity"
+                "quantity",
+                "id"
               ],
               "title": "Sort",
               "type": "string"
@@ -2395,6 +2391,25 @@
               ],
               "title": "Direction",
               "type": "string"
+            }
+          },
+          {
+            "description": "Return rows after this id. Needs sort=id, direction=asc. Use this to read a whole list safely while it changes: offset pages can repeat or skip rows.",
+            "in": "query",
+            "name": "after_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Return rows after this id. Needs sort=id, direction=asc. Use this to read a whole list safely while it changes: offset pages can repeat or skip rows.",
+              "title": "After Id"
             }
           },
           {

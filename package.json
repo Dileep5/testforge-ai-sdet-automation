@@ -13,6 +13,8 @@
   "devDependencies": {
     "@playwright/test": "1.64.1",
     "@types/pg": "8.23.1",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
     "csv-parse": "7.0.3",
     "embedded-postgres": "17.11.0-beta.19",
     "eslint": "10.14.0",
@@ -40,13 +42,19 @@
     "openapi:export": "apps/api/.venv/bin/python scripts/export_openapi.py && npm run generate:api-types -w apps/web",
     "lint": "eslint . --max-warnings 0",
     "e2e:install": "playwright install chromium firefox webkit",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --project=framework --project=chromium --project=firefox --project=webkit",
     "test:e2e:chromium": "playwright test --project=framework --project=chromium",
     "test:e2e:firefox": "playwright test --project=firefox",
     "test:e2e:webkit": "playwright test --project=webkit",
     "test:e2e:smoke": "playwright test --project=chromium --grep @smoke",
     "test:e2e:critical": "playwright test --grep @critical --project=chromium --project=webkit",
-    "test:e2e:regression": "playwright test --grep @regression",
+    "test:e2e:regression": "playwright test --project=framework --project=chromium --project=firefox --project=webkit --grep @regression",
+    "test:api": "playwright test --project=api",
+    "test:contract": "playwright test --project=contract",
+    "test:db": "playwright test --project=database",
+    "test:security": "playwright test --project=security",
+    "test:reliability": "playwright test --project=reliability",
+    "test:service": "playwright test --project=api --project=contract --project=database --project=security --project=reliability",
     "e2e:report": "playwright show-report"
   }
 }

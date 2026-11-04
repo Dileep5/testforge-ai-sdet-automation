@@ -301,3 +301,29 @@ def test_external_buyer_only_sees_own_orders(buyer_a, create_order, world):
     # A filter for the other customer must not widen the buyer's scope.
     filtered = buyer_a.get(f"{API}/orders", params={"customer_id": str(world.customer_b.id)}).json()
     assert filtered["items"] == []
+
+
+def test_the_latest_representable_date_filter_does_not_overflow(manager, create_order):
+    # Regression: date_to=9999-12-31 raised OverflowError when adding a day, giving a 500.
+    order = create_order()
+    params = {"date_from": "0001-01-01", "date_to": "9999-12-31"}
+    listed = manager.get(f"{API}/orders", params=params)
+    assert listed.status_code == 200
+    assert order["id"] in [item["id"] for item in listed.json()["items"]]
+    assert manager.get(f"{API}/orders/export.csv", params=params).status_code == 200
+
+
+def test_a_buyer_cannot_read_the_idempotency_key_used_to_pay_their_order(
+    buyer_a, manager, world, create_order
+):
+    # Regression: the key was serialized in every payment, including for customer-scoped buyers.
+    order = create_order(customer=world.customer_a)
+    key = "secret-retry-key-1"
+    response = manager.post(
+        f"{API}/orders/{order['id']}/payments",
+        json={"method_token": "sim_success"},
+        headers={"Idempotency-Key": key},
+    )
+    assert response.status_code == 201
+    assert key not in response.text
+    assert key not in buyer_a.get(f"{API}/orders/{order['id']}").text

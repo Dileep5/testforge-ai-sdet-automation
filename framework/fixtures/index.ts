@@ -9,7 +9,7 @@ import {
   type PlaywrightWorkerArgs,
   type TestInfo,
 } from "@playwright/test";
-import { BASE_URL, SESSION_COOKIE } from "../config";
+import { API_URL, BASE_URL, SESSION_COOKIE } from "../config";
 import { TestData, testNamespace, type CreatedUser } from "../factories/test-data";
 import { ApiClient } from "../helpers/api-client";
 import { ReadOnlyDb } from "../helpers/database";
@@ -71,8 +71,8 @@ interface WorkerFixtures {
 
 type Playwright = PlaywrightWorkerArgs["playwright"];
 
-async function apiLogin(playwright: Playwright, credentials: Credentials): Promise<APIRequestContext> {
-  const request = await playwright.request.newContext({ baseURL: BASE_URL });
+export async function apiLogin(playwright: Playwright, credentials: Credentials, baseURL = BASE_URL): Promise<APIRequestContext> {
+  const request = await playwright.request.newContext({ baseURL });
   const { email, password } = credentials;
   const response = await request.post("/api/v1/auth/login", { data: { email, password } });
   if (!response.ok()) {
@@ -131,7 +131,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
   ],
 
   setupApi: async ({ playwright }, use) => {
-    const request = await apiLogin(playwright, SEED_USERS.admin);
+    const request = await apiLogin(playwright, SEED_USERS.admin, API_URL);
     const api = new ApiClient(request);
     await use(api);
     await api.logout();

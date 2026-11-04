@@ -88,6 +88,8 @@ No assertion was weakened to make a test pass.
 
 ## Phase 2: Playwright framework (2026-11-03)
 
+**Status:** approved with Firefox marked unverified. Committed locally as `76e3a1e`.
+
 **Status:** complete except Firefox, which could not run on this machine. Awaiting review. Phase 3 has
 not been started. Nothing has been pushed, and Phase 2's changes are not yet committed.
 
@@ -161,3 +163,53 @@ during development all had root causes above, and each was fixed at its cause.
 
 - Confirm or rule out Firefox from an ordinary terminal.
 - Phases 3 to 7.
+
+## Phase 3: API, contract, PostgreSQL and security testing (2026-11-03)
+
+**Status:** complete, awaiting review. Not committed. Nothing pushed. Firefox unverified.
+
+### Built
+
+- **`tests/api`:** typed API automation with `APIRequestContext` across every resource.
+- **`tests/contract`, `framework/contract`:** validation against the generated OpenAPI spec with Ajv, including
+  closed objects, requests and queries generated from the schema, and a breaking-change detector.
+- **`tests/database`:** read-only SQL assertions, using a new SELECT-only PostgreSQL role.
+- **`tests/security`:** a spec-driven authorization matrix, IDOR, sessions, injection, identifiers, leakage and
+  idempotency abuse.
+- **`tests/reliability`, `test_concurrency_limit.py`:** bursts against a real server, plus deterministic
+  middleware tests that count admissions and do not depend on timing.
+- **`framework/fixtures/api.ts`:** browserless sessions per role. Every response is contract-checked automatically.
+- **`TEST_STRATEGY.md`:** new.
+
+Dependencies added: `ajv` 8.20.0 and `ajv-formats` 3.0.1. Backend API changes: `after_id` and `sort=id` on
+`GET /inventory`, and `idempotency_key` removed from payment responses.
+
+### Verified
+
+Exact counts are in [TEST_RESULTS.md](TEST_RESULTS.md). Backend 175; Chromium 57; WebKit 57; Firefox 0 of 57 (launch
+failure); framework 6; API 147; contract 97; database 44; security 106; reliability 5. All with retries off.
+
+### Failures and how each was resolved
+
+See [TEST_RESULTS.md](TEST_RESULTS.md#bugs-found-in-phase-3). In short: 4 application defects fixed, 7 test
+defects fixed, 1 environment limit recorded, and 1 WebKit failure not identified because details were not yet being
+kept. A clean-copy run exposed the order form bug, after earlier runs on the working tree had passed.
+
+### Operator notes
+
+- The clean copy was once deleted while its temporary PostgreSQL was still shutting down, so the project's own server
+  failed one start attempt. It then started normally, and a content hash confirmed the dev database was unchanged.
+- Mutation runs edited source files temporarily. Each was restored from a backup and checked with `git diff`.
+
+### Environment
+
+- **Firefox:** the project configuration is kept and no test is skipped. No further macOS workarounds were attempted.
+  It should run on Linux in CI in Phase 6.
+- **Docker:** still not installed.
+- **Dev database:** row counts and content hashes matched the pre-Phase 3 snapshot, checked twice.
+
+### Remains
+
+- Phase 4 should examine the unbounded request queue and the connection limit under load.
+- Firefox on Linux, CI and Docker in Phase 6.
+- Phases 4 to 7.

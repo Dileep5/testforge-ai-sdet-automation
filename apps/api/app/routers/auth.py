@@ -29,8 +29,10 @@ def login(payload: LoginRequest, response: Response, db: DbSession) -> SessionUs
     user = db.scalar(select(User).where(User.email == payload.email.lower()))
     password_ok = verify_password(user.password_hash if user else None, payload.password)
     if user is None or not password_ok or not user.is_active:
+        email = payload.email.lower()
+        # A valid email can be longer than the entity_id column, and must still fail as a 401.
         audit.record(
-            db, user.id if user else None, "auth.login_failed", "user", payload.email.lower()
+            db, user.id if user else None, "auth.login_failed", "user", email[:64], {"email": email}
         )
         db.commit()
         # One message for every cause, so the response does not reveal which emails exist.

@@ -48,11 +48,19 @@ export class TestData {
   private readonly cleanups: { label: string; run: () => Promise<void> }[] = [];
 
   constructor(
-    private readonly api: ApiClient,
+    readonly api: ApiClient,
     readonly namespace: string,
   ) {}
 
   private next = () => ++this.sequence;
+
+  /** A value unique within this test, for names and keys the test builds itself. */
+  unique = (label: string) => `${label}-${this.namespace}-${this.next()}`;
+
+  /** Register cleanup for a record the test created directly through the API. */
+  adopt(label: string, run: () => Promise<void>): void {
+    this.cleanups.push({ label, run });
+  }
 
   async warehouse(code: WarehouseCode): Promise<Warehouse> {
     this.warehouses ??= await this.api.warehouses();
@@ -88,6 +96,16 @@ export class TestData {
       await this.api.adjustInventory(row.inventory_id, quantity, row.version);
     }
     return this.api.product(product.id);
+  }
+
+  /** Many products, a few at a time, so bulk setup cannot flood the server with new connections. */
+  async products(count: number, options: ProductOptions = {}): Promise<ProductDetail[]> {
+    const created: ProductDetail[] = [];
+    while (created.length < count) {
+      const size = Math.min(10, count - created.length);
+      created.push(...(await Promise.all(Array.from({ length: size }, () => this.product(options)))));
+    }
+    return created;
   }
 
   async order({ customer, warehouse = "YYZ1", lines }: OrderOptions): Promise<OrderDetail> {

@@ -114,3 +114,14 @@ def test_cross_site_write_is_rejected(manager):
 def test_allowed_origin_may_write(manager):
     response = manager.post(f"{API}/auth/logout", headers={"Origin": "http://localhost:5173"})
     assert response.status_code == 204
+
+
+def test_failed_login_with_an_email_longer_than_the_audit_column_is_still_401(anon, db):
+    # Regression: the 64-character entity_id column overflowed, turning a 401 into a 422 and
+    # losing the audit record.
+    email = f"{'a' * 60}@{'b' * 60}.example"
+    response = anon.post(f"{API}/auth/login", json={"email": email, "password": "wrong"})
+    assert_error(response, 401, "INVALID_CREDENTIALS")
+    entry = db.scalar(select(AuditLog).where(AuditLog.action == "auth.login_failed"))
+    assert entry.entity_id == email[:64]
+    assert entry.details == {"email": email}

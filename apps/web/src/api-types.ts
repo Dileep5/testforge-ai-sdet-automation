@@ -853,8 +853,6 @@ export interface components {
              * Format: uuid
              */
             id: string;
-            /** Idempotency Key */
-            idempotency_key: string;
             /** Method Token */
             method_token: string;
             /**
@@ -1696,8 +1694,10 @@ export interface operations {
                 warehouse_id?: string | null;
                 product_id?: string | null;
                 low_stock?: boolean;
-                sort?: "sku" | "name" | "quantity";
+                sort?: "sku" | "name" | "quantity" | "id";
                 direction?: "asc" | "desc";
+                /** @description Return rows after this id. Needs sort=id, direction=asc. Use this to read a whole list safely while it changes: offset pages can repeat or skip rows. */
+                after_id?: string | null;
                 page?: number;
                 page_size?: number;
             };

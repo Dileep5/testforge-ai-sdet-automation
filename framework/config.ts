@@ -16,5 +16,24 @@ export function assertE2eDatabase(url: string = DATABASE_URL): void {
   }
 }
 
+/**
+ * SQL assertions connect as a role that only holds SELECT on this database. Unlike a read-only
+ * session setting, a query cannot switch this off, and the role has no access to other databases' tables.
+ */
+export const READONLY_ROLE = "testforge_e2e_reader";
+function readOnlyUrl(url: string): string {
+  const parsed = new URL(url);
+  parsed.username = READONLY_ROLE;
+  parsed.password = "testforge_e2e_reader_local";
+  return parsed.toString();
+}
+export const READONLY_DATABASE_URL = readOnlyUrl(DATABASE_URL);
+/** The same read-only role, aimed at the development database, to prove it has no access there. */
+export const READONLY_DEV_DATABASE_URL = (() => {
+  const parsed = new URL(READONLY_DATABASE_URL);
+  parsed.pathname = parsed.pathname.replace(/_e2e$/, "");
+  return parsed.toString();
+})();
+
 export const SESSION_COOKIE = "testforge_session";
 export const PAYMENT_SIM_TIMEOUT_MS = 300;

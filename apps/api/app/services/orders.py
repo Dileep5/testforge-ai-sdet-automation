@@ -1,7 +1,7 @@
 import csv
 import io
 from dataclasses import dataclass
-from datetime import UTC, date, datetime, time, timedelta
+from datetime import UTC, date, datetime, time
 from typing import Literal
 from uuid import UUID
 
@@ -86,8 +86,8 @@ def apply_filters(stmt: Select, filters: OrderFilters) -> Select:
     if filters.date_from:
         stmt = stmt.where(Order.created_at >= datetime.combine(filters.date_from, time.min, UTC))
     if filters.date_to:
-        next_day = filters.date_to + timedelta(days=1)
-        stmt = stmt.where(Order.created_at < datetime.combine(next_day, time.min, UTC))
+        # time.max, not "before the next day": there is no day after 9999-12-31.
+        stmt = stmt.where(Order.created_at <= datetime.combine(filters.date_to, time.max, UTC))
     if filters.warehouse_id:
         stmt = stmt.where(Order.warehouse_id == filters.warehouse_id)
     if filters.customer_id:

@@ -5,6 +5,8 @@ assertE2eDatabase();
 
 const CI = Boolean(process.env.CI);
 const browserTests = { testIgnore: /framework\.spec\.ts/ };
+// These call the API and database directly, so they need no browser.
+const serviceSuite = (name: string) => ({ name, testDir: `./tests/${name}` });
 
 // E2E_WORKERS accepts a count ("4") or a percentage of CPU cores ("50%").
 const requestedWorkers = process.env.E2E_WORKERS ?? (CI ? "2" : "50%");
@@ -13,6 +15,7 @@ const workers = requestedWorkers.endsWith("%") ? requestedWorkers : Number(reque
 export default defineConfig({
   testDir: "./tests/e2e",
   globalSetup: "./framework/global-setup.ts",
+  globalTeardown: "./framework/global-teardown.ts",
   outputDir: "./test-results",
   fullyParallel: true,
   forbidOnly: CI,
@@ -42,6 +45,12 @@ export default defineConfig({
     { name: "chromium", use: { ...devices["Desktop Chrome"] }, ...browserTests },
     { name: "firefox", use: { ...devices["Desktop Firefox"] }, ...browserTests },
     { name: "webkit", use: { ...devices["Desktop Safari"] }, ...browserTests },
+    serviceSuite("api"),
+    serviceSuite("contract"),
+    serviceSuite("database"),
+    serviceSuite("security"),
+    // One burst at a time, so bursts do not add up past the operating system's connection queue.
+    { ...serviceSuite("reliability"), fullyParallel: false, workers: 1 },
   ],
   webServer: [
     {
