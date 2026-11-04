@@ -1,3 +1,4 @@
+import { BASE_URL } from "../../framework/config";
 import { expect, test } from "../../framework/fixtures/api";
 import { OpenApiContract } from "../../framework/contract/openapi";
 import { PREFIX, type ApiClient } from "../../framework/helpers/api-client";
@@ -168,7 +169,7 @@ test.describe("cross-site requests", { tag: "@security" }, () => {
 
   test("the app's own origin may write", async ({ asManager, data }) => {
     const product = await data.product();
-    const response = await asManager.api.send("PATCH", `/products/${product.id}`, { data: { description: "fine" }, headers: { Origin: "http://localhost:5273" } });
+    const response = await asManager.api.send("PATCH", `/products/${product.id}`, { data: { description: "fine" }, headers: { Origin: new URL(BASE_URL).origin } });
     expect(response.status()).toBe(200);
   });
 });
