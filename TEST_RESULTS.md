@@ -164,13 +164,19 @@ No application defect was found. Normal-load Linux p95: health 30.5 ms, products
 
 **Artifacts:** `failure-docker-41893657050-1`, 18.2 MB, was the first real sanitized upload, with 20 error contexts, 19 screenshots, 38 videos and 1 trace, and no HTML report or raw `test-results`. A scan of its contents, inside the trace too, and of all job logs and other artifacts found 0 seed passwords, session cookies, keys, tokens, authorization headers or database passwords. It found **1 synthetic test password** (`E2E-Long-Password-1`) in the one kept trace, a test value that is already in this repository. The same fix covers it. Screenshots and videos were not reviewed one by one. Artifacts expire on 2026-11-18.
 
+## WebKit soak: no tests ran
+
+[Run 41909199483](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41909199483), commit `d3da95b`, started by hand with 5 repeats, ended after 50 seconds with **0 jobs and 0 tests, and nothing was billed.** It says nothing about WebKit stability. **The historical input failure is neither confirmed nor ruled out on Linux.**
+
+GitHub reports only a likely workflow file issue through its API. The exact message is on the run's web page. The likely cause, **not confirmed**, is that the dispatch input reached the reusable workflow's `type: number` input as a string. `actionlint` did not catch it, and `ci.yml` never passes that input. A local fix wraps it in `fromJSON`, and can only be tested by running it on GitHub.
+
 ## Status of what remains
 
 | Item | Status |
 | --- | --- |
 | Playwright suites in Docker | **Passed: 666 of 666** in the first green run |
 | Sanitizer fix on GitHub | **Not exercised**, because nothing failed. Verified locally |
-| Repeated Linux WebKit runs | **Not run**, as instructed. `webkit-soak.yml` is ready |
+| Repeated Linux WebKit runs | **No tests have run.** The one authorized attempt, [run 41909199483](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41909199483), failed at startup with 0 jobs. See below |
 
 ## CI simulation on macOS
 

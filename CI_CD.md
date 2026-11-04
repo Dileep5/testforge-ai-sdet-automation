@@ -40,7 +40,7 @@ The browser and service jobs wait for `typescript` and `python`, because they ar
 **Other workflows, which run only when started by hand:**
 
 - `performance-stress.yml`: all k6 scenarios at full length.
-- `webkit-soak.yml`: repeats the WebKit suite at 2 and 4 workers, keeping sanitized evidence for 30 days.
+- `webkit-soak.yml`: repeats the WebKit suite at 2 and 4 workers, keeping sanitized evidence for 30 days. **It has not run any tests yet:** its first attempt failed at startup. See [TEST_RESULTS.md](TEST_RESULTS.md#webkit-soak-no-tests-ran).
 
 There is deliberately **no workflow for live LLM evaluation.** It is run by hand, as described in [AI_EVALUATION.md](AI_EVALUATION.md#live-evaluation).
 
