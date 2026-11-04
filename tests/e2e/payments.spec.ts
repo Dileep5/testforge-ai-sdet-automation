@@ -41,6 +41,18 @@ test.describe("simulated payments", { tag: "@regression" }, () => {
     expect(await db.audit(payment.id, "payment.settled")).toHaveLength(1);
   });
 
+  test("a payment works on plain HTTP, where browsers provide no crypto.randomUUID", async ({ manager, data }) => {
+    // Browsers only offer it on HTTPS and localhost. Docker's http://web:8080 found this for real.
+    await manager.page.addInitScript(() => Object.defineProperty(Crypto.prototype, "randomUUID", { value: undefined }));
+    const customer = await data.customer();
+    const product = await data.product({ stock: { YYZ1: 5 } });
+    const order = await data.order({ customer, lines: [{ product, quantity: 1 }] });
+    const { orderDetails } = manager.app;
+    await orderDetails.goto(order.id);
+    await orderDetails.runPayment(PAYMENT_LABELS.sim_success);
+    await expect(orderDetails.paymentRows).toHaveCount(1);
+  });
+
   test("a declined payment is recorded and blocks confirmation, and a retry can succeed", { tag: "@critical" }, async ({ manager, data, db }) => {
     const customer = await data.customer();
     const product = await data.product({ stock: { YYZ1: 10 } });

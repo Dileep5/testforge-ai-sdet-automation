@@ -128,7 +128,7 @@ jobs:
       name: chromium
       projects: framework chromium
       browsers: chromium
-      min-tests: 70
+      min-tests: 71
 
   firefox:
     name: Firefox
@@ -138,7 +138,7 @@ jobs:
       name: firefox
       projects: firefox
       browsers: firefox
-      min-tests: 64
+      min-tests: 65
 
   webkit:
     name: WebKit
@@ -148,7 +148,7 @@ jobs:
       name: webkit
       projects: webkit
       browsers: webkit
-      min-tests: 64
+      min-tests: 65
 
   accessibility:
     name: Accessibility and keyboard

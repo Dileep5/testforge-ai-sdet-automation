@@ -40,6 +40,18 @@ const OUTCOME_MESSAGES: Record<string, string> = {
   TIMED_OUT: "The payment gateway timed out. No funds were captured; you can try again.",
 };
 
+/**
+ * A random version 4 UUID. crypto.randomUUID exists only on HTTPS and localhost, while
+ * getRandomValues is available everywhere, so a payment also works over plain HTTP.
+ */
+function newIdempotencyKey(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6]! & 0x0f) | 0x40;
+  bytes[8] = (bytes[8]! & 0x3f) | 0x80;
+  const hex = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 export function OrderDetailPage() {
   const { orderId = "" } = useParams();
   const { can } = useAuth();
@@ -278,7 +290,7 @@ function PaymentForm({ orderId, onDone }: { orderId: string; onDone: (payment: P
     setBusy(true);
     setError(undefined);
     if (attemptKey.current?.token !== token) {
-      attemptKey.current = { token, key: crypto.randomUUID() };
+      attemptKey.current = { token, key: newIdempotencyKey() };
     }
     try {
       const payment = await post<Payment>(
