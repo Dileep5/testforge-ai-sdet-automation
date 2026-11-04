@@ -1,0 +1,23 @@
+[project]
+name = "testforge-api"
+version = "0.1.0"
+description = "TestForge synthetic B2B commerce API"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "C4", "SIM"]
+# B008: FastAPI's Depends()/Query() in defaults is the framework's documented idiom.
+ignore = ["B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S105", "S106", "S107"]
+"app/seed.py" = ["S105", "S106", "S311"]
+"alembic/versions/*" = ["E501"]

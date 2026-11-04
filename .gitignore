@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# Local runtime state: never commit generated databases or secrets
+.local/
+.env
+.env.*
+!.env.example
+*.sqlite3
+*.dump
+
+# Build and tool output
+dist/
+.vite/
+*.tsbuildinfo
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+test-results/
+playwright-report/
+blob-report/
+reports/
+
+# Browser test artifacts: traces and saved auth state can contain live session cookies
+.auth/
+*.trace.zip
+trace.zip
+*.webm
+*.log
+.DS_Store

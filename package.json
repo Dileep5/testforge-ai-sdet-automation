@@ -1,0 +1,33 @@
+{
+  "name": "testforge-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TestForge AI - enterprise SDET and intelligent test automation platform",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "apps/web"
+  ],
+  "devDependencies": {
+    "embedded-postgres": "17.11.0-beta.19"
+  },
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "dev": "bash scripts/dev.sh",
+    "db:start": "bash scripts/db-local.sh start",
+    "db:stop": "bash scripts/db-local.sh stop",
+    "db:status": "bash scripts/db-local.sh status",
+    "db:destroy": "bash scripts/db-local.sh destroy",
+    "db:migrate": "cd apps/api && .venv/bin/alembic upgrade head",
+    "db:seed": "cd apps/api && .venv/bin/python -m app.seed",
+    "db:reset": "cd apps/api && .venv/bin/alembic upgrade head && .venv/bin/python -m app.seed --reset",
+    "test:backend": "cd apps/api && .venv/bin/python -m pytest",
+    "test:backend:coverage": "cd apps/api && .venv/bin/python -m pytest --cov=app --cov-report=term-missing",
+    "lint:backend": "cd apps/api && .venv/bin/ruff check . && .venv/bin/ruff format --check .",
+    "typecheck": "npm run typecheck -w apps/web",
+    "build": "npm run build -w apps/web",
+    "openapi:export": "apps/api/.venv/bin/python scripts/export_openapi.py && npm run generate:api-types -w apps/web"
+  }
+}
