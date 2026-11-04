@@ -4,7 +4,7 @@ Each phase records what was built, what was verified, what failed and what remai
 
 ## Phase 1: Commerce application (2026-11-03)
 
-**Status:** complete, awaiting approval to start Phase 2.
+**Status:** complete and approved. Committed locally as `e0a5a40`.
 
 ### Built
 
@@ -84,6 +84,80 @@ No assertion was weakened to make a test pass.
 
 ### Remains
 
-- Phases 2 to 7. Nothing from them has been started.
-- Directories in the target layout that belong to later phases have deliberately not been created.
-- Nothing has been committed or pushed. The git repository is initialized with no commits.
+- Phases 2 to 7 were not started in this phase.
+
+## Phase 2: Playwright framework (2026-11-03)
+
+**Status:** complete except Firefox, which could not run on this machine. Awaiting review. Phase 3 has
+not been started. Nothing has been pushed, and Phase 2's changes are not yet committed.
+
+### Built
+
+- **Framework (`framework/`):** Playwright with strict TypeScript. Page objects for every screen; grid,
+  modal, toast and navigation components; typed role fixtures; a typed API client generated from the
+  OpenAPI spec; deterministic factories with tracked cleanup; a read-only database helper.
+- **Tests (`tests/e2e/`):** 56 browser tests per browser, plus 6 browserless framework checks.
+- **Dedicated environment:** a `testforge_e2e` database and separate ports, against the production build.
+- **Tooling:** ESLint with type-aware rules and Playwright rules that ban hard waits and forced clicks.
+  HTML, JUnit and JSON reports. Traces, screenshots and video kept for failures.
+
+Design is explained in [ARCHITECTURE.md](ARCHITECTURE.md). Results are in [TEST_RESULTS.md](TEST_RESULTS.md).
+
+### Application changes
+
+- **Added `POST /customers` (Admin only),** with 3 backend tests. Without it, tests could not create
+  their own customers and would have had to share seeded ones.
+- **Added `ConcurrencyLimitMiddleware`,** to fix bug 1 below.
+- **Disabled router transitions and made filter state updates functional,** to fix bugs 2 and 3.
+- **The order form now loads every page of stock,** to fix bug 4.
+
+### Real bugs found
+
+1. **The API froze completely under a burst of concurrent requests. (Severe)** Requests held a database
+   connection while waiting for a worker thread, and threads waited for a connection, so nothing could
+   proceed until the 30 second pool timeout. Found when a test creating many products made unrelated
+   calls time out across the suite; `pg_stat_activity` showed 30 connections `idle in transaction`.
+   Backend tests could not see it, because the in-process client does not create that concurrency.
+   Admission is now limited to the number of connections. A regression test runs a burst of 300 against
+   a real server: all 300 timed out without the fix, and all returned 200 with it.
+2. **URL-driven controls snapped back after being used.** Router updates ran as low-priority transitions,
+   so a checkbox or select reverted until the transition committed. Found by Playwright reporting that
+   clicking a checkbox did not change its state. This was also the root cause of the Phase 1 filter race.
+3. **A stale closure could restore old filter values.** Filter changes spread a previous copy of the
+   form's state, so input arriving before the next render brought back a value just cleared. Found by the
+   filter race test.
+4. **The order form silently hid products beyond the first 100 stock rows.** Recorded as a limitation in
+   Phase 1. Fixed because parallel tests routinely exceed that many rows.
+
+### Test and framework mistakes found
+
+- **A regression test that could not fail.** The first burst test passed with the fix removed, because
+  its requests were not truly simultaneous. It was rewritten until it reproduced the freeze.
+- **A filter race test that could not fail.** In a production build, ordinary typing never hits the race.
+  It now places input in the same browser task as Clear, and fails when the bug is put back.
+- **A weak tax test.** Its values never reached a rounding boundary, so truncating passed too. It now uses
+  a value where the two differ.
+- **A real isolation bug.** The CSV test used a fixed customer name, so it selected another test's customer
+  under parallel repeats. A single pass did not show this; `--repeat-each=3` did. Names are now namespaced.
+- **Login sent extra fields.** The fixture posted the whole created-user object, and the API's strict
+  validation rejected it. This failed 7 tests on the first run.
+- **Mutation script errors.** Two mutations broke the build or the Python, so no tests ran and they showed
+  `0/0`. Those were not treated as results; they were corrected and rerun.
+
+### Flakiness
+
+No test needed a retry to pass in the final runs, and retries were off for all of them. The failures seen
+during development all had root causes above, and each was fixed at its cause.
+
+### Environment
+
+- **Firefox:** see [TEST_RESULTS.md](TEST_RESULTS.md#firefox). The cause is not established. Launching it
+  outside the agent's shell sandbox was attempted once and denied by the permission system, and that was
+  not retried.
+- **Docker:** still not installed.
+- **Dev database:** confirmed untouched after all runs, with 60 seeded orders and no test data.
+
+### Remains
+
+- Confirm or rule out Firefox from an ordinary terminal.
+- Phases 3 to 7.

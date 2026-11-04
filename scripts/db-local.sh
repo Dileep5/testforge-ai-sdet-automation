@@ -43,7 +43,7 @@ import sys
 import psycopg
 url = f"postgresql://testforge:testforge_local@127.0.0.1:{sys.argv[1]}/postgres"
 with psycopg.connect(url, autocommit=True) as conn:
-    for name in ("testforge", "testforge_test"):
+    for name in ("testforge", "testforge_test", "testforge_e2e"):
         if not conn.execute("SELECT 1 FROM pg_database WHERE datname = %s", (name,)).fetchone():
             conn.execute(f'CREATE DATABASE "{name}"')
             print(f"Created database {name}")

@@ -82,7 +82,8 @@ export interface paths {
         /** List Customers */
         get: operations["list_customers_api_v1_customers_get"];
         put?: never;
-        post?: never;
+        /** Create Customer */
+        post: operations["create_customer_api_v1_customers_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -491,6 +492,18 @@ export interface components {
              * Format: uuid
              */
             id: string;
+        };
+        /** CustomerCreate */
+        CustomerCreate: {
+            /** Code */
+            code: string;
+            /**
+             * Contact Email
+             * Format: email
+             */
+            contact_email: string;
+            /** Name */
+            name: string;
         };
         /** CustomerOut */
         CustomerOut: {
@@ -1445,6 +1458,84 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CustomerOut"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Content */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_customer_api_v1_customers_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CustomerCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomerOut"];
                 };
             };
             /** @description Bad Request */

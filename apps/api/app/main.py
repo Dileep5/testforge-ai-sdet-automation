@@ -11,7 +11,9 @@ from sqlalchemy.exc import DataError, IntegrityError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import get_settings
+from app.db import MAX_CONNECTIONS
 from app.errors import AppError
+from app.middleware import ConcurrencyLimitMiddleware
 from app.routers import (
     audit,
     auth,
@@ -139,6 +141,13 @@ def create_app() -> FastAPI:
         # Details go to the log only: nothing internal may reach the client.
         logger.exception("Unhandled error", exc_info=exc)
         return _error(request, 500, "INTERNAL_ERROR", "An unexpected error occurred")
+
+    # Liveness must answer while the server is busy; it does not touch the database.
+    app.add_middleware(
+        ConcurrencyLimitMiddleware,
+        limit=MAX_CONNECTIONS,
+        exempt_paths=frozenset({f"{API_PREFIX}/health"}),
+    )
 
     api = APIRouter(prefix=API_PREFIX)
     api.include_router(health.router)

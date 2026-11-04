@@ -2,10 +2,11 @@
 
 An enterprise SDET and test automation portfolio project, built around a real application under test.
 
-> **Status: Phase 1 of 7 complete.** The commerce application and its backend tests exist and are
-> verified. The Playwright framework, contract, accessibility, performance and AI evaluation suites,
-> Docker and CI are **not built yet**, and this README will only describe them once they are.
-> See [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md) and [TEST_RESULTS.md](TEST_RESULTS.md).
+> **Status: Phases 1 and 2 of 7 complete.** The commerce application, backend tests and Playwright
+> framework exist and are verified. **Firefox could not be run on this machine.** API contract,
+> accessibility, performance and AI evaluation suites, Docker and CI are **not built yet**.
+> See [TEST_RESULTS.md](TEST_RESULTS.md), [ARCHITECTURE.md](ARCHITECTURE.md) and
+> [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md).
 
 ## The application
 
@@ -14,25 +15,18 @@ fictional, and payments are simulated: no card data is accepted and no real mone
 
 | Area | What it does |
 | --- | --- |
-| Auth | Server-side sessions in an HttpOnly, SameSite=Lax cookie. Only a hash of the token is stored. Absolute expiry and server-side logout. |
+| Auth | Server-side sessions in an HttpOnly, SameSite=Lax cookie. Only a hash of the token is stored. |
 | Roles | Admin, Manager and Viewer, enforced in the backend. Customer-scoped buyers see only their own orders; other customers' orders return 404. |
 | Products | Search, filter, sort, paginate, create, edit, soft delete. |
-| Inventory | Stock per warehouse, with optimistic version checks so a stale edit cannot overwrite a newer one. |
+| Inventory | Stock per warehouse, with version checks so a stale edit cannot overwrite a newer one. |
 | Orders | Multi-line orders in one transaction, row locks that prevent overselling, a status state machine, filtered grid, CSV export. |
 | Payments | Deterministic simulated approve, decline and timeout, idempotency keys, settlement. |
 | Audit | Business actions are recorded in the same transaction as the change they describe. |
 
-Money is integer cents throughout, with tax in basis points rounded half-up. The API and the UI
-preview use the same formula, and database constraints reject totals that do not add up.
-
 ## Stack
 
 React 19, TypeScript and Vite · FastAPI, Pydantic v2, SQLAlchemy 2 and Alembic · PostgreSQL 17 ·
-pytest. Frontend API types are generated from the backend's OpenAPI spec.
-
-```
-Browser ──> Vite dev server (:5173) ──/api proxy──> FastAPI (:8000) ──> PostgreSQL (:55432)
-```
+pytest · Playwright with strict TypeScript · ESLint and Ruff.
 
 ## Getting started
 
@@ -41,8 +35,9 @@ the `embedded-postgres` dev dependency provides server binaries, and the data li
 To use your own PostgreSQL binaries instead, set `PG_BIN` to their directory.
 
 ```bash
-npm run setup   # install dependencies, start PostgreSQL, migrate, seed
-npm run dev     # API on :8000, web app on http://localhost:5173
+npm run setup         # install dependencies, start PostgreSQL, migrate, seed
+npm run e2e:install   # download the Playwright browsers
+npm run dev           # API on :8000, web app on http://localhost:5173
 ```
 
 `Ctrl+C` stops the API and web app. PostgreSQL keeps running until `npm run db:stop`.
@@ -59,21 +54,61 @@ These fictional accounts are for local development only. Seeding is refused when
 | Viewer, scoped to Maple Ridge | `buyer@mapleridge.example` | `Buyer!Forge2026` |
 | Viewer, scoped to Granite Harbour | `buyer@granite.example` | `Buyer!Forge2026` |
 
-### Commands
+## Running the tests
+
+Backend tests need PostgreSQL running (`npm run db:start`). Playwright starts everything it needs,
+against its own database and ports, so it does not touch development data.
 
 | Command | Purpose |
 | --- | --- |
-| `npm run test:backend` | Backend tests. PostgreSQL must be running (`npm run db:start`). |
-| `npm run test:backend:coverage` | The same, with a coverage report. |
-| `npm run lint:backend` | Ruff lint and format check. |
-| `npm run typecheck` / `npm run build` | Frontend type check / production build. |
-| `npm run db:start`, `db:stop`, `db:status` | Control the local PostgreSQL. |
-| `npm run db:reset` | Migrate, then replace all dev data with the deterministic seed. |
-| `npm run db:destroy` | Delete the local PostgreSQL data directory. |
-| `npm run openapi:export` | Regenerate `apps/api/openapi.json` and the frontend types. |
+| `npm run test:backend` | Backend tests |
+| `npm run test:backend:coverage` | Backend tests with a coverage report |
+| `npm run test:e2e` | All browsers |
+| `npm run test:e2e:chromium`, `test:e2e:webkit`, `test:e2e:firefox` | One browser |
+| `npm run test:e2e:smoke` | Fast core journeys in Chromium |
+| `npm run test:e2e:critical` | Critical paths in Chromium and WebKit |
+| `npm run test:e2e:regression` | Everything tagged for regression |
+| `npm run typecheck` | Strict type check of the frontend and framework |
+| `npm run lint` / `npm run lint:backend` | ESLint / Ruff |
+| `npm run build` | Frontend production build |
 
-Backend tests use a separate `testforge_test` database and refuse to run against any database whose
-name does not end in `_test`, because they wipe it.
+Useful options:
+
+```bash
+E2E_WORKERS=8 npm run test:e2e:chromium                      # parallelism
+npx playwright test --project=chromium --repeat-each=3       # hunt for flakiness
+npx playwright test --grep "rapid typing" --headed           # watch one test
+```
+
+**On this machine, use `npm run test:e2e:chromium` and `test:e2e:webkit`.** Firefox currently fails to
+launch here, so `npm run test:e2e` reports 56 launch failures. See
+[TEST_RESULTS.md](TEST_RESULTS.md#firefox).
+
+### Investigating a failure
+
+Failures keep a trace, screenshots and video in `test-results/<test-name>/`.
+
+```bash
+npm run e2e:report                                           # HTML report, with all attachments
+npx playwright show-trace test-results/<test-name>/trace.zip # step through one failure
+```
+
+The trace viewer shows each action with a before and after snapshot of the page, plus console output
+and network calls. A test with two signed-in users has one trace covering both sessions, plus a
+screenshot and video for each. Reports are written to `playwright-report/` and
+`reports/junit/playwright.xml`.
+
+To reproduce a failure, run that one test with `--grep`. Tests create their own data, so they do not
+depend on what ran before them. If a failure only appears in parallel, add `--repeat-each=3`.
+
+## Other commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm run db:start`, `db:stop`, `db:status` | Control the local PostgreSQL |
+| `npm run db:reset` | Migrate, then replace all **dev** data with the deterministic seed |
+| `npm run db:destroy` | Delete the local PostgreSQL data directory |
+| `npm run openapi:export` | Regenerate `apps/api/openapi.json` and the frontend types |
 
 The API serves interactive docs at `http://localhost:8000/api/v1/docs`. The committed spec is
 [apps/api/openapi.json](apps/api/openapi.json), and a test fails if it drifts from the code.
@@ -81,10 +116,15 @@ The API serves interactive docs at `http://localhost:8000/api/v1/docs`. The comm
 ## Layout
 
 ```
-apps/api    FastAPI app, Alembic migrations, seed data, pytest suite
-apps/web    React app
-scripts     Setup, local PostgreSQL, dev runner, OpenAPI export
+apps/api      FastAPI app, Alembic migrations, seed data, pytest suite
+apps/web      React app
+framework     Playwright page objects, components, fixtures, factories and helpers
+tests/e2e     Playwright tests
+scripts       Setup, local PostgreSQL, dev runner, E2E API runner, OpenAPI export
 ```
+
+The fixture design, page objects, isolation and browser configuration are explained in
+[ARCHITECTURE.md](ARCHITECTURE.md#playwright-framework).
 
 ## Known limitations
 

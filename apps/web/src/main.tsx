@@ -8,7 +8,8 @@ import "./styles.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
+    {/* Transitions would make URL-driven form controls lag behind input and snap back. */}
+    <BrowserRouter useTransitions={false}>
       <AuthProvider>
         <ToastProvider>
           <App />

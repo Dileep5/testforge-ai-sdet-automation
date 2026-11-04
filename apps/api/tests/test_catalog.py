@@ -162,3 +162,29 @@ def test_warehouses(viewer, world):
 def test_customers_are_scoped_for_external_buyers(viewer, buyer_a):
     assert [c["code"] for c in viewer.get(f"{API}/customers").json()] == ["ACME", "BETA"]
     assert [c["code"] for c in buyer_a.get(f"{API}/customers").json()] == ["ACME"]
+
+
+NEW_CUSTOMER = {"code": "NEW-1", "name": "New Co", "contact_email": "buy@new.example"}
+
+
+def test_admin_creates_customer_with_audit(admin, world, db):
+    response = admin.post(f"{API}/customers", json=NEW_CUSTOMER)
+    assert response.status_code == 201
+    assert response.json()["code"] == "NEW-1"
+    entry = db.scalar(select(AuditLog).where(AuditLog.action == "customer.created"))
+    assert entry.actor_user_id == world.admin.id
+    assert entry.entity_id == response.json()["id"]
+
+
+def test_only_admin_can_create_customers(manager, viewer, anon):
+    assert_error(manager.post(f"{API}/customers", json=NEW_CUSTOMER), 403, "FORBIDDEN")
+    assert_error(viewer.post(f"{API}/customers", json=NEW_CUSTOMER), 403, "FORBIDDEN")
+    assert_error(anon.post(f"{API}/customers", json=NEW_CUSTOMER), 401, "NOT_AUTHENTICATED")
+
+
+def test_customer_validation_and_duplicates(admin):
+    assert admin.post(f"{API}/customers", json=NEW_CUSTOMER).status_code == 201
+    assert_error(admin.post(f"{API}/customers", json=NEW_CUSTOMER), 409, "DUPLICATE_CUSTOMER")
+    for bad in ({"code": "lower"}, {"name": " "}, {"contact_email": "nope"}, {"id": "x"}):
+        response = admin.post(f"{API}/customers", json={**NEW_CUSTOMER, "code": "NEW-2", **bad})
+        assert_error(response, 422, "VALIDATION_ERROR")

@@ -65,6 +65,12 @@ class CustomerOut(CustomerRef):
     contact_email: str
 
 
+class CustomerCreate(InputModel):
+    code: Annotated[str, StringConstraints(pattern=r"^[A-Z0-9-]{2,32}$")]
+    name: ShortText
+    contact_email: EmailStr
+
+
 class UserOut(ORMModel):
     id: UUID
     email: str

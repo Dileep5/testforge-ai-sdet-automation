@@ -2,14 +2,13 @@ import { useMemo, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ApiError,
+  fetchAllPages,
   post,
-  query,
   request,
   type Customer,
   type ErrorDetail,
   type InventoryRow,
   type OrderDetail,
-  type Page,
   type Warehouse,
 } from "../api";
 import { Field } from "../components/Field";
@@ -52,14 +51,14 @@ export function NewOrderPage() {
   const stock = useAsync(
     (signal) =>
       warehouseId
-        ? request<Page<InventoryRow>>(`/inventory${query({ warehouse_id: warehouseId, page_size: 100 })}`, { signal })
+        ? fetchAllPages<InventoryRow>("/inventory", { warehouse_id: warehouseId }, signal)
         : Promise.resolve(undefined),
     warehouseId,
   );
 
   const warehouse = refs.data?.warehouses.find((item) => item.id === warehouseId);
   const stockByProduct = useMemo(
-    () => new Map(stock.data?.items.map((row) => [row.product.id, row]) ?? []),
+    () => new Map(stock.data?.map((row) => [row.product.id, row]) ?? []),
     [stock.data],
   );
 
@@ -182,7 +181,7 @@ export function NewOrderPage() {
                         onChange={(e) => updateLine(line.key, { productId: e.target.value })}
                       >
                         <option value="">Select a product</option>
-                        {stock.data?.items.map((item) => (
+                        {stock.data?.map((item) => (
                           <option
                             key={item.product.id}
                             value={item.product.id}

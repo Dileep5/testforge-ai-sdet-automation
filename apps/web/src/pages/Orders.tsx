@@ -101,8 +101,11 @@ export function OrdersPage() {
   }
 
   const sortProps = { sort, direction, onSort };
-  const setDraftField = (key: FilterKey) => (event: { target: { value: string } }) =>
-    setDraft({ ...draft, [key]: event.target.value });
+  // A functional update, so a change made before the next render cannot restore older values.
+  const setDraftField = (key: FilterKey) => (event: { target: { value: string } }) => {
+    const { value } = event.target;
+    setDraft((current) => ({ ...current, [key]: value }));
+  };
 
   return (
     <>

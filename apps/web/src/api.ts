@@ -107,6 +107,20 @@ export async function downloadFile(path: string, filename: string): Promise<void
   URL.revokeObjectURL(url);
 }
 
+/** Fetch every page of a listing, for pick lists that must not silently miss rows. */
+export async function fetchAllPages<T>(
+  path: string,
+  params: Record<string, string | number | boolean | null | undefined>,
+  signal?: AbortSignal,
+): Promise<T[]> {
+  const items: T[] = [];
+  for (let page = 1; ; page++) {
+    const result = await request<Page<T>>(`${path}${query({ ...params, page, page_size: 100 })}`, { signal });
+    items.push(...result.items);
+    if (page >= result.pages) return items;
+  }
+}
+
 /** Build a query string, leaving out blank values. */
 export function query(params: Record<string, string | number | boolean | null | undefined>): string {
   const search = new URLSearchParams();
