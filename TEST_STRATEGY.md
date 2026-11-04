@@ -168,7 +168,7 @@ Repeating suites finds what single runs miss: Phase 6's keep-alive defect appear
 
 ## CI quality gates
 
-The CI design, and what keeps a suite from silently disappearing, are in [CI_CD.md](CI_CD.md). **It has never run.**
+The CI design, and what keeps a suite from silently disappearing, are in [CI_CD.md](CI_CD.md). It has run once, with its gate red. See [the results](TEST_RESULTS.md#first-github-actions-run).
 
 ## Checking the tests themselves
 
@@ -183,5 +183,5 @@ tests using deliberately wrong input. This is a hand-picked set of risks, not fu
 | Screen reader and other manual accessibility testing | Not scheduled |
 | Long-running soak tests, and load on Linux | Not scheduled |
 | Live LLM evaluation | Opt-in, not run. See [AI_EVALUATION.md](AI_EVALUATION.md#live-evaluation) |
-| Docker, CI and Firefox on Linux | Configured, and **never run** |
+| The suites in Docker, and repeated Linux WebKit runs | Configured, and **not yet run** |
 | Penetration testing, TLS, production hardening | Out of scope for a local portfolio app |

@@ -208,7 +208,7 @@ flowchart LR
 
 ## Delivery
 
-Docker and CI are configured, and **have never run.** See [DOCKER.md](DOCKER.md) and [CI_CD.md](CI_CD.md).
+Docker and CI have run once, on GitHub. See [DOCKER.md](DOCKER.md) and [CI_CD.md](CI_CD.md).
 
 - **External PostgreSQL mode:** `EXTERNAL_POSTGRES=1` makes `db-local.sh` only create missing databases on a server someone else runs, such as a CI service container on port 55432, so the default URLs still apply.
 - **External servers mode:** `E2E_EXTERNAL_SERVERS=1` stops Playwright starting the API and web app, and `E2E_API_URL` and `E2E_BASE_URL` say where they are. In Docker, `E2E_SKIP_SEED=1` leaves seeding to a one-shot service.

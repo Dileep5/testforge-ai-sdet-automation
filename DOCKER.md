@@ -1,17 +1,16 @@
 # Docker
 
-**Status: none of this has ever run.** Docker is not installed on the development machine, so no image has been built and no container has started. The `docker` job in [CI_CD.md](CI_CD.md) is set up to run it on Linux, but the repository has no remote, so that has not happened either. Expect the first run to find problems.
+**Status: images build on Linux, and the application stack is verified. The test stack is not.** Docker is not installed on the development machine, so this comes only from the `docker` job in [the first GitHub Actions run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41883893976).
 
-## What was checked without Docker
-
-| Check | Result |
+| Check | Result on GitHub, ubuntu-24.04 |
 | --- | --- |
-| Compose and workflow files parse, and follow project rules | Passed (`npm run ci:policy`) |
-| Base images exist at the pinned digests | Confirmed by reading each registry on 2026-11-04 |
-| API image's install command, in a temporary virtual environment | Installed, with no pytest, ruff or coverage. The app imported and the bot answered |
-| Web image's build steps, in a temporary copy | Built, and `embedded-postgres` was not installed |
+| API, web and runner images | Built |
+| Application stack starts healthy, with `up --wait` and a one-shot `migrate` | Passed |
+| Migrations and seeding | Passed |
+| A record survives `down` and `up`, keeping the volume | Passed |
+| **Playwright suites in the test stack** | **Did not run.** `--abort-on-container-exit` stopped the stack as soon as `migrate` exited. Fixed locally in `docker-test.sh`, which cannot be tested without Docker, so it is unverified until the next run |
 
-**Not checked at all:** building the images, the nginx configuration, running as non-root, health checks, migrations and seeding in a container, data surviving a restart, the Linux browsers in the runner image, and `docker compose up --wait` with a one-shot service. Dockerfiles have also not been linted, because hadolint has no macOS arm64 build in the pinned release. The `policy` CI job lints them.
+The Dockerfiles pass `hadolint` locally, with one suppressed note: `USER pwuser` is named by the base image, which documents no fixed numeric id.
 
 ## What is here
 
@@ -62,7 +61,6 @@ The `contract` project is **not** in the Docker test run, because its breaking-c
 
 ## Limitations
 
-- **Unverified**, as stated above.
+- **The test stack is unverified**, as stated above.
 - **This is not a production deployment.** There is no TLS, `APP_ENV` is `development`, and the seed accounts have published passwords. `SEED_MODE` must be `none` anywhere real.
-- **`--wait` and one-shot services:** some Compose versions report a service that exits as a failure under `--wait`. If the first run hits this, `docker:up` and `docker-smoke.sh` will need changing.
 - **Digest pins go stale.** Dependabot would propose updates, but it is temporarily off, and has never run. See [CI_CD.md](CI_CD.md#security).

@@ -2,7 +2,7 @@
 
 An enterprise SDET and test automation portfolio project, built around a real application under test.
 
-> **Status: Phases 1 to 6 of 7 complete, and every result is local, on macOS.** The application and its test suites ran on this machine. **Docker, GitHub Actions and Linux browsers are configured but have never run. Firefox is unverified. One WebKit failure is unresolved. No live LLM has been called.** See [TEST_RESULTS.md](TEST_RESULTS.md), [CI_CD.md](CI_CD.md), [DOCKER.md](DOCKER.md) and [AI_EVALUATION.md](AI_EVALUATION.md).
+> **Status: Phases 1 to 6 of 7 built. [The first GitHub Actions run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41883893976) failed on 3 of 14 jobs, and fixes are not yet pushed.** All Playwright, backend and AI suites passed on Linux, including Firefox for the first time. The suites have not run in Docker. One WebKit failure is unresolved. No live LLM has been called. See [TEST_RESULTS.md](TEST_RESULTS.md#first-github-actions-run), [CI_CD.md](CI_CD.md), [DOCKER.md](DOCKER.md) and [AI_EVALUATION.md](AI_EVALUATION.md).
 
 ## The application
 
@@ -77,7 +77,7 @@ against its own database and ports, so it does not touch development data.
 | `npm run test:ai`, `npm run lint:ai` | AI tests and lint, offline with no key. See [AI_TESTING.md](AI_TESTING.md) |
 | `npm run ai:eval`, `npm run ai:eval:heldout` | Chatbot evaluation. See [AI_EVALUATION.md](AI_EVALUATION.md) |
 | `npm run ai:triage:corpus` | Run deliberately failing tests, then classify them. Failures are expected |
-| `npm run docker:up`, `docker:smoke`, `docker:test` | Docker stacks. **Never run.** See [DOCKER.md](DOCKER.md) |
+| `npm run docker:up`, `docker:smoke`, `docker:test` | Docker stacks. **Suites not yet run in Docker.** See [DOCKER.md](DOCKER.md) |
 | `npm run ci:tools`, `ci:policy` | Install pinned scanners, and check the CI and Docker rules. See [CI_CD.md](CI_CD.md) |
 | `npm run typecheck` | Strict type check of the frontend and framework |
 | `npm run lint` / `npm run lint:backend` | ESLint / Ruff |
@@ -92,7 +92,7 @@ npx playwright test --grep "rapid typing" --headed           # watch one test
 ```
 
 **On this machine, use `npm run test:e2e:chromium` and `test:e2e:webkit`.** Firefox currently fails to
-launch here, so `npm run test:e2e` reports 64 launch failures and Firefox is unverified. See
+launch on this Mac, so `npm run test:e2e` reports 64 launch failures here. It passes on Linux in CI. See
 [TEST_RESULTS.md](TEST_RESULTS.md#firefox).
 
 ### Investigating a failure
@@ -143,7 +143,7 @@ tests/accessibility    axe, semantics, focus and keyboard tests
 performance   k6 scenarios
 ai            AI test generation, support chatbot, LLM evaluation and failure triage
 docker        Dockerfiles, nginx and migration scripts. compose.yaml and compose.test.yaml are at the root
-.github       GitHub Actions workflows. Never run
+.github       GitHub Actions workflows
 scripts       Setup, local PostgreSQL, dev runner, E2E API runner, OpenAPI export
 ```
 

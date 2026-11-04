@@ -303,9 +303,9 @@ Listed in [TEST_RESULTS.md](TEST_RESULTS.md#bugs-found-in-phase-5). No defect wa
 
 ## Phase 6: Docker, CI and quality gates (2026-11-04)
 
-Phase 5 was committed locally as `738ccb1`. Phase 6 is uncommitted.
+Phase 5 was committed locally as `738ccb1`. Phase 6 was committed as `5b6fcd8`.
 
-**Docker, GitHub Actions and Linux browsers have never run.** Docker is not installed, and the repository has no remote. I did not install Docker or any VM, and did not push, because neither was approved.
+At the end of Phase 6 itself, nothing had run on Linux. The CI checkpoint below changed that.
 
 ### Built
 
@@ -340,4 +340,12 @@ Listed in [TEST_RESULTS.md](TEST_RESULTS.md#bugs-found-in-phase-6). The main one
 - Push, and read the first CI run: this needs your approval.
 - Docker verification and Firefox on Linux, through that run.
 - Phase 7.
+
+### First CI checkpoint (2026-11-04)
+
+`2ad4bf0`, which disables Dependabot for now, was pushed to the private repository after approval. [The first run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41883893976) failed on 3 of 14 jobs, and its results are in [TEST_RESULTS.md](TEST_RESULTS.md#first-github-actions-run). Linux Firefox passed for the first time. The fixes are committed locally, and are not pushed.
+
+- GitHub CLI is at `.local/tools/gh`, from the official release, because Homebrew has no build for macOS 27. The owner logged it in, using the keychain.
+- `hadolint` was never run before the push, because I wrongly said it had no macOS arm64 build. It has one.
+- The first SSH check added GitHub's host key to `~/.ssh/known_hosts`.
 

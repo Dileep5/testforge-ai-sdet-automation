@@ -170,6 +170,10 @@ Phase 6 added pass or fail thresholds in `performance/thresholds.js`. **They cat
 
 **In CI,** the `performance` job runs short versions with a queue of 5 and 60 virtual users. `performance-stress.yml` runs the full set, by hand only. **Shared runners** vary in speed and share hosts, so CI results can fail without a regression, and pass despite one. Limits there are deliberately loose. The Linux listen queue also differs from the macOS limit of 128.
 
+### Recovery is measured after the queue drains
+
+The first CI run found the overload scenario measuring leftovers. Its short version compresses the ramp-down, so the "after" stage began with the queue still full. A 5-second gap, not scaled by `PERF_SCALE`, now separates them, because that is the longest a queued request can remain: a 4-second wait plus 1 second of work. The recovery gate is still `rate==0`, and `recovery` in each report records when any error happened. Full-length results above predate this gap, which only moves when that stage starts.
+
 ### Bounded wait and disconnected clients
 
 `MAX_QUEUE_WAIT_SECONDS`, default 4, limits how long a request may wait. It then gets the same 503. A queued request whose client disconnects now leaves the queue, and never runs. A test against real uvicorn proves this, which corrects Phase 4's statement that it could not be detected. Neither case has done any work, so both are safe to retry.

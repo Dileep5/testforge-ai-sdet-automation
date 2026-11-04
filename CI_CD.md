@@ -1,16 +1,6 @@
 # CI/CD
 
-**Status: configured, and never run on GitHub.** The repository has no remote and nothing has been pushed, so there is **no CI result of any kind, and nothing here has run on Linux.** Firefox remains unverified until the Firefox job passes. Expect the first run to find problems that a Mac cannot show.
-
-## What was checked locally
-
-| Check | Result |
-| --- | --- |
-| `actionlint` 1.7.12 on all workflows | No findings |
-| `npm run ci:policy`, plus tests that the policy catches bad changes | Passed |
-| The CI test commands on macOS, in a fresh copy, against a separate empty PostgreSQL on the CI port, with `CI=1`, `EXTERNAL_POSTGRES=1`, 2 workers and retries off | Passed. See [TEST_RESULTS.md](TEST_RESULTS.md#ci-simulation-on-macos) |
-
-**That simulation is not CI.** It used macOS, Mac browsers and no containers. It proves that the databases, external-PostgreSQL mode, commands and count gates work together. It cannot show Linux behaviour, and it left out the Firefox, Docker and audit jobs.
+**Status: the first GitHub Actions run failed, on 3 of 14 jobs, so the final gate is red.** All Playwright, backend and AI suites passed on Linux, including Firefox. Fixes for all 3 are committed locally and **not yet pushed, so they have not run on GitHub.** The full results of [run 41883893976](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41883893976), at commit `2ad4bf0`, are in [TEST_RESULTS.md](TEST_RESULTS.md#first-github-actions-run).
 
 ## Jobs
 
@@ -126,19 +116,11 @@ Results are in [TEST_RESULTS.md](TEST_RESULTS.md#dependency-and-secret-scans).
 
 ## Setting it up
 
-**Pushing needs your approval, and has not been done.**
-
-```bash
-git remote add origin git@github.com:<you>/testforge-ai.git
-git push -u origin main
-```
-
-Then read the first run closely, and start `webkit-soak.yml` by hand. No secrets need configuring. To make `gate` a required check, add a branch protection rule. Artifacts on a public repository can be downloaded by anyone logged in to GitHub.
+The repository is private, at `Dileep5/testforge-ai-sdet-automation`, and pushes need the owner's approval. `webkit-soak.yml` and `performance-stress.yml` have not been started. No secrets need configuring. To make `gate` a required check, add a branch protection rule. Artifacts on a public repository can be downloaded by anyone logged in to GitHub.
 
 ## Limitations
 
-- **Never run,** as stated above. Timeouts, runner speed and browser behaviour on Linux are all unknown.
-- **Linux differences are likely.** Fonts and layout can change reflow tests, and Firefox focus behaviour has never been observed by these tests. A WebKit keyboard helper changes behaviour by platform, and its Linux path has never run.
+- **One run so far,** so rare or timing-related Linux failures may not have appeared. The Docker test stack, and the sanitized failure upload on GitHub, have not run yet.
 - **The `min-tests` numbers need updating** when tests are added or removed, and this is deliberate.
 - **`pip-audit` uses `--no-deps`,** because the lock files are unhashed. It checks exactly what is listed in them.
 - **Shared runners vary,** so performance limits in CI are loose. See [PERFORMANCE.md](PERFORMANCE.md#quality-gates).

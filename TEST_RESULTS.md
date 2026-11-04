@@ -3,7 +3,7 @@
 Only results from commands that were actually run are recorded here.
 
 **Last updated:** 2026-11-04, Phase 6. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
-PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). **All results here are from macOS. CI, Docker and Linux browsers have never run, because Docker is not installed and the repository has no remote. No live LLM has been called.**
+PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). **Results are from macOS unless marked Linux. Linux results are from one GitHub Actions run, below. No live LLM has been called.**
 
 ## Summary
 
@@ -14,7 +14,8 @@ Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass o
 | Backend (pytest, real PostgreSQL) | `npm run test:backend` | **197** | 0 | 0 | n/a |
 | Playwright Chromium 156 | `npx playwright test --project=chromium` | **64** | 0 | 0 | 0 |
 | Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **64** | 0 | 0 | 0 |
-| Playwright Firefox 157 | `npm run test:e2e:firefox` | **0: unverified** | 64 at launch, no test body ran | 0 | 0 |
+| Playwright Firefox 157, macOS | `npm run test:e2e:firefox` | **0** | 64 at launch, no test body ran | 0 | 0 |
+| Playwright Firefox 157, **Linux CI** | CI `firefox` job | **64** | 0 | 0 | 0 |
 | Framework self-checks | `npx playwright test --project=framework` | 6 | 0 | 0 | 0 |
 | Accessibility, Chromium | `npm run test:a11y` | **82** | 0 | 0 | 0 |
 | Keyboard, WebKit | `npm run test:a11y:keyboard` | **33** | 0 | 0 | 0 |
@@ -48,16 +49,48 @@ These counts include generated cases, which overstate distinct scenarios. Access
 | `npm audit --omit=dev` | No known vulnerabilities |
 | `npm audit` including dev tools | 13 moderate (see limitations) |
 
-**Never run, so no results exist:** Docker, GitHub Actions, any Linux browser, Firefox, live LLM evaluation.
+**Never run, so no results exist:** the Playwright suites in Docker, repeated Linux WebKit runs, live LLM evaluation.
 
-## Linux, Docker and CI status
+## First GitHub Actions run
 
-| Item | Status | Blocker |
-| --- | --- | --- |
-| Docker build, startup, tests, persistence | **Not run** | Docker is not installed. See [DOCKER.md](DOCKER.md) |
-| GitHub Actions | **Configured, unverified** | No remote, and pushing needs approval. See [CI_CD.md](CI_CD.md) |
-| Linux Chromium, Firefox, WebKit | **Not run: 0 results** | Needs Docker, a Linux machine or CI |
-| Repeated Linux WebKit runs | **Not run** | Same. `webkit-soak.yml` is ready |
+[Run 41883893976](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41883893976), commit `2ad4bf0`, ubuntu-24.04, Linux on 2 cores, retries off. **It failed: 11 of 14 jobs succeeded, and the final gate is red, because 3 jobs failed.**
+
+| Job | Result | Passed | Failed | Skipped | Flaky |
+| --- | --- | --- | --- | --- | --- |
+| TypeScript and ESLint | Success | n/a | | | |
+| CI and Docker policy | **Failure** | n/a | | | |
+| Ruff and backend pytest (97% coverage) | Success | 197 | 0 | 0 | n/a |
+| AI tests and offline evaluation | Success | 350 | 0 | 0 | n/a |
+| Chromium, plus framework checks | Success | 64 + 6 | 0 | 0 | 0 |
+| **Firefox** | Success | **64** | 0 | 0 | 0 |
+| WebKit | Success | 64 | 0 | 0 | 0 |
+| Accessibility 82, keyboard Firefox 33, keyboard WebKit 33 | Success | 148 | 0 | 0 | 0 |
+| API 154, contract 100 | Success | 254 | 0 | 0 | 0 |
+| PostgreSQL 44, security 114, reliability 5 | Success | 163 | 0 | 0 | 0 |
+| Performance gates, short | **Failure** | 21 of 22 gates | 1 | | |
+| Docker build and tests | **Failure** | Smoke passed, and suites did not run | | | |
+| Dependency audit and secret scan | Success | n/a | | | |
+| All checks passed (gate) | **Failure** | | | | |
+
+**This is the first time Firefox has run these tests, and all 97 passed (64 browser and 33 keyboard), in Firefox 157 on Linux.** On macOS it still cannot launch. All of this is from one run.
+
+| Failure | Cause | Type | Fix |
+| --- | --- | --- | --- |
+| Policy | `hadolint` exits 1 on info-level notes, and I had wrongly said no macOS build existed, so it was never run before pushing | Infrastructure | Merged two `RUN` lines. One note suppressed, with its reason. hadolint now installs on macOS |
+| Docker | `--abort-on-container-exit` stopped the stack when `migrate` succeeded, so the suites never ran | Test infrastructure | The stack and runner now start separately, with container logs on failure. **Unverified without Docker** |
+| Performance | 4 of 466 recovery-stage requests got a 503. The short scenario's compressed ramp-down left the queue full. Reproduced on macOS under CPU load in 3 of 3 attempts, with 1 to 4 errors, all within 10 ms of the stage starting | Test design | A 5-second drain before recovery is measured, with `rate==0` unchanged. Then 3 of 3 attempts passed under the same load |
+
+No application defect was found. Normal-load Linux p95: health 30.5 ms, products 78.4 ms, orders 141.2 ms, mixed 602 ms, all within the CI limits. Refusal gates passed, and connections returned to 10 idle.
+
+**Artifacts and logs:** only 2 artifacts were uploaded, with 9 JSON files in total, because no test failed. No trace, screenshot, video or HTML report was uploaded, so **the sanitized failure upload has not yet been exercised on GitHub.** Scans of those files and all job logs found 0 seed passwords, session cookies, keys, tokens, authorization headers or passwords in database URLs. gitleaks found nothing in the artifacts. Artifacts expire on 2026-11-18.
+
+## Status of what remains
+
+| Item | Status |
+| --- | --- |
+| Playwright suites in Docker | **Not run.** Fix ready, and awaiting approval to push |
+| Fixes for the 3 failed jobs | Committed locally, **not on GitHub** |
+| Repeated Linux WebKit runs | **Not run**, as instructed. `webkit-soak.yml` is ready |
 
 ## CI simulation on macOS
 
@@ -159,7 +192,7 @@ typed value right after filling, so a recurrence fails at the point of loss. No 
 
 **Update:** the trace, screenshot and video from that failure no longer exist, because Playwright cleared `test-results/` on a later run. Only its JSON report entry survives. Each run now keeps its own folder, so this cannot happen again. The triage tool classifies this failure as timing, medium confidence, with review required, which is not a root cause.
 
-**Phase 6:** WebKit ran about 1,150 more times on macOS, and **this input failure did not recur, so its root cause remains unknown.** Two other failures occurred, with a different and now fixed cause, listed below. **Repeated Linux runs have not happened.** `webkit-soak.yml` is ready for them.
+**Phase 6:** WebKit ran about 1,150 more times on macOS, and 64 tests passed once on Linux. **This input failure did not recur, so its root cause remains unknown.** Two other failures occurred, with a different and now fixed cause, listed below. **Repeated Linux runs have not happened.** `webkit-soak.yml` is ready for them.
 
 ## Intermittent failures found in Phase 3
 
@@ -178,8 +211,7 @@ CI is untested.
 
 ## Firefox
 
-**Firefox remains unverified. Nothing here says the app works in Firefox.** The projects are kept and no
-test is skipped. Firefox should be tested on Linux in CI in Phase 6.
+**On Linux, all 97 Firefox tests passed in one GitHub Actions run. On macOS, Firefox still cannot launch,** so it remains unverified there. The projects are kept and no test is skipped.
 
 Exact failure, for each of the 97 tests (64 browser and 33 keyboard), when Playwright launches the browser:
 
@@ -429,7 +461,7 @@ Earlier Phase 1 verification, including data surviving a PostgreSQL restart, is 
 **Testing**
 
 - **Firefox is unverified,** as described above.
-- **CI, Docker and Linux have never run.** See [CI_CD.md](CI_CD.md) and [DOCKER.md](DOCKER.md).
+- **CI has run once, and its gate is red.** The suites have not run in Docker. See [the first run](#first-github-actions-run).
 - **One WebKit failure is unresolved,** as described above.
 - **No live LLM has been called.** Offline chatbot results measure keyword retrieval and rules, and it scored 0/8 on held-out paraphrases. See [AI_EVALUATION.md](AI_EVALUATION.md#limitations).
 - **Accessibility is not proven by these tests.** No screen reader was used. See [ACCESSIBILITY.md](ACCESSIBILITY.md#limitations).
