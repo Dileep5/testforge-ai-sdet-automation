@@ -19,8 +19,8 @@ export default defineConfig({
   outputDir: `${RUN_DIR}/test-results`,
   fullyParallel: true,
   forbidOnly: CI,
-  // Retries exist to diagnose flakiness in CI. A test that needs one is reported as flaky, not passed.
-  retries: Number(process.env.E2E_RETRIES ?? (CI ? 1 : 0)),
+  // Off everywhere unless asked for. A test that needs a retry is reported as flaky, not passed.
+  retries: Number(process.env.E2E_RETRIES ?? 0),
   workers,
   timeout: 45_000,
   expect: { timeout: 10_000 },
