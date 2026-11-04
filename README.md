@@ -162,8 +162,16 @@ Raw reports contain session cookies and synthetic passwords. They are ignored by
 
 The full list is in [TEST_RESULTS.md](TEST_RESULTS.md#known-limitations).
 
-## Project history and licence
+## How this was built
 
-Built in stages, recorded in [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md). Development was AI-assisted, using Claude Code, and commits show this with a `Co-Authored-By` line.
+**Claude Code, an AI coding tool, wrote most of the code, tests and documentation,** and commits show this with a `Co-Authored-By` line.
+
+Venkata Sai Dileep Varada directed the project: setting the scope and order of each stage, defining the quality rules, such as no retries to hide failures, no invented metrics and no weakened gates, reviewing the evidence at each stage, deciding which fixes to accept, and approving every push. The work is not presented as hand-written.
+
+The stages are recorded in [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md).
+
+## Security and licence
+
+To report a problem, see [SECURITY.md](SECURITY.md). The credentials published in this repository are synthetic.
 
 Released under the [MIT License](LICENSE). Third-party packages keep their own licences. No images are published from this repository. Notable dependencies and tools are listed in [TEST_RESULTS.md](TEST_RESULTS.md#third-party-licences).

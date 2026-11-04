@@ -206,7 +206,7 @@ No application defect was found. Normal-load Linux p95: health 30.5 ms, products
 
 | Item | Status |
 | --- | --- |
-| Sanitizer fix on GitHub | **Not exercised**, because nothing has failed since. Verified locally |
+| Sanitizer fix on GitHub | **Not exercised**, because nothing has failed since. Verified locally. `sanitizer-self-test.yml` is ready, and has not been run |
 | Browser install mitigation | **Prepared, and has not run on GitHub** |
 | Live LLM evaluation | **Not run** |
 
@@ -363,6 +363,17 @@ Chromium and WebKit launched normally in the same shell. WebKit here is Playwrig
 reports version 27.2 and downloads as its macOS 26 package. It is close to Safari but is not Safari.
 
 No further macOS workarounds were attempted in Phases 3 or 4.
+
+## A failed local run in the final audit
+
+One combined local run on macOS had **662 passed and 10 failed**, and took 14.6 minutes. The same code and tests then passed 672 of 672 in 1.9 minutes. The failures were in unrelated files, in three bursts, with up to 4 tests stalling together and basic API calls timing out. Just afterwards, the machine's 15-minute load average was 84 on 8 cores, with 6.8 of 8.2 GB of swap in use. **This points to the machine being overloaded, but what caused that overload is not known,** and it is one occurrence. No test or threshold was changed in response. It is a reminder that this suite needs spare memory on an 8 GB laptop, and that a stall can look like a test failure.
+
+## Bugs found in the final audit
+
+| Defect | Found by | Type |
+| --- | --- | --- |
+| The payment form set its busy state before a step that could throw, so an early error left "Processing…" on screen with no message | A CI failure screenshot | **Application**, fixed. A new test failed before the fix |
+| `scripts/docker-test.sh` had an unguarded `cd` | shellcheck, newly added | Script, fixed |
 
 ## Bugs found in Phase 6
 
@@ -530,7 +541,7 @@ The approach for each is in [TEST_STRATEGY.md](TEST_STRATEGY.md).
 | `auth.spec.ts` | 7 | Login, cookie flags, generic errors, server-side logout, expiry, return-to-page, open redirect |
 | `rbac.spec.ts` | 10 | Navigation per role, UI and API refusals, session revocation, customer-scoped Viewer |
 | `orders.spec.ts` | 20 | Totals across UI, API and database, stock races, filters, sort, pagination, CSV, status rules |
-| `payments.spec.ts` | 7 | Approve, decline, timeout, settlement gates, lost-response replay, key reuse |
+| `payments.spec.ts` | 9 | Approve, decline, timeout, recovery from a failed start or server error, settlement gates, lost-response replay, key reuse |
 | `inventory.spec.ts` | 8 | Search, audited updates, validation, stale edits, focus restoration, low stock |
 | `products.spec.ts` | 7 | Filters, numeric sort, exact cents, duplicates, price history, retirement, dashboard |
 | `support.spec.ts` | 6 | Citations, refusals, typed instructions, order scope, markup shown as text |

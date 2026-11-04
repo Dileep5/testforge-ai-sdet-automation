@@ -357,3 +357,5 @@ The 4 approved commits were pushed as `86a8843`. [Run 41893657050](https://githu
 
 An audit for public release added the MIT `LICENSE` and rewrote the README, and corrected stale documents. Retries now default to 0 everywhere. A bounded, cached browser install was added after one job's slow package mirror nearly used up its time limit, and has not yet run on GitHub.
 
+Further local work added a payment form that recovers from every failure, CI concurrency that keeps every result for `main`, static checks for the repository's scripts, `SECURITY.md`, and a sanitizer self-test workflow. The workflow has not been run.
+

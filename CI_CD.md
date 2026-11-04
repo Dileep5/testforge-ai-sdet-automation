@@ -9,14 +9,14 @@
 | Job | What it runs | Passing tests required |
 | --- | --- | --- |
 | `typescript` | Type check, ESLint, production build | n/a |
-| `policy` | `ci:policy`, `actionlint`, `hadolint` | n/a |
+| `policy` | `ci:policy`, `lint:scripts` (Ruff, `bash -n`, shellcheck, `node --check`), `actionlint`, `hadolint` | n/a |
 | `python` | Ruff, backend pytest, committed spec matches the code | pytest's own result |
 | `ai` | Ruff, AI pytest, offline evaluation against the baseline | pytest's own result |
 | `api-contract` | `api`, `contract` | 254 |
 | `database-security` | `database`, `security`, `reliability` | 163 |
-| `chromium` | `framework`, `chromium` | 71 |
-| `firefox` | `firefox` | 65 |
-| `webkit` | `webkit` | 65 |
+| `chromium` | `framework`, `chromium` | 73 |
+| `firefox` | `firefox` | 67 |
+| `webkit` | `webkit` | 67 |
 | `accessibility` | `accessibility`, `keyboard-webkit`, `keyboard-firefox` | 148 |
 | `performance` | Short k6 runs with gates | k6 thresholds |
 | `docker` | Build, startup and persistence check, suites in the test stack | 500 |
@@ -40,6 +40,7 @@ The browser and service jobs wait for `typescript` and `python`, because they ar
 **Other workflows, which run only when started by hand:**
 
 - `performance-stress.yml`: all k6 scenarios at full length.
+- `sanitizer-self-test.yml`: proves the sanitizer without failing any application test. See [below](#sanitizer-self-test). **It has not been run.**
 - `webkit-soak.yml`: repeats the WebKit suite at 2 and 4 workers, keeping sanitized evidence for 30 days. [Its one complete run passed 650 of 650](TEST_RESULTS.md#webkit-soak).
 
 There is deliberately **no workflow for live LLM evaluation.** It is run by hand, as described in [AI_EVALUATION.md](AI_EVALUATION.md#live-evaluation).
@@ -60,6 +61,10 @@ There is deliberately **no workflow for live LLM evaluation.** It is run by hand
 - **Versions:** Node from `.nvmrc`, Python from `.python-version`, `npm ci`, and lock files for Python.
 - **Databases:** each job has its own PostgreSQL service container, pinned by digest, with a health check and the same collation as the local cluster. It maps to port 55432, so the default URLs apply. `scripts/create_databases.py` creates the databases.
 - **Browsers:** `npx playwright install --with-deps <browser>`, which is the supported way to get a browser and its Linux system packages.
+
+## Concurrency
+
+A newer push replaces an unfinished run on the same pull request, because only the latest commit there matters. Each push to `main` has a group of its own, so it is never cancelled, never waits, and its result is kept. A pull request and a push to `main` are different events on different commits, so one commit does not run twice. A policy rule enforces this.
 
 ## Browser install reliability
 
@@ -104,6 +109,17 @@ Locally, the run ID is a timestamp plus the process ID. In CI it names the job. 
 **Retention:** failure evidence 14 days, soak evidence 30 days, measurements 14 or 30 days. Locally, `npm run reports:prune` keeps the newest 20 runs and anything from the last 14 days. It never removes a run with failures unless given `--include-failed`.
 
 **Limits:** images and video cannot be scanned. Password fields are masked on screen, but any other visible data remains. All data in this project is synthetic.
+
+### Sanitizer self-test
+
+The sanitizer runs only after a failure, so a green run never exercises it. `sanitizer-self-test.yml` runs only by hand, and takes about 4 job minutes. It fails no application test.
+
+1. It builds a synthetic run with dummy secrets in each place real traces hold them, and confirms the raw copy really contains them.
+2. It sanitizes the run, then checks that every secret is gone, the HTML report is left out, a trace that cannot be cleaned is dropped, and the actions, statuses, screenshot and report that diagnose a failure remain.
+3. It uploads only the public copy, kept for 7 days.
+4. A second job downloads that artifact, and runs the same checks on what was actually uploaded.
+
+**Status: verified locally only, and not yet run on GitHub.** It checks text and bytes, so it cannot judge what a real screenshot or video shows.
 
 ### Verification, with an intentionally failing test
 
