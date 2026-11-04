@@ -289,14 +289,21 @@ function PaymentForm({ orderId, onDone }: { orderId: string; onDone: (payment: P
     if (busy) return;
     setBusy(true);
     setError(undefined);
-    if (attemptKey.current?.token !== token) {
-      attemptKey.current = { token, key: newIdempotencyKey() };
-    }
     try {
+      let key: string;
+      try {
+        if (attemptKey.current?.token !== token) {
+          attemptKey.current = { token, key: newIdempotencyKey() };
+        }
+        key = attemptKey.current.key;
+      } catch {
+        setError("The payment could not be started, and nothing was sent. Please try again.");
+        return;
+      }
       const payment = await post<Payment>(
         `/orders/${orderId}/payments`,
         { method_token: token },
-        { "Idempotency-Key": attemptKey.current.key },
+        { "Idempotency-Key": key },
       );
       attemptKey.current = null;
       onDone(payment);

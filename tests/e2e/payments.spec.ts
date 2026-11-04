@@ -3,6 +3,16 @@ import { expectApiError } from "../../framework/helpers/api-client";
 import { PAYMENT_LABELS } from "../../framework/pages/order-details-page";
 import type { Payment } from "../../framework/helpers/types";
 
+/** Runs in the page. Makes key generation fail until the flag is cleared, as a broken browser API might. */
+function breakKeyGeneration(): void {
+  const original = crypto.getRandomValues.bind(crypto);
+  Object.assign(window, { __breakKeys: true });
+  Crypto.prototype.getRandomValues = function <T extends ArrayBufferView | null>(array: T): T {
+    if ((window as unknown as { __breakKeys: boolean }).__breakKeys) throw new Error("Key generation is unavailable");
+    return original(array as never);
+  };
+}
+
 test.describe("simulated payments", { tag: "@regression" }, () => {
   test("approval, settlement and shipping follow the rules through to delivery", { tag: ["@smoke", "@critical"] }, async ({ manager, data, db }) => {
     const customer = await data.customer();
@@ -51,6 +61,53 @@ test.describe("simulated payments", { tag: "@regression" }, () => {
     await orderDetails.goto(order.id);
     await orderDetails.runPayment(PAYMENT_LABELS.sim_success);
     await expect(orderDetails.paymentRows).toHaveCount(1);
+  });
+
+  test("if a payment cannot be started, nothing is sent, the form recovers, and a retry works", async ({ manager, data }) => {
+    await manager.page.addInitScript(breakKeyGeneration);
+    const customer = await data.customer();
+    const product = await data.product({ stock: { YYZ1: 5 } });
+    const order = await data.order({ customer, lines: [{ product, quantity: 1 }] });
+    const { orderDetails } = manager.app;
+    const { page } = manager;
+    const payments: string[] = [];
+    page.on("request", (request) => {
+      if (request.method() === "POST") payments.push(request.url());
+    });
+    await orderDetails.goto(order.id);
+
+    const button = orderDetails.paymentForm.getByRole("button");
+    await button.click();
+    await expect(orderDetails.paymentForm.getByRole("alert")).toContainText("could not be started");
+    await expect(button).toHaveText("Run payment");
+    await expect(button).toHaveAttribute("aria-disabled", "false");
+    expect(payments).toEqual([]);
+
+    await page.evaluate(() => Object.assign(window, { __breakKeys: false }));
+    await orderDetails.runPayment(PAYMENT_LABELS.sim_success);
+    await expect(orderDetails.paymentRows).toHaveCount(1);
+    await expect(orderDetails.paymentForm.getByRole("alert")).toBeHidden();
+  });
+
+  test("a server failure during payment shows its message and restores the form", async ({ manager, data }) => {
+    const customer = await data.customer();
+    const product = await data.product({ stock: { YYZ1: 5 } });
+    const order = await data.order({ customer, lines: [{ product, quantity: 1 }] });
+    const { orderDetails } = manager.app;
+    const { page } = manager;
+    await page.route("**/api/v1/orders/*/payments", (route) =>
+      route.request().method() === "POST"
+        ? route.fulfill({ status: 500, json: { error: { code: "INTERNAL_ERROR", message: "An unexpected error occurred", details: [], request_id: "r" } } })
+        : route.continue(),
+    );
+    await orderDetails.goto(order.id);
+
+    const button = orderDetails.paymentForm.getByRole("button");
+    await button.click();
+    await expect(orderDetails.paymentForm.getByRole("alert")).toContainText("An unexpected error occurred");
+    await expect(button).toHaveText("Run payment");
+    await expect(button).toHaveAttribute("aria-disabled", "false");
+    await expect(orderDetails.paymentRows).toHaveCount(0);
   });
 
   test("a declined payment is recorded and blocks confirmation, and a retry can succeed", { tag: "@critical" }, async ({ manager, data, db }) => {
