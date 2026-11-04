@@ -62,6 +62,18 @@ def check_workflow(path: str, text: str) -> list[str]:
     return problems
 
 
+def check_concurrency(path: str, text: str) -> list[str]:
+    """A push to main must never cancel, or wait on, another run. Its result has to be kept."""
+    concurrency = yaml.safe_load(text).get("concurrency", {})
+    problems = []
+    cancel = str(concurrency.get("cancel-in-progress", False))
+    if cancel == "True" or "pull_request" not in cancel:
+        problems.append(f"{path}: cancelling must apply to pull requests only")
+    if "github.sha" not in str(concurrency.get("group", "")):
+        problems.append(f"{path}: pushes to main need a concurrency group of their own")
+    return problems
+
+
 def check_action(path: str, text: str) -> list[str]:
     problems = []
     for step in yaml.safe_load(text)["runs"]["steps"]:
@@ -117,6 +129,8 @@ def check_all(root: Path = ROOT) -> list[str]:
     problems = []
     for path in sorted((root / ".github/workflows").glob("*.yml")):
         problems += check_workflow(str(path.relative_to(root)), path.read_text())
+    ci = root / ".github/workflows/ci.yml"
+    problems += check_concurrency(str(ci.relative_to(root)), ci.read_text())
     for path in sorted((root / ".github/actions").rglob("action.yml")):
         problems += check_action(str(path.relative_to(root)), path.read_text())
     for path in sorted((root / "docker").glob("*.Dockerfile")):

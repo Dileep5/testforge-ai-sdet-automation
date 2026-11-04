@@ -63,6 +63,7 @@
     "perf": "npm run -s db:start && npm run -s perf:migrate && node scripts/perf.mjs",
     "ai": "apps/api/.venv/bin/python -m testforge_ai.cli",
     "test:ai": "cd ai && ../apps/api/.venv/bin/python -m pytest",
+    "lint:scripts": "bash scripts/check-scripts.sh",
     "lint:ai": "cd ai && ../apps/api/.venv/bin/ruff check . && ../apps/api/.venv/bin/ruff format --check .",
     "ai:eval": "npm run -s ai -- eval --split dev --out reports/ai/eval-dev.json",
     "ai:eval:heldout": "npm run -s ai -- eval --split heldout --out reports/ai/eval-heldout.json",

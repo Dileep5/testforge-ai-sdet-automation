@@ -134,3 +134,26 @@ def test_the_test_stack_must_stay_isolated() -> None:
     )
     kept = TEST_COMPOSE.replace("    tmpfs:\n      - /var/lib/postgresql/data\n", "")
     assert any("not persist" in item for item in policy.check_compose("c", kept, test_stack=True))
+
+
+CONCURRENCY = """
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+"""
+
+
+def test_good_concurrency_passes() -> None:
+    assert policy.check_concurrency("w", CONCURRENCY) == []
+
+
+@pytest.mark.parametrize(
+    ("change", "message"),
+    [
+        (("${{ github.event_name == 'pull_request' }}", "true"), "pull requests only"),
+        (("|| github.sha", "|| github.ref"), "group of their own"),
+    ],
+)
+def test_main_results_cannot_be_cancelled(change: tuple[str, str], message: str) -> None:
+    problems = policy.check_concurrency("w", CONCURRENCY.replace(*change))
+    assert any(message in item for item in problems), problems

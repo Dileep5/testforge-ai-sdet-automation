@@ -9,9 +9,11 @@ on:
 permissions:
   contents: read
 
+# A newer push replaces an unfinished pull request run, because only the latest commit there matters.
+# Each push to main has its own group, so its result is always kept and no run waits on another.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   TESTFORGE_ALLOW_LIVE_LLM: "0"
@@ -41,6 +43,7 @@ jobs:
       - uses: ./.github/actions/setup-test-env
       - run: npm run ci:tools
       - run: npm run ci:policy
+      - run: npm run lint:scripts
       - run: .local/tools/actionlint
       - run: .local/tools/hadolint docker/*.Dockerfile
 
@@ -128,7 +131,7 @@ jobs:
       name: chromium
       projects: framework chromium
       browsers: chromium
-      min-tests: 71
+      min-tests: 73
 
   firefox:
     name: Firefox
@@ -138,7 +141,7 @@ jobs:
       name: firefox
       projects: firefox
       browsers: firefox
-      min-tests: 65
+      min-tests: 67
 
   webkit:
     name: WebKit
@@ -148,7 +151,7 @@ jobs:
       name: webkit
       projects: webkit
       browsers: webkit
-      min-tests: 65
+      min-tests: 67
 
   accessibility:
     name: Accessibility and keyboard

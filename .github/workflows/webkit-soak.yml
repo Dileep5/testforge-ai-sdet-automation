@@ -20,7 +20,7 @@ jobs:
       name: webkit-soak-2-workers
       projects: webkit
       browsers: webkit
-      min-tests: 65
+      min-tests: 67
       repeat-each: ${{ fromJSON(inputs.repeat-each) }}
       workers: 2
       retention-days: 30
@@ -32,7 +32,7 @@ jobs:
       name: webkit-soak-4-workers
       projects: webkit
       browsers: webkit
-      min-tests: 65
+      min-tests: 67
       repeat-each: ${{ fromJSON(inputs.repeat-each) }}
       workers: 4
       retention-days: 30

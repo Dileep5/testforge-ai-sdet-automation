@@ -5,10 +5,11 @@
 # everything as soon as any container exits, including the one-shot migrate step when it succeeds.
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$ROOT"
+cd "$ROOT" || exit 1
 export TESTFORGE_RUN_ID="${TESTFORGE_RUN_ID:-docker-$(date +%Y%m%d-%H%M%S)}"
 RUNNER="testforge-test-runner-$TESTFORGE_RUN_ID"
 compose() { docker compose -f compose.test.yaml "$@"; }
+# shellcheck disable=SC2329 # The trap below calls this.
 finish() {
   docker rm --force "$RUNNER" >/dev/null 2>&1
   compose down -v --remove-orphans
