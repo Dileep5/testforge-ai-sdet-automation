@@ -20,6 +20,7 @@ from testforge_ai.generation.review import (
 )
 from testforge_ai.llm import LLMError, OpenAIProvider
 from testforge_ai.sanitize import sanitize_run
+from testforge_ai.sanitizer_self_test import run_self_test, verify_public_copy
 from testforge_ai.triage.artifacts import ArtifactError, load_run
 from testforge_ai.triage.assist import assist
 from testforge_ai.triage.classifier import classify
@@ -156,6 +157,19 @@ def _cmd_sanitize(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_self_test(args: argparse.Namespace) -> int:
+    if args.verify_only:
+        problems = verify_public_copy(args.verify_only)
+    elif args.workdir:
+        result = run_self_test(args.workdir)
+        problems = result["problems"]
+        _print(result["sanitizer"])
+    else:
+        raise ValueError("Give --workdir or --verify-only")
+    _print({"passed": not problems, "problems": problems})
+    return 1 if problems else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="testforge-ai", description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -217,6 +231,15 @@ def build_parser() -> argparse.ArgumentParser:
     sanitize.add_argument("--run-dir", type=Path, required=True)
     sanitize.add_argument("--out", type=Path, required=True)
     sanitize.set_defaults(run=_cmd_sanitize)
+
+    self_test = commands.add_parser(
+        "sanitize-self-test", help="Check the sanitizer on a synthetic run with dummy secrets"
+    )
+    self_test.add_argument("--workdir", type=Path, help="Build, sanitize and check a synthetic run")
+    self_test.add_argument(
+        "--verify-only", type=Path, help="Check a public copy, such as a download"
+    )
+    self_test.set_defaults(run=_cmd_self_test)
     return parser
 
 
