@@ -65,4 +65,4 @@ The `contract` project is **not** in the Docker test run, because its breaking-c
 - **Unverified**, as stated above.
 - **This is not a production deployment.** There is no TLS, `APP_ENV` is `development`, and the seed accounts have published passwords. `SEED_MODE` must be `none` anywhere real.
 - **`--wait` and one-shot services:** some Compose versions report a service that exits as a failure under `--wait`. If the first run hits this, `docker:up` and `docker-smoke.sh` will need changing.
-- **Digest pins go stale.** Dependabot is configured to propose updates, but this also has not run.
+- **Digest pins go stale.** Dependabot would propose updates, but it is temporarily off, and has never run. See [CI_CD.md](CI_CD.md#security).

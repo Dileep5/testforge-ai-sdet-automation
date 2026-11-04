@@ -112,7 +112,7 @@ Locally, the run ID is a timestamp plus the process ID. In CI it names the job. 
 | Untrusted code | No `pull_request_target`. Inputs reach scripts through environment variables |
 | No live LLM | `TESTFORGE_ALLOW_LIVE_LLM` is `0`, and the policy rejects a key or enabling it |
 | Secret scanning | gitleaks over all history. The allow-list holds only exact synthetic values |
-| Dependencies | `npm audit` and `pip-audit`, with Dependabot configured for all four ecosystems |
+| Dependencies | `npm audit` and `pip-audit`. Dependabot is **temporarily off** while CI is first verified, because each of its pull requests runs full CI. To turn it on, rename `.github/dependabot.yml.disabled` to `.github/dependabot.yml` |
 
 ### Dependency findings
 
