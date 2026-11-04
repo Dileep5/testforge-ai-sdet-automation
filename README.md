@@ -2,7 +2,7 @@
 
 An enterprise SDET and test automation portfolio project, built around a real application under test.
 
-> **Status: Phases 1 to 5 of 7 complete, and every result is local.** The commerce application and its backend, browser, API, contract, database, security, accessibility, performance and AI test suites exist and ran on this machine. **Firefox cannot launch here, so it is unverified. One WebKit failure is unresolved. No live LLM has been called, and offline chatbot results are modest.** Docker and CI are **not built yet**. See [TEST_RESULTS.md](TEST_RESULTS.md), [AI_EVALUATION.md](AI_EVALUATION.md), [ARCHITECTURE.md](ARCHITECTURE.md) and [IMPLEMENTATION_LOG.md](IMPLEMENTATION_LOG.md).
+> **Status: Phases 1 to 6 of 7 complete, and every result is local, on macOS.** The application and its test suites ran on this machine. **Docker, GitHub Actions and Linux browsers are configured but have never run. Firefox is unverified. One WebKit failure is unresolved. No live LLM has been called.** See [TEST_RESULTS.md](TEST_RESULTS.md), [CI_CD.md](CI_CD.md), [DOCKER.md](DOCKER.md) and [AI_EVALUATION.md](AI_EVALUATION.md).
 
 ## The application
 
@@ -77,6 +77,8 @@ against its own database and ports, so it does not touch development data.
 | `npm run test:ai`, `npm run lint:ai` | AI tests and lint, offline with no key. See [AI_TESTING.md](AI_TESTING.md) |
 | `npm run ai:eval`, `npm run ai:eval:heldout` | Chatbot evaluation. See [AI_EVALUATION.md](AI_EVALUATION.md) |
 | `npm run ai:triage:corpus` | Run deliberately failing tests, then classify them. Failures are expected |
+| `npm run docker:up`, `docker:smoke`, `docker:test` | Docker stacks. **Never run.** See [DOCKER.md](DOCKER.md) |
+| `npm run ci:tools`, `ci:policy` | Install pinned scanners, and check the CI and Docker rules. See [CI_CD.md](CI_CD.md) |
 | `npm run typecheck` | Strict type check of the frontend and framework |
 | `npm run lint` / `npm run lint:backend` | ESLint / Ruff |
 | `npm run build` | Frontend production build |
@@ -95,19 +97,21 @@ launch here, so `npm run test:e2e` reports 64 launch failures and Firefox is unv
 
 ### Investigating a failure
 
-Failures keep a trace, screenshots and video in `test-results/<test-name>/`.
+Each run keeps its own folder, `reports/runs/<run id>/`, and failures there keep a trace, screenshots and video. A later run cannot overwrite them. These files hold session cookies and passwords for the synthetic accounts, so publish only the output of `npm run reports:sanitize`.
 
 ```bash
-npm run e2e:report                                           # HTML report, with all attachments
-npx playwright show-trace test-results/<test-name>/trace.zip # step through one failure
+npm run e2e:report                                           # HTML report of the latest run
+npx playwright show-trace reports/runs/<run id>/test-results/<test-name>/trace.zip
+npm run reports:check -- --run <run id>                      # fail on failures, flaky or skipped
+npm run reports:sanitize -- --run-dir reports/runs/<run id> --out reports/sanitized/<run id>
+npm run reports:prune                                        # tidy old runs, never ones with failures
 ```
 
 Failed browser tests also attach `diagnostics`, with console errors, failed requests and execution metadata.
 
 The trace viewer shows each action with a before and after snapshot of the page, plus console output
 and network calls. A test with two signed-in users has one trace covering both sessions, plus a
-screenshot and video for each. Reports are written to `playwright-report/` and
-`reports/junit/playwright.xml`.
+screenshot and video for each.
 
 `OPENAPI_BASE_REF=<ref> npm run test:contract` compares the spec with another revision. A deliberate breaking change
 must be recorded, with its reason, in `apps/api/openapi-accepted-breaking-changes.json`.
@@ -138,13 +142,15 @@ tests/api, contract, database, security, reliability    Playwright tests with no
 tests/accessibility    axe, semantics, focus and keyboard tests
 performance   k6 scenarios
 ai            AI test generation, support chatbot, LLM evaluation and failure triage
+docker        Dockerfiles, nginx and migration scripts. compose.yaml and compose.test.yaml are at the root
+.github       GitHub Actions workflows. Never run
 scripts       Setup, local PostgreSQL, dev runner, E2E API runner, OpenAPI export
 ```
 
 The fixture design, page objects, isolation and browser configuration are explained in
 [ARCHITECTURE.md](ARCHITECTURE.md#playwright-framework). What each test layer covers is in
 [TEST_STRATEGY.md](TEST_STRATEGY.md), and results are in [TEST_RESULTS.md](TEST_RESULTS.md),
-[ACCESSIBILITY.md](ACCESSIBILITY.md), [PERFORMANCE.md](PERFORMANCE.md), [AI_TESTING.md](AI_TESTING.md) and [AI_EVALUATION.md](AI_EVALUATION.md).
+[ACCESSIBILITY.md](ACCESSIBILITY.md), [PERFORMANCE.md](PERFORMANCE.md), [AI_TESTING.md](AI_TESTING.md), [AI_EVALUATION.md](AI_EVALUATION.md), [CI_CD.md](CI_CD.md) and [DOCKER.md](DOCKER.md).
 
 ## Known limitations
 

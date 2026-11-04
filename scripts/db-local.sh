@@ -38,17 +38,17 @@ start() {
     "$PG_BIN/pg_ctl" -D "$DATA" -l "$LOG" -w -o "-p $PORT -h 127.0.0.1 -c unix_socket_directories=''" start >/dev/null
     echo "PostgreSQL started on 127.0.0.1:$PORT"
   fi
-  "$PY" - "$PORT" <<'PY'
-import sys
-import psycopg
-url = f"postgresql://testforge:testforge_local@127.0.0.1:{sys.argv[1]}/postgres"
-with psycopg.connect(url, autocommit=True) as conn:
-    for name in ("testforge", "testforge_test", "testforge_e2e", "testforge_perf"):
-        if not conn.execute("SELECT 1 FROM pg_database WHERE datname = %s", (name,)).fetchone():
-            conn.execute(f'CREATE DATABASE "{name}"')
-            print(f"Created database {name}")
-PY
+  POSTGRES_ADMIN_URL="postgresql://testforge:testforge_local@127.0.0.1:$PORT/postgres" "$PY" "$ROOT/scripts/create_databases.py"
 }
+
+# Another server is in charge, such as a CI service container, so only make sure the databases exist.
+if [[ -n "${EXTERNAL_POSTGRES:-}" ]]; then
+  case "${1:-}" in
+    start) "$PY" "$ROOT/scripts/create_databases.py"; exit 0 ;;
+    status) echo "external"; exit 0 ;;
+    *) echo "EXTERNAL_POSTGRES is set: this script manages only the local cluster" >&2; exit 2 ;;
+  esac
+fi
 
 case "${1:-}" in
   start) start ;;

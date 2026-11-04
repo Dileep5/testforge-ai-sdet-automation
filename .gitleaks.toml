@@ -1,0 +1,17 @@
+title = "TestForge secret scan"
+
+[extend]
+useDefault = true
+
+# Published on purpose: the seed and test accounts and the local database default are synthetic,
+# and they work only against a throwaway local database. Each entry is one exact known value, and
+# nothing else may be allow-listed here.
+[allowlist]
+description = "Synthetic local credentials"
+regexes = [
+  '''(Admin|Manager|Viewer)!Forge2026''',
+  '''testforge_local''',
+  '''testforge_e2e_reader_local''',
+  '''Perf-Synthetic-Passw0rd''',
+  '''A-Long-Enough-Passw0rd''',
+]

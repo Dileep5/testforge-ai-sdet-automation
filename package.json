@@ -66,7 +66,17 @@
     "lint:ai": "cd ai && ../apps/api/.venv/bin/ruff check . && ../apps/api/.venv/bin/ruff format --check .",
     "ai:eval": "npm run -s ai -- eval --split dev --out reports/ai/eval-dev.json",
     "ai:eval:heldout": "npm run -s ai -- eval --split heldout --out reports/ai/eval-heldout.json",
-    "ai:triage:corpus": "playwright test -c playwright.triage.config.ts; npm run -s ai -- triage --json reports/triage-corpus/playwright.json --artifacts-root . --out reports/triage-corpus/triage.json --score heldout",
-    "e2e:report": "playwright show-report"
+    "ai:triage:corpus": "export TESTFORGE_RUN_ID=triage-corpus-$(date +%Y%m%d-%H%M%S); playwright test -c playwright.triage.config.ts --project=corpus-chromium --project=corpus-webkit --project=corpus-firefox; npm run -s ai -- triage --json reports/runs/$TESTFORGE_RUN_ID/playwright.json --artifacts-root . --out reports/runs/$TESTFORGE_RUN_ID/triage.json --score heldout",
+    "e2e:report": "playwright show-report \"reports/runs/$(cat reports/latest-run.txt)/html\"",
+    "docker:up": "docker compose --env-file docker/.env up --build --detach --wait",
+    "docker:down": "docker compose --env-file docker/.env down",
+    "docker:reset": "docker compose --env-file docker/.env down -v && docker compose --env-file docker/.env up --build --detach --wait",
+    "docker:smoke": "bash scripts/docker-smoke.sh",
+    "docker:test": "bash scripts/docker-test.sh",
+    "ci:tools": "bash scripts/install-ci-tools.sh",
+    "ci:policy": "apps/api/.venv/bin/python scripts/check_ci_policy.py",
+    "reports:check": "node scripts/reports.mjs check",
+    "reports:prune": "node scripts/reports.mjs prune",
+    "reports:sanitize": "npm run -s ai -- sanitize"
   }
 }

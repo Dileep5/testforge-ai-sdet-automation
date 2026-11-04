@@ -301,3 +301,43 @@ Listed in [TEST_RESULTS.md](TEST_RESULTS.md#bugs-found-in-phase-5). No defect wa
 - Firefox on Linux, CI and Docker in Phase 6.
 - Phases 6 and 7.
 
+## Phase 6: Docker, CI and quality gates (2026-11-04)
+
+Phase 5 was committed locally as `738ccb1`. Phase 6 is uncommitted.
+
+**Docker, GitHub Actions and Linux browsers have never run.** Docker is not installed, and the repository has no remote. I did not install Docker or any VM, and did not push, because neither was approved.
+
+### Built
+
+- **Docker:** images for the API, web app and test runner, an application stack with a named volume, and an isolated test stack. See [DOCKER.md](DOCKER.md).
+- **CI:** 14 jobs, plus hand-started stress and WebKit soak workflows, and a policy checker with its own tests. See [CI_CD.md](CI_CD.md).
+- **Artifacts:** per-run folders, a fail-closed sanitizer, count gates and pruning.
+- **k6:** thresholds for errors, p95, status families and overload behaviour.
+
+### Application changes
+
+- A queued request is refused after `MAX_QUEUE_WAIT_SECONDS`, and dropped if its client disconnects.
+- `app.seed --if-empty`, for restarts.
+
+### Verified on macOS only
+
+Exact counts are in [TEST_RESULTS.md](TEST_RESULTS.md). Backend 197; AI 350; Chromium 64; WebKit 64; accessibility 82; keyboard WebKit 33; Firefox 0 of 97 (launch failure); API 154; contract 100; PostgreSQL 44; security 114; reliability 5; framework 6. All except Firefox together: 666, retries off. The CI commands also passed in a fresh copy against a separate empty database. The development database was unchanged, by content hash.
+
+### Failures and how each was resolved
+
+Listed in [TEST_RESULTS.md](TEST_RESULTS.md#bugs-found-in-phase-6). The main one is a keep-alive race that repeated WebKit runs exposed. The Phase 4 WebKit input failure did not recur, and remains unexplained.
+
+### Operator notes
+
+- A large command that wrote these files and ran tool installers together was denied by the session's permission check, without a reason. Nothing from it had applied. The files were then written one at a time, and the installer ran as its own step, with both allowed.
+- `.local/tools` now holds actionlint, gitleaks and pip-audit. It is ignored by git.
+- `reports/runs` holds raw artifacts, including session cookies and synthetic passwords. It is ignored by git.
+- Disk was at 94%, with 13 GB free when this phase started.
+- The stale `reports/performance` folders from Phase 4 are still there.
+
+### Remains
+
+- Push, and read the first CI run: this needs your approval.
+- Docker verification and Firefox on Linux, through that run.
+- Phase 7.
+

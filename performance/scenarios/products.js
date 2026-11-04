@@ -1,6 +1,8 @@
 import { SEED, get, loginCookie, seconds } from "../lib.js";
+import { loadThresholds } from "../thresholds.js";
 
 export const options = {
+  thresholds: loadThresholds("products"),
   scenarios: {
     products: {
       executor: "ramping-vus",

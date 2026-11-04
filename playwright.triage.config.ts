@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { RUN_DIR } from "./framework/config";
 import base from "./playwright.config";
 
 /**
@@ -8,17 +9,19 @@ import base from "./playwright.config";
 export default defineConfig({
   ...base,
   testDir: "./ai/triage-corpus",
-  outputDir: "./reports/triage-corpus/test-results",
+  outputDir: `${RUN_DIR}/test-results`,
   retries: 0,
   timeout: 20_000,
   reporter: [
     ["list"],
-    ["junit", { outputFile: "reports/triage-corpus/junit.xml" }],
-    ["json", { outputFile: "reports/triage-corpus/playwright.json" }],
+    ["junit", { outputFile: `${RUN_DIR}/junit.xml` }],
+    ["json", { outputFile: `${RUN_DIR}/playwright.json` }],
   ],
   projects: [
     { name: "corpus-chromium", testMatch: /(dev|heldout)\.spec\.ts/, use: { ...devices["Desktop Chrome"] } },
     { name: "corpus-webkit", testMatch: /(dev|heldout)\.spec\.ts/, use: { ...devices["Desktop Safari"] } },
     { name: "corpus-firefox", testMatch: /launch\.spec\.ts/, use: { ...devices["Desktop Firefox"] } },
+    // Proves what a failed run leaves behind, and that its public copy holds no credentials.
+    { name: "artifact-check", testMatch: /artifact-check\.spec\.ts/, use: { ...devices["Desktop Chrome"] } },
   ],
 });

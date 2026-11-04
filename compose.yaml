@@ -1,0 +1,60 @@
+# The application stack. Run with: npm run docker:up
+# It has its own database in a named volume, and never touches .local or the local cluster.
+name: testforge
+
+services:
+  db:
+    image: postgres:17.11-bookworm@sha256:839fbb5a4942a7758dd93e18b42ea5649807491a0545b5eeeb8f0b8bb11857a5
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in docker/.env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in docker/.env}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in docker/.env}
+      # The same collation as the local cluster, so sorting does not change between them.
+      POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    image: testforge-api:local
+    command: ["testforge-migrate"]
+    environment: &api-environment
+      APP_ENV: development
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      ALLOWED_ORIGINS: '["http://localhost:${WEB_PORT:-8080}"]'
+      SEED_MODE: if-empty
+    healthcheck:
+      disable: true
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    image: testforge-api:local
+    environment: *api-environment
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+    image: testforge-web:local
+    environment:
+      API_UPSTREAM: api:8000
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8080}:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  db-data:

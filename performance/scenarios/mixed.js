@@ -1,9 +1,11 @@
 import { createActors, get, loginCookie, placeOrder, seconds, send, uniqueKey } from "../lib.js";
+import { loadThresholds } from "../thresholds.js";
 
 const VUS = 30;
 
 // About 70% reads and 30% writes, including row contention on one shared hot product.
 export const options = {
+  thresholds: loadThresholds("mixed"),
   setupTimeout: "180s",
   scenarios: {
     mixed: {

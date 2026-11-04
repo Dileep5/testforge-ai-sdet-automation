@@ -16,7 +16,7 @@ Browser ──> Web app (React, Vite) ──/api proxy──> FastAPI ──> Po
 ### Request admission
 
 `ConcurrencyLimitMiddleware` admits at most as many requests as the database pool has connections (30), queues up to
-`MAX_QUEUED_REQUESTS` more (200) in arrival order, and refuses the rest immediately.
+`MAX_QUEUED_REQUESTS` more (200) in arrival order, and refuses the rest immediately. A queued request is refused if it waits longer than `MAX_QUEUE_WAIT_SECONDS` (4), and is dropped without running if its client disconnects.
 
 **The admission limit prevents a deadlock.** FastAPI runs synchronous dependencies and endpoints as separate jobs on a 40-thread pool, and a request keeps its database connection between those jobs. Under
 a burst, all threads could wait for a connection while all connections were held by requests waiting for a thread, freezing the API until the 30 second pool timeout. Phase 2 found this.
@@ -142,7 +142,7 @@ Global teardown writes the operations and statuses reached to `reports/contract/
 
 ### Failure diagnostics
 
-Failed browser tests keep a trace, screenshot, video and error context. They also attach `diagnostics`, with the test title, project, browser version, worker, retry, duration, console errors, page errors, failed requests and
+Failed browser tests keep a trace, screenshot, video and error context, in that run's own folder. They also attach `diagnostics`, with the test title, project, browser version, worker, retry, duration, console errors, page errors, failed requests and
 error responses, including each response's request ID, which links it to the API's log. It records URLs and statuses only, with no cookies, headers or bodies.
 
 ### Accessibility helpers
@@ -205,3 +205,13 @@ flowchart LR
 - **A model is untrusted.** Output is parsed, validated and checked by rules, and only then shown. Refusals use fixed text.
 - **Plain BM25, with no vector database.** The purpose is testing AI systems, and a few dozen short articles do not need more.
 - **A failed configuration stops startup.** A live provider that is not fully configured fails when the server starts, not on a customer's request.
+
+## Delivery
+
+Docker and CI are configured, and **have never run.** See [DOCKER.md](DOCKER.md) and [CI_CD.md](CI_CD.md).
+
+- **External PostgreSQL mode:** `EXTERNAL_POSTGRES=1` makes `db-local.sh` only create missing databases on a server someone else runs, such as a CI service container on port 55432, so the default URLs still apply.
+- **External servers mode:** `E2E_EXTERNAL_SERVERS=1` stops Playwright starting the API and web app, and `E2E_API_URL` and `E2E_BASE_URL` say where they are. In Docker, `E2E_SKIP_SEED=1` leaves seeding to a one-shot service.
+- **Per-run reports:** each run writes to `reports/runs/<run id>/`, because Playwright empties its output folder when it starts. Only a sanitized copy can be published.
+- **API keep-alive:** test servers and the API image use a 75-second keep-alive. With uvicorn's default of 5, a client reusing an idle connection can be reset.
+

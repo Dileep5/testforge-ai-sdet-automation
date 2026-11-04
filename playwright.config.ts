@@ -1,5 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-import { API_DATABASE_URL, API_PORT, API_URL, BASE_URL, PAYMENT_SIM_TIMEOUT_MS, WEB_PORT, assertE2eDatabase } from "./framework/config";
+import { API_DATABASE_URL, API_PORT, API_URL, BASE_URL, PAYMENT_SIM_TIMEOUT_MS, RUN_DIR, WEB_PORT, assertE2eDatabase } from "./framework/config";
 
 assertE2eDatabase();
 
@@ -16,7 +16,7 @@ export default defineConfig({
   testDir: "./tests/e2e",
   globalSetup: "./framework/global-setup.ts",
   globalTeardown: "./framework/global-teardown.ts",
-  outputDir: "./test-results",
+  outputDir: `${RUN_DIR}/test-results`,
   fullyParallel: true,
   forbidOnly: CI,
   // Retries exist to diagnose flakiness in CI. A test that needs one is reported as flaky, not passed.
@@ -26,9 +26,9 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   reporter: [
     ["list"],
-    ["html", { outputFolder: "playwright-report", open: "never" }],
-    ["junit", { outputFile: "reports/junit/playwright.xml" }],
-    ["json", { outputFile: "reports/playwright.json" }],
+    ["html", { outputFolder: `${RUN_DIR}/html`, open: "never" }],
+    ["junit", { outputFile: `${RUN_DIR}/junit.xml` }],
+    ["json", { outputFile: `${RUN_DIR}/playwright.json` }],
   ],
   use: {
     baseURL: BASE_URL,
@@ -55,7 +55,8 @@ export default defineConfig({
     // One burst at a time, so bursts do not add up past the operating system's connection queue.
     { ...serviceSuite("reliability"), fullyParallel: false, workers: 1 },
   ],
-  webServer: [
+  // Set when the API and web app already run elsewhere, such as in Docker Compose.
+  webServer: process.env.E2E_EXTERNAL_SERVERS ? [] : [
     {
       name: "api",
       command: "bash scripts/e2e-api.sh",

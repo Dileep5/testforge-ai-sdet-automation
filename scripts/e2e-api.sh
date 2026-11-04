@@ -11,4 +11,6 @@ esac
 bash "$ROOT/scripts/db-local.sh" start
 cd "$ROOT/apps/api"
 .venv/bin/alembic upgrade head
-exec .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port "${E2E_API_PORT:?}" --log-level warning
+# Longer than any test keeps a client idle. With uvicorn's default of 5 seconds, a client that reuses
+# a connection just as the server closes it gets ECONNRESET. See TEST_RESULTS.md.
+exec .venv/bin/uvicorn app.main:app --host 127.0.0.1 --port "${E2E_API_PORT:?}" --log-level warning --timeout-keep-alive 75

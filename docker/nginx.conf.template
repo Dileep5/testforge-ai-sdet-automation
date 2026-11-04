@@ -1,0 +1,24 @@
+# API_UPSTREAM is filled in when the container starts, so one image serves any stack.
+server {
+    listen 8080;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy same-origin always;
+
+    location /api/ {
+        proxy_pass http://${API_UPSTREAM};
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header Connection "";
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 60s;
+    }
+
+    # Client-side routes all load the app.
+    location / {
+        try_files $uri /index.html;
+    }
+}

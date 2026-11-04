@@ -1,0 +1,290 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Every job gets read-only access. No job here uses a repository secret or calls a paid service.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  TESTFORGE_ALLOW_LIVE_LLM: "0"
+
+jobs:
+  typescript:
+    name: TypeScript and ESLint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-test-env
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build
+
+  policy:
+    name: CI and Docker policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-test-env
+      - run: npm run ci:tools
+      - run: npm run ci:policy
+      - run: .local/tools/actionlint
+      - run: .local/tools/hadolint docker/*.Dockerfile
+
+  python:
+    name: Ruff and backend pytest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17.11-bookworm@sha256:839fbb5a4942a7758dd93e18b42ea5649807491a0545b5eeeb8f0b8bb11857a5
+        env:
+          POSTGRES_USER: testforge
+          POSTGRES_PASSWORD: testforge_local
+          POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U testforge"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      EXTERNAL_POSTGRES: "1"
+      POSTGRES_ADMIN_URL: postgresql://testforge:testforge_local@127.0.0.1:55432/postgres
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-test-env
+      - run: npm run lint:backend
+      - run: apps/api/.venv/bin/python scripts/create_databases.py
+      - run: npm run test:backend:coverage
+      - name: The committed API spec and types match the code
+        run: |
+          npm run openapi:export
+          git diff --exit-code -- apps/api/openapi.json apps/web/src/api-types.ts
+
+  ai:
+    name: AI tests and offline evaluation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-test-env
+      - run: npm run lint:ai
+      - run: npm run test:ai
+      - run: npm run -s ai:eval > /dev/null
+      - run: npm run -s ai:eval:heldout > /dev/null
+      - name: Results match the recorded baseline
+        run: apps/api/.venv/bin/python scripts/check_eval.py
+      - name: Upload evaluation reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: ai-evaluation-${{ github.run_id }}
+          path: reports/ai
+          retention-days: 14
+          if-no-files-found: error
+
+  api-contract:
+    name: API and contract
+    needs: [typescript, python]
+    uses: ./.github/workflows/playwright-job.yml
+    with:
+      name: api-contract
+      projects: api contract
+      min-tests: 254
+
+  database-security:
+    name: PostgreSQL, security and reliability
+    needs: [typescript, python]
+    uses: ./.github/workflows/playwright-job.yml
+    with:
+      name: database-security
+      projects: database security reliability
+      min-tests: 163
+
+  chromium:
+    name: Chromium
+    needs: [typescript, python]
+    uses: ./.github/workflows/playwright-job.yml
+    with:
+      name: chromium
+      projects: framework chromium
+      browsers: chromium
+      min-tests: 70
+
+  firefox:
+    name: Firefox
+    needs: [typescript, python]
+    uses: ./.github/workflows/playwright-job.yml
+    with:
+      name: firefox
+      projects: firefox
+      browsers: firefox
+      min-tests: 64
+
+  webkit:
+    name: WebKit
+    needs: [typescript, python]
+    uses: ./.github/workflows/playwright-job.yml
+    with:
+      name: webkit
+      projects: webkit
+      browsers: webkit
+      min-tests: 64
+
+  accessibility:
+    name: Accessibility and keyboard
+    needs: [typescript, python]
+    uses: ./.github/workflows/playwright-job.yml
+    with:
+      name: accessibility
+      projects: accessibility keyboard-webkit keyboard-firefox
+      browsers: chromium webkit firefox
+      min-tests: 148
+
+  performance:
+    name: Performance gates (short)
+    needs: [python]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17.11-bookworm@sha256:839fbb5a4942a7758dd93e18b42ea5649807491a0545b5eeeb8f0b8bb11857a5
+        env:
+          POSTGRES_USER: testforge
+          POSTGRES_PASSWORD: testforge_local
+          POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U testforge"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      EXTERNAL_POSTGRES: "1"
+      POSTGRES_ADMIN_URL: postgresql://testforge:testforge_local@127.0.0.1:55432/postgres
+      PERF_PROFILE: ci
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-test-env
+      - run: npm run perf:install
+      - name: Normal load, short
+        env:
+          PERF_SCALE: "0.2"
+        run: npm run perf -- --label ci-normal health products orders mixed
+      - name: Overload, with a short queue so a small load reaches it
+        env:
+          PERF_SCALE: "0.25"
+          PERF_PEAK_VUS: "60"
+          MAX_QUEUED_REQUESTS: "5"
+        run: npm run perf -- --label ci-overload overload
+      - name: Upload measurements
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: performance-${{ github.run_id }}
+          path: reports/performance
+          retention-days: 14
+          if-no-files-found: error
+
+  docker:
+    name: Docker build and tests
+    needs: [typescript, python]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-test-env
+      - name: Application stack starts, and data survives a restart
+        run: npm run docker:smoke
+      - name: Suites against the isolated test stack
+        env:
+          TESTFORGE_RUN_ID: docker
+        run: npm run docker:test
+      - name: Check counts
+        env:
+          TESTFORGE_RUN_ID: docker
+        run: npm run -s reports:check -- --min-tests 500
+      - name: Make a public copy of the failure evidence
+        if: failure()
+        run: npm run -s reports:sanitize -- --run-dir reports/runs/docker --out reports/sanitized/docker
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: failure-docker-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/sanitized/docker
+          retention-days: 14
+          if-no-files-found: warn
+
+  audit:
+    name: Dependency audit and secret scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The scan covers all history, not just the latest commit.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ./.github/actions/setup-test-env
+      - run: npm run ci:tools
+      - name: Production npm dependencies have no known vulnerabilities
+        run: npm audit --omit=dev --audit-level=low
+      - name: Development tools have nothing high or critical
+        run: npm audit --audit-level=high
+      - name: Python dependencies have no known vulnerabilities
+        run: .local/tools/pip-audit --no-deps --disable-pip -r apps/api/requirements.lock -r ai/requirements.lock
+      - name: No secrets in the repository or its history
+        run: .local/tools/gitleaks git --redact --no-banner --config .gitleaks.toml .
+
+  gate:
+    name: All checks passed
+    if: always()
+    needs:
+      - typescript
+      - policy
+      - python
+      - ai
+      - api-contract
+      - database-security
+      - chromium
+      - firefox
+      - webkit
+      - accessibility
+      - performance
+      - docker
+      - audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      # "Skipped" fails too, so a suite that did not run cannot count as a pass.
+      - name: Every job succeeded
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          echo "$RESULTS" | jq -e 'all(.[]; .result == "success")' > /dev/null

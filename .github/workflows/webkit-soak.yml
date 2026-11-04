@@ -1,0 +1,38 @@
+# Repeats the WebKit suite under controlled parallelism, to look for the unresolved input failure.
+# Retries stay off, so a recurrence fails, and its sanitized evidence is kept for 30 days.
+name: WebKit soak
+
+on:
+  workflow_dispatch:
+    inputs:
+      repeat-each:
+        description: How many times to repeat each test.
+        type: number
+        default: 5
+
+permissions:
+  contents: read
+
+jobs:
+  soak-2-workers:
+    uses: ./.github/workflows/playwright-job.yml
+    with:
+      name: webkit-soak-2-workers
+      projects: webkit
+      browsers: webkit
+      min-tests: 64
+      repeat-each: ${{ inputs.repeat-each }}
+      workers: 2
+      retention-days: 30
+
+  # Runners have about 4 cores, so 4 workers is the pressure closest to the original failure.
+  soak-4-workers:
+    uses: ./.github/workflows/playwright-job.yml
+    with:
+      name: webkit-soak-4-workers
+      projects: webkit
+      browsers: webkit
+      min-tests: 64
+      repeat-each: ${{ inputs.repeat-each }}
+      workers: 4
+      retention-days: 30

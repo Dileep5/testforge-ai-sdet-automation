@@ -304,6 +304,9 @@ def _seed_order(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Load deterministic synthetic data")
     parser.add_argument("--reset", action="store_true", help="Delete all existing data first")
+    parser.add_argument(
+        "--if-empty", action="store_true", help="Do nothing, successfully, if data already exists"
+    )
     args = parser.parse_args()
     if get_settings().app_env == "production":
         raise SystemExit("Refusing to seed: APP_ENV is production")
@@ -311,6 +314,9 @@ def main() -> None:
         if args.reset:
             reset(db)
         elif db.scalar(text("SELECT count(*) FROM users")):
+            if args.if_empty:
+                print("Database already has data, so nothing was seeded.")
+                return
             raise SystemExit("Database already has data. Use --reset to replace it.")
         counts = seed(db)
         db.commit()

@@ -5,9 +5,9 @@ import { whileWaitingFor } from "../../framework/helpers/network";
 
 // Runs in Chromium and WebKit. Firefox has a project too, but cannot launch on this machine.
 
-/** Safari only tabs to fields unless Option is held or the user changes a setting. Other browsers tab to everything. */
+/** On macOS, WebKit only tabs to fields unless Option is held. Other browsers, and WebKit on Linux, tab to everything. */
 function tab(page: Page, browserName: string, reverse = false): Promise<void> {
-  const option = browserName === "webkit" ? "Alt+" : "";
+  const option = browserName === "webkit" && process.platform === "darwin" ? "Alt+" : "";
   return page.keyboard.press(`${option}${reverse ? "Shift+" : ""}Tab`);
 }
 

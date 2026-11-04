@@ -151,6 +151,42 @@ The p95 of about 1,050 ms is the workload: 20% of this traffic is the simulated 
 `apps/api/tests/test_concurrency_limit.py` uses no timing: it counts admissions exactly. It covers exact admit, queue and refuse counts, the 503's envelope and headers, arrival order, full recovery, giving up a place on cancellation, exempt paths, and slot release after failure. A live
 test confirms a real server refuses cleanly and returns every connection. All 7 deliberately reintroduced bugs were caught.
 
+## Quality gates
+
+Phase 6 added pass or fail thresholds in `performance/thresholds.js`. **They catch large regressions on a known machine. They are not service level objectives, and passing says nothing about production.** Limits are about 3 times what this laptop measured (`PERF_PROFILE=local`), or looser on shared runners (`PERF_PROFILE=ci`). `PERF_P95_MS` overrides any p95 limit. `npm run perf` exits non-zero if a threshold fails, and an impossible limit confirmed this.
+
+| Scenario | p95 limit, local | p95 limit, CI | Measured p95 |
+| --- | --- | --- | --- |
+| Health and readiness | 50 ms | 500 ms | 10.9 ms |
+| Product listing | 100 ms | 1,000 ms | 28.5 ms |
+| Order lookup | 200 ms | 1,500 ms | 53.3 ms |
+| Authentication | 800 ms | 3,000 ms | 222.4 ms |
+| Order creation | 150 ms | 1,500 ms | 36.9 ms |
+| Mixed | 500 ms | 3,000 ms | 123.9 ms |
+
+**Every normal scenario also requires** under 1% failed requests, under 1% 4xx responses and no 5xx responses. All passed on macOS, with 0% errors.
+
+**Overload requires** no 5xx except 503, no client left without a response, some 503s (proving the queue was reached), a 503 p95 under 100 ms, and no failed requests after the peak. All 6 passed at 800 and at 300 virtual users.
+
+**In CI,** the `performance` job runs short versions with a queue of 5 and 60 virtual users. `performance-stress.yml` runs the full set, by hand only. **Shared runners** vary in speed and share hosts, so CI results can fail without a regression, and pass despite one. Limits there are deliberately loose. The Linux listen queue also differs from the macOS limit of 128.
+
+### Bounded wait and disconnected clients
+
+`MAX_QUEUE_WAIT_SECONDS`, default 4, limits how long a request may wait. It then gets the same 503. A queued request whose client disconnects now leaves the queue, and never runs. A test against real uvicorn proves this, which corrects Phase 4's statement that it could not be detected. Neither case has done any work, so both are safe to retry.
+
+| Measured, with the wait limit on and off | 800 VUs, on | 800 VUs, off | 300 VUs, on | 300 VUs, off |
+| --- | --- | --- | --- | --- |
+| Served | 21,346 | 21,341 | 13,361 | 13,653 |
+| Served p95 | 2,477 ms | 2,508 ms | 2,593 ms | 2,653 ms |
+| Longest served | 3,079 ms | 3,235 ms | 3,105 ms | 3,132 ms |
+| Refused with 503 | 34,536 | 34,496 | 3,046 | 3,047 |
+| 503 p95 | 1.2 ms | 1.1 ms | 1.2 ms | 1.0 ms |
+| Client timeouts | 0 | 0 | 0 | 0 |
+
+**The wait limit changed nothing measurable, because it never fired:** the longest wait stayed near 3 seconds, as the 200-place queue already bounds it for this mix. It is a backstop for a slower workload, such as all requests holding a slot for a second, and is calculated rather than measured to matter there. Disconnect handling was not separately measured under load.
+
+**The trade-off remains.** At 300 virtual users, about 19% of overload-stage requests got a fast 503, though Phase 4 showed a queue with no limit would have served them within the client's patience. A short limit protects clients that give up quickly. Clients that retry after `Retry-After` and can wait may do better with a longer queue. These numbers cannot choose the right value for production.
+
 ## Discarded runs
 
 Two sets of measurements were thrown out, and neither appears above.
@@ -164,8 +200,8 @@ Two sets of measurements were thrown out, and neither appears above.
 - **Not a soak test.** The longest run is under 4 minutes, so slow leaks would not appear.
 - **Not realistic users:** no think time and few distinct sessions. The data set is small, about 60 orders and 24 products, plus what each scenario creates, so query plans on larger data are untested.
 - **More than about 128 simultaneous new connections can be reset by the operating system on this machine** before the API sees them. The bound does not address this. Linux behaviour has not been measured.
-- **The queue limits length, not wait time.** An all-slow workload would wait longer.
-- **A client that disconnects while queued is not detected by the API.** Uvicorn does not cancel its request, so it still runs when its turn comes. The bound limits this waste, and does not remove it. The cancellation test covers the middleware only.
+- **The wait limit has not been seen working under real load.** It is proven by deterministic tests only, because no measured workload waited 4 seconds.
+- **A request that has been admitted is not cancelled when its client leaves.** Only queued requests are. Bodies above 1 MB stop being watched while queued.
 - **The limit is per process.** Several API processes would need their database connections divided between them.
 - **The API has no per-client fairness or rate limiting.** One client can fill the queue.
 - **`/ready` queues like other requests,** and answers 503 under overload. A load balancer would stop sending traffic, which may or may not be wanted.

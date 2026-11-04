@@ -2,8 +2,8 @@
 
 Only results from commands that were actually run are recorded here.
 
-**Last updated:** 2026-11-04, Phase 5. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
-PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). Everything ran locally. **CI has not run. No live LLM has been called.**
+**Last updated:** 2026-11-04, Phase 6. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
+PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). **All results here are from macOS. CI, Docker and Linux browsers have never run, because Docker is not installed and the repository has no remote. No live LLM has been called.**
 
 ## Summary
 
@@ -11,7 +11,7 @@ Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass o
 
 | Suite | Command | Passed | Failed | Skipped | Flaky |
 | --- | --- | --- | --- | --- | --- |
-| Backend (pytest, real PostgreSQL) | `npm run test:backend` | **188** | 0 | 0 | n/a |
+| Backend (pytest, real PostgreSQL) | `npm run test:backend` | **197** | 0 | 0 | n/a |
 | Playwright Chromium 156 | `npx playwright test --project=chromium` | **64** | 0 | 0 | 0 |
 | Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **64** | 0 | 0 | 0 |
 | Playwright Firefox 157 | `npm run test:e2e:firefox` | **0: unverified** | 64 at launch, no test body ran | 0 | 0 |
@@ -24,29 +24,81 @@ Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass o
 | PostgreSQL validation | `npm run test:db` | **44** | 0 | 0 | 0 |
 | Security regression | `npm run test:security` | **114** | 0 | 0 | 0 |
 | Reliability | `npm run test:reliability` | **5** | 0 | 0 | 0 |
-| AI package (pytest, offline) | `npm run test:ai` | **305** | 0 | 0 | n/a |
+| AI package (pytest, offline) | `npm run test:ai` | **350** | 0 | 0 | n/a |
 
 These counts include generated cases, which overstate distinct scenarios. Accessibility and keyboard detail is in
 [ACCESSIBILITY.md](ACCESSIBILITY.md).
 
 | Other check | Result |
 | --- | --- |
-| Backend line coverage | 98% (1,338 statements, 33 missed) |
+| Backend line coverage | 97% (1,417 statements, 42 missed) |
 | TypeScript strict type check (frontend and framework) | Passed |
 | ESLint and Ruff (API and AI package) | Passed, 0 warnings |
 | Frontend production build | Passed |
 | HTML and JUnit reports | Generated (JUnit: 666 tests, 0 failures, 0 skipped, 0 errors) |
 | axe-core | 41 screen states, 0 violations, no rule disabled |
-| k6 scenarios | All 7 ran in Phase 4, and were **not rerun in Phase 5**. See [PERFORMANCE.md](PERFORMANCE.md) |
+| k6 scenarios, with thresholds | All 7 ran and passed their gates. See [PERFORMANCE.md](PERFORMANCE.md#quality-gates) |
 | Offline chatbot evaluation | Held-out correctness 12/23, refusal recall 41/43. See [AI_EVALUATION.md](AI_EVALUATION.md) |
 | Failure triage, real deliberately caused failures | Held-out 33/36. See [AI_EVALUATION.md](AI_EVALUATION.md#failure-triage-accuracy) |
-| AI safeguards, bugs put back on purpose | 29 of 29 caught |
-| Setup from a clean clone, with the uncommitted Phase 5 changes applied | 188 backend, 305 AI and 666 Playwright passed; type check, lint and build passed; held-out output hash identical |
+| AI safeguards, bugs put back on purpose | 29 of 29 caught (Phase 5) |
+| Phase 6 safeguards, bugs put back on purpose | 17 of 17 caught, 3 only after adding tests |
+| `actionlint`, CI and Docker policy rules | Passed |
+| Fresh copy with CI commands. See [the simulation](#ci-simulation-on-macos) | Passed |
 | Development database after all runs | Row counts and content hashes identical to before Phase 3 |
 | `npm audit --omit=dev` | No known vulnerabilities |
 | `npm audit` including dev tools | 13 moderate (see limitations) |
 
-**Not done yet, so no results exist:** live LLM evaluation, Docker, GitHub Actions, secret scanning in CI.
+**Never run, so no results exist:** Docker, GitHub Actions, any Linux browser, Firefox, live LLM evaluation.
+
+## Linux, Docker and CI status
+
+| Item | Status | Blocker |
+| --- | --- | --- |
+| Docker build, startup, tests, persistence | **Not run** | Docker is not installed. See [DOCKER.md](DOCKER.md) |
+| GitHub Actions | **Configured, unverified** | No remote, and pushing needs approval. See [CI_CD.md](CI_CD.md) |
+| Linux Chromium, Firefox, WebKit | **Not run: 0 results** | Needs Docker, a Linux machine or CI |
+| Repeated Linux WebKit runs | **Not run** | Same. `webkit-soak.yml` is ready |
+
+## CI simulation on macOS
+
+**This is not CI.** A fresh copy, with the commands from the workflows, `CI=1`, `EXTERNAL_POSTGRES=1`, 2 workers and retries off, against a separate new PostgreSQL on port 55432. The development cluster was stopped throughout. It ran before the last two fixes below, which were verified separately.
+
+| Job's commands | Passed | Failed | Skipped | Flaky |
+| --- | --- | --- | --- | --- |
+| Backend | 197 | 0 | 0 | n/a |
+| AI | 348 | 0 | 0 | n/a |
+| `api-contract` | 254 | 0 | 0 | 0 |
+| `database-security` | 163 | 0 | 0 | 0 |
+| `chromium` | 70 | 0 | 0 | 0 |
+| `webkit` | 64 | 0 | 0 | 0 |
+| `accessibility`, without Firefox | 115 | 0 | 0 | 0 |
+| `performance`, normal and overload | Exit 0 | | | |
+
+## Artifact retention
+
+Verified with `ai/triage-corpus/artifact-check.spec.ts`, which fails on purpose after typing a real password.
+
+| Check | Result |
+| --- | --- |
+| Run twice | The first run's folder remained, with an identical `trace.zip` hash |
+| Evidence kept | Trace, screenshot, video, error context, JUnit, JSON, and diagnostics with 2 console errors and the 500 response |
+| Raw versus sanitized, over 3 real traces | Password hits 28 versus **0**. Cookie hits 111 versus **0** |
+| Trace viewer | Playwright's viewer opens the sanitized trace with the same actions. The raw one shows the password in an action title, and the sanitized one does not |
+| Triage on the sanitized copy | Still classified correctly from its evidence |
+| Real failures | Sanitized the 2 real failures below, with evidence retained |
+
+**One sanitizer gap was found by scanning real output.** Traces also bundle test source files, which held 2 synthetic passwords that the first version missed. Those files are now treated as text, and the leak check fails closed on the seed passwords.
+
+## Dependency and secret scans
+
+| Scan | Result |
+| --- | --- |
+| `npm audit --omit=dev` | 0 vulnerabilities |
+| `npm audit`, development tools | 13 moderate, from 1 advisory. None high or critical. See [CI_CD.md](CI_CD.md#dependency-findings) |
+| `pip-audit` on both lock files | No known vulnerabilities |
+| gitleaks over all 5 commits, and each source folder | No leaks, after allow-listing exact synthetic values. It first flagged 2 synthetic test passwords, which were checked by hand |
+
+These scanners only know about published advisories and known secret shapes, so a clean result does not prove there are none.
 
 ## k6 summary
 
@@ -73,11 +125,14 @@ comparison are in [PERFORMANCE.md](PERFORMANCE.md).
 
 | Run | Workers | Passed | Failed | Skipped | Flaky | Duration |
 | --- | --- | --- | --- | --- | --- | --- |
-| Everything except Firefox, together | 4 | 666 | 0 | 0 | 0 | 2.0m |
-| Everything except Firefox, together | 8 | 666 | 0 | 0 | 0 | 2.8m |
+| Everything except Firefox, together, after all fixes | 4 | 666 | 0 | 0 | 0 | 2.2m |
+| Everything except Firefox, together, before the keep-alive fix | 8 | 666 | 0 | 0 | 0 | 3.8m |
+| WebKit, Chromium, API and security together, 3 times, before the fix | 8 | 396 each | 0 | 0 | 0 | 2.0 to 3.5m |
+| WebKit, each test 5 times, before the fix | 4 | 318 | **2** | 0 | 0 | 5.0m |
+| WebKit, each test 5 times, after the fix, twice | 4 | 320 each | 0 | 0 | 0 | 2.9 and 3.5m |
 | Accessibility and keyboard, each test 3 times (Phase 4, not rerun) | 4 | 336 | 0 | 0 | 0 | 117s |
-| Smoke, Chromium | 4 | 15 | 0 | 0 | 0 | 9s |
-| Critical, Chromium and WebKit | 4 | 64 (32 each) | 0 | 0 | 0 | 28s |
+| Smoke, Chromium | 4 | 15 | 0 | 0 | 0 | 10s |
+| Critical, Chromium and WebKit | 4 | 64 (32 each) | 0 | 0 | 0 | 1.1m |
 
 `reliability` always runs one test at a time, whatever the worker count.
 
@@ -102,7 +157,9 @@ The one failure was in WebKit, in `the low stock filter shows a low row and leav
 **This does not separate an application race from a WebKit or Playwright input problem.** It is also unknown whether this is the same failure as the unidentified one in Phase 3. Search page objects now assert the
 typed value right after filling, so a recurrence fails at the point of loss. No retry was added.
 
-**Phase 5 update:** the failure did not recur in the Phase 5 runs, but those were few, so this says nothing about whether it is gone. The trace, screenshot and video from that failure no longer exist, because Playwright clears `test-results/` at the start of each run. Only its JSON report entry was kept. To keep artifacts from a future failure, copy `test-results/` before running again. The triage tool classifies this failure as timing, medium confidence, with review required. That is not a root cause.
+**Update:** the trace, screenshot and video from that failure no longer exist, because Playwright cleared `test-results/` on a later run. Only its JSON report entry survives. Each run now keeps its own folder, so this cannot happen again. The triage tool classifies this failure as timing, medium confidence, with review required, which is not a root cause.
+
+**Phase 6:** WebKit ran about 1,150 more times on macOS, and **this input failure did not recur, so its root cause remains unknown.** Two other failures occurred, with a different and now fixed cause, listed below. **Repeated Linux runs have not happened.** `webkit-soak.yml` is ready for them.
 
 ## Intermittent failures found in Phase 3
 
@@ -156,6 +213,22 @@ Chromium and WebKit launched normally in the same shell. WebKit here is Playwrig
 reports version 27.2 and downloads as its macOS 26 package. It is close to Safari but is not Safari.
 
 No further macOS workarounds were attempted in Phases 3 or 4.
+
+## Bugs found in Phase 6
+
+| Defect | Found by | Type |
+| --- | --- | --- |
+| **`ECONNRESET` during test-data cleanup.** Uvicorn closes idle connections after 5 seconds, and a client reusing one at that moment is reset. 2 of 320 WebKit runs failed. At the boundary, a direct test failed 23 of 400 with the default and 0 of 400 with 75 seconds. It may also explain Phase 3's bulk-setup resets, but that was not tested | Repeated WebKit runs, with evidence kept by the new per-run folders | Test infrastructure, fixed with a longer keep-alive |
+| Traces bundle source files, which the sanitizer skipped | Byte scan of real sanitized traces | New code |
+| A queued request stayed queued after its client left, and ran anyway | Planned from Phase 4's limits | Application, fixed |
+| A queued request could wait without limit | Planned from Phase 4's limits | Application, fixed |
+| Playwright destroyed earlier failure evidence | Phase 5 | Framework, fixed |
+| `perf.mjs` used macOS-only commands, which would have crashed on Linux | Reviewing it for CI | Tooling, fixed |
+| The keyboard helper held Option in WebKit on every platform, which is only needed on macOS | Reviewing it for CI | Test defect, fixed but unverified on Linux |
+| Compared with the local cluster's collation, the default image locale could change sorting | Reviewing it for CI | Configuration, avoided with `--locale=C` |
+| A gitleaks allow-list entry I first wrote used a wrong guess at the value | Rereading the file | My mistake, corrected before any run relied on it |
+
+Three bugs put back on purpose first survived, because two sanitizer rules backed each other up and a slot race was never hit. Direct tests now catch all three.
 
 ## Bugs found in Phase 5
 
@@ -356,7 +429,7 @@ Earlier Phase 1 verification, including data surviving a PostgreSQL restart, is 
 **Testing**
 
 - **Firefox is unverified,** as described above.
-- **CI has not run.** Timing on a slower machine is untested.
+- **CI, Docker and Linux have never run.** See [CI_CD.md](CI_CD.md) and [DOCKER.md](DOCKER.md).
 - **One WebKit failure is unresolved,** as described above.
 - **No live LLM has been called.** Offline chatbot results measure keyword retrieval and rules, and it scored 0/8 on held-out paraphrases. See [AI_EVALUATION.md](AI_EVALUATION.md#limitations).
 - **Accessibility is not proven by these tests.** No screen reader was used. See [ACCESSIBILITY.md](ACCESSIBILITY.md#limitations).

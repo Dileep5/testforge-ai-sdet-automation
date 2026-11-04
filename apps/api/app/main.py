@@ -150,6 +150,7 @@ def create_app() -> FastAPI:
         ConcurrencyLimitMiddleware,
         limit=MAX_CONNECTIONS,
         max_queued=settings.max_queued_requests,
+        max_queue_wait_seconds=settings.max_queue_wait_seconds,
         exempt_paths=frozenset({f"{API_PREFIX}/health"}),
     )
 

@@ -1,9 +1,11 @@
 import { createActors, loginCookie, placeOrder, seconds, send } from "../lib.js";
+import { loadThresholds } from "../thresholds.js";
 
 const VUS = 10;
 
 // Each virtual user has its own login, customer and product, so no two contend for a row lock.
 export const options = {
+  thresholds: loadThresholds("order-create"),
   setupTimeout: "120s",
   scenarios: { order_create: { executor: "constant-vus", vus: VUS, duration: seconds(40) } },
 };

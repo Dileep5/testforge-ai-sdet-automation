@@ -1,0 +1,61 @@
+# Larger load, run only by hand. Shared runners vary, so results are for comparing runs on the same
+# day, and do not show what production can handle.
+name: Performance stress
+
+on:
+  workflow_dispatch:
+    inputs:
+      peak-vus:
+        description: Overload peak in virtual users.
+        type: number
+        default: 300
+      max-queued-requests:
+        description: Queue length for this run.
+        type: number
+        default: 200
+
+permissions:
+  contents: read
+
+jobs:
+  stress:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    services:
+      postgres:
+        image: postgres:17.11-bookworm@sha256:839fbb5a4942a7758dd93e18b42ea5649807491a0545b5eeeb8f0b8bb11857a5
+        env:
+          POSTGRES_USER: testforge
+          POSTGRES_PASSWORD: testforge_local
+          POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U testforge"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      EXTERNAL_POSTGRES: "1"
+      POSTGRES_ADMIN_URL: postgresql://testforge:testforge_local@127.0.0.1:55432/postgres
+      PERF_PROFILE: ci
+      TESTFORGE_ALLOW_LIVE_LLM: "0"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-test-env
+      - run: npm run perf:install
+      - name: All scenarios at full length
+        env:
+          PERF_PEAK_VUS: ${{ inputs.peak-vus }}
+          MAX_QUEUED_REQUESTS: ${{ inputs.max-queued-requests }}
+        run: npm run perf -- --label stress
+      - name: Upload measurements
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: performance-stress-${{ github.run_id }}
+          path: reports/performance/stress
+          retention-days: 30
+          if-no-files-found: error

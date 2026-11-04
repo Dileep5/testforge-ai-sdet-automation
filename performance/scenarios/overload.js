@@ -1,6 +1,7 @@
 import { sleep } from "k6";
 import http from "k6/http";
-import { API, createActors, get, placeOrder, seconds, send, uniqueKey } from "../lib.js";
+import { API, createActors, get, placeOrder, record, seconds, send, uniqueKey } from "../lib.js";
+import { overloadThresholds } from "../thresholds.js";
 
 const ACTORS = 20;
 const PEAK_VUS = Number(__ENV.PERF_PEAK_VUS || 300);
@@ -10,6 +11,7 @@ const CLIENT_TIMEOUT = "5s";
 // New connections arrive at no more than 10 per second, so the macOS listen queue of 128 is not what
 // gets measured: existing connections hold requests open in the API's own queue.
 export const options = {
+  thresholds: overloadThresholds(),
   setupTimeout: "120s",
   scenarios: {
     before: { executor: "constant-vus", vus: 10, duration: seconds(20), exec: "traffic" },
@@ -55,11 +57,13 @@ function backOffIfFailed(response) {
 
 function login({ email, password }) {
   const response = backOffIfFailed(
-    http.post(`${API}/auth/login`, JSON.stringify({ email, password }), {
-      headers: { "Content-Type": "application/json" },
-      tags: { name: "POST /auth/login" },
-      timeout: CLIENT_TIMEOUT,
-    }),
+    record(
+      http.post(`${API}/auth/login`, JSON.stringify({ email, password }), {
+        headers: { "Content-Type": "application/json" },
+        tags: { name: "POST /auth/login" },
+        timeout: CLIENT_TIMEOUT,
+      }),
+    ),
   );
   return response.status === 200 ? `testforge_session=${response.cookies.testforge_session[0].value}` : undefined;
 }

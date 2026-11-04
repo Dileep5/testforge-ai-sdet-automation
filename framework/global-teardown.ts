@@ -1,8 +1,9 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { RUN_DIR } from "./config";
 import { OpenApiContract } from "./contract/openapi";
 
-const DIR = path.resolve(__dirname, "../reports/contract");
+const DIR = path.resolve(__dirname, "..", RUN_DIR, "contract");
 
 /** Summarise which documented operations and statuses the run's real traffic reached. */
 export default function globalTeardown(): void {

@@ -1,0 +1,39 @@
+name: Set up test environment
+description: Pinned Node and Python, locked dependencies, and optionally Playwright browsers.
+
+inputs:
+  browsers:
+    description: Space-separated Playwright browsers to install, or empty for none.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      with:
+        node-version-file: .nvmrc
+        cache: npm
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+      with:
+        python-version-file: .python-version
+        cache: pip
+        cache-dependency-path: |
+          apps/api/requirements.lock
+          ai/requirements.lock
+    - name: Install locked dependencies
+      shell: bash
+      run: bash scripts/install-deps.sh
+    - name: Restore browsers
+      if: inputs.browsers != ''
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ inputs.browsers }}
+    - name: Install browsers and their system dependencies
+      if: inputs.browsers != ''
+      shell: bash
+      env:
+        BROWSERS: ${{ inputs.browsers }}
+      # BROWSERS is a list, so it is split into words on purpose.
+      run: npx playwright install --with-deps $BROWSERS

@@ -158,7 +158,9 @@ def _http_scope(path: str) -> dict:
 
 
 async def _noop_receive() -> dict:
-    return {"type": "http.request"}
+    # A real server's receive waits here until the client disconnects.
+    await asyncio.Event().wait()
+    return {"type": "http.disconnect"}
 
 
 class _Response:
@@ -218,9 +220,13 @@ def _start(middleware, path: str = "/x") -> tuple[asyncio.Task, _Response]:
     return asyncio.create_task(middleware(_http_scope(path), _noop_receive, response)), response
 
 
-def _limited(inner, limit: int = 3, max_queued: int = 2, exempt=frozenset()):
+def _limited(inner, limit: int = 3, max_queued: int = 2, exempt=frozenset(), max_wait: float = 60):
     return ConcurrencyLimitMiddleware(
-        inner, limit=limit, max_queued=max_queued, exempt_paths=exempt
+        inner,
+        limit=limit,
+        max_queued=max_queued,
+        exempt_paths=exempt,
+        max_queue_wait_seconds=max_wait,
     )
 
 
@@ -394,3 +400,254 @@ def test_a_failed_request_lets_the_next_queued_one_run():
         assert not middleware.slots.locked()
 
     _run(run())
+
+
+def test_a_request_that_waits_too_long_is_refused_and_never_runs():
+    async def run() -> None:
+        inner = _BlockingApp()
+        middleware = _limited(inner, limit=1, max_queued=5, max_wait=0.05)
+        holder = _start(middleware, "/holder")
+        await _settle()
+        task, response = _start(middleware, "/queued")
+        await asyncio.wait_for(task, timeout=2)
+
+        assert response.status == 503
+        assert response.body["error"]["code"] == "OVERLOADED"
+        assert inner.admitted == ["/holder"]
+        assert middleware.queued == 0
+
+        # The refusal cost nothing: the slot still belongs to the holder, and then frees normally.
+        inner.release.set()
+        await holder[0]
+        assert not middleware.slots.locked()
+
+    _run(run())
+
+
+def test_a_request_admitted_within_the_limit_runs():
+    async def run() -> None:
+        inner = _BlockingApp()
+        middleware = _limited(inner, limit=1, max_queued=5, max_wait=5)
+        holder = _start(middleware, "/holder")
+        await _settle()
+        task, response = _start(middleware, "/queued")
+        await _settle()
+        inner.release.set()
+        await asyncio.gather(holder[0], task)
+
+        assert response.status is None
+        assert inner.admitted == ["/holder", "/queued"]
+        assert not middleware.slots.locked()
+
+    _run(run())
+
+
+def test_a_queued_client_that_leaves_never_runs_and_gets_no_response():
+    async def run() -> None:
+        inner = _BlockingApp()
+        middleware = _limited(inner, limit=1, max_queued=5)
+        holder = _start(middleware, "/holder")
+        await _settle()
+        left = asyncio.Event()
+
+        async def receive() -> dict:
+            await left.wait()
+            return {"type": "http.disconnect"}
+
+        response = _Response()
+        task = asyncio.create_task(middleware(_http_scope("/gone"), receive, response))
+        await _settle()
+        assert middleware.queued == 1
+
+        left.set()
+        await asyncio.wait_for(task, timeout=2)
+        assert middleware.queued == 0
+        assert response.messages == []
+
+        inner.release.set()
+        await holder[0]
+        await _settle()
+        assert inner.admitted == ["/holder"]
+        assert not middleware.slots.locked()
+
+    _run(run())
+
+
+def test_a_queued_request_still_receives_its_whole_body_in_order():
+    async def run() -> None:
+        release = asyncio.Event()
+        received: list[dict] = []
+        running = 0
+
+        async def inner(scope, receive, send) -> None:
+            nonlocal running
+            running += 1
+            if scope["path"] == "/holder":
+                await release.wait()
+            else:
+                received.append(await receive())
+                received.append(await receive())
+
+        middleware = ConcurrencyLimitMiddleware(
+            inner, limit=1, max_queued=5, exempt_paths=frozenset(), max_queue_wait_seconds=60
+        )
+        holder = asyncio.create_task(middleware(_http_scope("/holder"), _noop_receive, _Response()))
+        await _settle()
+        messages = [
+            {"type": "http.request", "body": b"one", "more_body": True},
+            {"type": "http.request", "body": b"two", "more_body": False},
+        ]
+
+        async def receive() -> dict:
+            if messages:
+                return messages.pop(0)
+            await asyncio.Event().wait()
+            return {"type": "http.disconnect"}
+
+        task = asyncio.create_task(middleware(_http_scope("/body"), receive, _Response()))
+        await _settle()
+        assert messages == []
+        release.set()
+        await asyncio.gather(holder, task)
+
+        assert [item["body"] for item in received] == [b"one", b"two"]
+        assert running == 2
+
+    _run(run())
+
+
+def test_a_queued_body_too_large_to_hold_stops_being_read_until_admitted():
+    async def run() -> None:
+        release = asyncio.Event()
+        reads = 0
+
+        async def inner(scope, receive, send) -> None:
+            if scope["path"] == "/holder":
+                await release.wait()
+
+        middleware = ConcurrencyLimitMiddleware(
+            inner, limit=1, max_queued=5, exempt_paths=frozenset(), max_queue_wait_seconds=60
+        )
+        holder = asyncio.create_task(middleware(_http_scope("/holder"), _noop_receive, _Response()))
+        await _settle()
+
+        async def receive() -> dict:
+            nonlocal reads
+            reads += 1
+            return {"type": "http.request", "body": b"x" * 600_000, "more_body": True}
+
+        task = asyncio.create_task(middleware(_http_scope("/big"), receive, _Response()))
+        await _settle()
+        assert reads == 2
+        release.set()
+        await asyncio.gather(holder, task)
+
+    _run(run())
+
+
+def test_cancelling_a_queued_request_does_not_lose_a_slot():
+    async def run() -> None:
+        inner = _BlockingApp()
+        middleware = _limited(inner, limit=1, max_queued=5)
+        holder = _start(middleware, "/holder")
+        await _settle()
+        task, _ = _start(middleware, "/queued")
+        await _settle()
+        task.cancel()
+        await asyncio.gather(task, return_exceptions=True)
+        assert middleware.queued == 0
+
+        inner.release.set()
+        await holder[0]
+        assert not middleware.slots.locked()
+
+    _run(run())
+
+
+def test_a_slot_granted_at_the_moment_of_a_timeout_is_not_lost():
+    async def run() -> None:
+        # Release at offsets around the deadline, to land on both sides of the race.
+        for offset in (0.0, 0.001, 0.002, 0.003, 0.004, 0.005, 0.006, 0.008, 0.01, 0.012):
+            inner = _BlockingApp()
+            middleware = _limited(inner, limit=1, max_queued=5, max_wait=0.006)
+            holder = _start(middleware, "/holder")
+            await _settle()
+            task, _ = _start(middleware, "/queued")
+            await asyncio.sleep(offset)
+            inner.release.set()
+            await asyncio.gather(holder[0], task)
+            await _settle()
+            assert not middleware.slots.locked(), offset
+            assert middleware.queued == 0
+
+    _run(run())
+
+
+def test_giving_up_on_a_slot_that_was_just_granted_hands_it_back():
+    async def run() -> None:
+        middleware = _limited(_BlockingApp(), limit=1)
+        slot = asyncio.ensure_future(middleware.slots.acquire())
+        await _settle()
+        assert slot.done()
+        assert middleware.slots.locked()
+
+        await middleware._give_up(slot)
+        assert not middleware.slots.locked()
+
+    _run(run())
+
+
+def test_a_real_server_reports_a_disconnect_while_a_request_is_queued():
+    """Earlier this was only a documented limit, so it is proven against uvicorn itself."""
+    inner_started = threading.Event()
+    release = threading.Event()
+    ran: list[str] = []
+
+    async def inner(scope, receive, send) -> None:
+        ran.append(scope["path"])
+        inner_started.set()
+        while not release.is_set():
+            await asyncio.sleep(0.01)
+        await send({"type": "http.response.start", "status": 200, "headers": []})
+        await send({"type": "http.response.body", "body": b"ok"})
+
+    middleware = ConcurrencyLimitMiddleware(
+        inner, limit=1, max_queued=5, exempt_paths=frozenset(), max_queue_wait_seconds=30
+    )
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        port = probe.getsockname()[1]
+    server = uvicorn.Server(
+        uvicorn.Config(middleware, host="127.0.0.1", port=port, log_level="critical")
+    )
+    thread = threading.Thread(target=server.run, daemon=True)
+    thread.start()
+
+    def wait_until(condition, label: str) -> None:
+        deadline = time.monotonic() + 5
+        while not condition():
+            assert time.monotonic() < deadline, label
+            time.sleep(0.01)
+
+    wait_until(lambda: server.started, "server did not start")
+    request = "GET {} HTTP/1.1\r\nHost: x\r\n\r\n"
+    holder = socket.create_connection(("127.0.0.1", port))
+    queued = socket.create_connection(("127.0.0.1", port))
+    try:
+        holder.sendall(request.format("/holder").encode())
+        assert inner_started.wait(5)
+        queued.sendall(request.format("/queued").encode())
+        wait_until(lambda: middleware.queued == 1, "request did not queue")
+
+        queued.close()
+        wait_until(lambda: middleware.queued == 0, "disconnect was not noticed")
+
+        release.set()
+        assert b"200" in holder.recv(1024)
+        wait_until(lambda: not middleware.slots.locked(), "slot was not released")
+        assert ran == ["/holder"]
+    finally:
+        release.set()
+        holder.close()
+        server.should_exit = True
+        thread.join(timeout=10)

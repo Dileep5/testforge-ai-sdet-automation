@@ -1,7 +1,7 @@
 import { appendFileSync, mkdirSync } from "node:fs";
 import path from "node:path";
 import type { APIRequestContext } from "@playwright/test";
-import { API_URL, SESSION_COOKIE } from "../config";
+import { API_URL, RUN_DIR, SESSION_COOKIE } from "../config";
 import { OpenApiContract } from "../contract/openapi";
 import type { CreatedUser } from "../factories/test-data";
 import { ApiClient, type ResponseObserver } from "../helpers/api-client";
@@ -57,7 +57,7 @@ export const test = base.extend<ApiFixtures>({
       const operation = contract.find(method, pathOnly);
       if (operation) reached.add(JSON.stringify({ operation: operation.key, status: response.status() }));
     });
-    const dir = path.resolve(__dirname, "../../reports/contract");
+    const dir = path.resolve(__dirname, "../..", RUN_DIR, "contract");
     mkdirSync(dir, { recursive: true });
     appendFileSync(path.join(dir, `observed-${testInfo.parallelIndex}.jsonl`), [...reached, ""].join("\n"));
     expect(violations, "responses that break the OpenAPI contract").toEqual([]);

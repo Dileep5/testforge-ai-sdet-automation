@@ -1,0 +1,17 @@
+{
+  "note": "Recorded offline results. A change must be deliberate: update this file in the same commit, and say why. Do not tune against heldout.",
+  "dev": {
+    "answer_correctness": [23, 23],
+    "refusal_recall": [41, 43],
+    "refusal_precision": [41, 41],
+    "citation_validity": [48, 48],
+    "response_consistency": [74, 74]
+  },
+  "heldout": {
+    "answer_correctness": [12, 23],
+    "refusal_recall": [41, 43],
+    "refusal_precision": [41, 52],
+    "citation_validity": [34, 34],
+    "response_consistency": [74, 74]
+  }
+}

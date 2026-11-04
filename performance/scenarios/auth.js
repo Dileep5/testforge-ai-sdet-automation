@@ -1,8 +1,10 @@
 import http from "k6/http";
 import { API, SEED, seconds } from "../lib.js";
+import { loadThresholds } from "../thresholds.js";
 
 // Password hashing is deliberately slow, so this measures Argon2 as well as the API.
 export const options = {
+  thresholds: loadThresholds("auth"),
   scenarios: { auth: { executor: "constant-vus", vus: 10, duration: seconds(30) } },
 };
 

@@ -129,7 +129,7 @@ The connection and thread-pool deadlock from Phase 2 is guarded at three levels:
 Burst sizes are fixed. No test sleeps or retries to get a result, and client errors are reported by their
 message.
 
-The bounded queue added in Phase 4 has its own deterministic tests, which count admissions exactly.
+The bounded queue added in Phase 4, and the wait limit and disconnect handling added in Phase 6, have deterministic tests that count admissions exactly. One test proves disconnect handling against real uvicorn.
 
 ## Accessibility
 
@@ -140,8 +140,7 @@ operation, and focus position after errors and actions. Detail and limitations a
 
 ## Performance
 
-k6 runs 7 scenarios against the real API. Results are compared only between adjacent runs with a matching CPU calibration, because this machine's speed varies. They describe one laptop, and are not compared with production targets. k6 has no pass or fail threshold yet, because no meaningful target exists for this
-machine. A person reads the results. Detail is in [PERFORMANCE.md](PERFORMANCE.md).
+k6 runs 7 scenarios against the real API. Results are compared only between adjacent runs with a matching CPU calibration, because this machine's speed varies. They describe one laptop, and are not compared with production targets. k6 thresholds catch large regressions on a known machine, and are not targets for production. Detail is in [PERFORMANCE.md](PERFORMANCE.md).
 
 ## AI
 
@@ -162,9 +161,14 @@ Which protections are deterministic and which are probabilistic is set out in [A
 
 ## Flakiness policy
 
-Tests use auto-waiting and no fixed sleeps. Retries are 0 locally and 1 in CI, and a test that passes on
-retry is reported as flaky rather than passed. A flaky test is treated as a defect in the test or the
+Tests use auto-waiting and no fixed sleeps. Retries are 0 locally and in the CI workflows, and a flaky or skipped test fails the count gate. A flaky test is treated as a defect in the test or the
 application, and its cause is fixed.
+
+Repeating suites finds what single runs miss: Phase 6's keep-alive defect appeared only when each WebKit test ran 5 times. Each run keeps its own evidence, so a rare failure can be studied. Raw artifacts hold credentials, so only a sanitized copy is ever published. See [CI_CD.md](CI_CD.md#artifact-retention).
+
+## CI quality gates
+
+The CI design, and what keeps a suite from silently disappearing, are in [CI_CD.md](CI_CD.md). **It has never run.**
 
 ## Checking the tests themselves
 
@@ -179,6 +183,5 @@ tests using deliberately wrong input. This is a hand-picked set of risks, not fu
 | Screen reader and other manual accessibility testing | Not scheduled |
 | Long-running soak tests, and load on Linux | Not scheduled |
 | Live LLM evaluation | Opt-in, not run. See [AI_EVALUATION.md](AI_EVALUATION.md#live-evaluation) |
-| CI, Docker, Firefox on Linux | Phase 6 |
-| Dependency and secret scanning in CI | Phase 6 |
+| Docker, CI and Firefox on Linux | Configured, and **never run** |
 | Penetration testing, TLS, production hardening | Out of scope for a local portfolio app |

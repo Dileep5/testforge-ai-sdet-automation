@@ -19,6 +19,7 @@ from testforge_ai.generation.review import (
     save_bundle,
 )
 from testforge_ai.llm import LLMError, OpenAIProvider
+from testforge_ai.sanitize import sanitize_run
 from testforge_ai.triage.artifacts import ArtifactError, load_run
 from testforge_ai.triage.assist import assist
 from testforge_ai.triage.classifier import classify
@@ -149,6 +150,12 @@ def _cmd_triage(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_sanitize(args: argparse.Namespace) -> int:
+    summary = sanitize_run(args.run_dir, args.out)
+    _print(summary)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="testforge-ai", description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
@@ -205,6 +212,11 @@ def build_parser() -> argparse.ArgumentParser:
     triage.add_argument("--score", choices=["dev", "heldout"], help="Score against corpus labels")
     provider_args(triage)
     triage.set_defaults(run=_cmd_triage)
+
+    sanitize = commands.add_parser("sanitize", help="Make a copy of a run that is safe to publish")
+    sanitize.add_argument("--run-dir", type=Path, required=True)
+    sanitize.add_argument("--out", type=Path, required=True)
+    sanitize.set_defaults(run=_cmd_sanitize)
     return parser
 
 
@@ -212,7 +224,14 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         return args.run(args)
-    except (GenerationRejected, ReviewError, ExportRefused, ArtifactError, LLMError) as exc:
+    except (
+        GenerationRejected,
+        ReviewError,
+        ExportRefused,
+        ArtifactError,
+        LLMError,
+        ValueError,
+    ) as exc:
         print(f"Refused: {exc}", file=sys.stderr)  # noqa: T201
         return 2
 

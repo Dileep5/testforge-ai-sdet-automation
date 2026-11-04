@@ -4,7 +4,7 @@
 import { execFileSync, spawn } from "node:child_process";
 import { pbkdf2Sync } from "node:crypto";
 import { createInterface } from "node:readline";
-import { createReadStream, existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { createReadStream, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -105,6 +105,16 @@ async function summarise(file) {
   return { overall: stats(samples), peak_vus: peakVus, overload_outcomes: overloadOutcomes, by_scenario: groupBy("scenario"), by_request: groupBy("name"), timeline };
 }
 
+/** Each threshold and its result, from k6's own export. In this format, true means the rule was crossed. */
+function readThresholds(file) {
+  if (!existsSync(file)) return [];
+  const { metrics } = JSON.parse(readFileSync(file, "utf8"));
+  rmSync(file, { force: true });
+  return Object.entries(metrics).flatMap(([metric, data]) =>
+    Object.entries(data.thresholds ?? {}).map(([rule, crossed]) => ({ metric, rule, passed: !crossed })),
+  );
+}
+
 /** The same fixed CPU work before each scenario. If this moves, so will every latency: compare with care. */
 function calibrateCpuMs() {
   const started = performance.now();
@@ -180,8 +190,9 @@ async function runScenario(name, admin) {
     })();
 
     const raw = path.join(OUT, `${name}.raw.json`);
+    const exported = path.join(OUT, `${name}.k6-summary.json`);
     const started = Date.now();
-    const k6 = spawn(K6, ["run", "--quiet", "--summary-mode", "disabled", "--out", `json=${raw}`, "--system-tags", "status,error_code,scenario,name,method,group", "-e", `PERF_BASE_URL=${BASE_URL}`, "-e", `PERF_RUN_ID=${Date.now()}`, "-e", `PERF_SCALE=${process.env.PERF_SCALE ?? "1"}`, "-e", `PERF_PEAK_VUS=${process.env.PERF_PEAK_VUS ?? "300"}`, path.join(ROOT, `performance/scenarios/${name}.js`)], { stdio: ["ignore", "ignore", "pipe"] });
+    const k6 = spawn(K6, ["run", "--quiet", "--summary-mode", "compact", "--summary-export", exported, "--out", `json=${raw}`, "--system-tags", "status,error_code,scenario,name,method,group", "-e", `PERF_BASE_URL=${BASE_URL}`, "-e", `PERF_RUN_ID=${Date.now()}`, "-e", `PERF_SCALE=${process.env.PERF_SCALE ?? "1"}`, "-e", `PERF_PEAK_VUS=${process.env.PERF_PEAK_VUS ?? "300"}`, "-e", `PERF_PROFILE=${process.env.PERF_PROFILE ?? "local"}`, "-e", `PERF_P95_MS=${process.env.PERF_P95_MS ?? ""}`, path.join(ROOT, `performance/scenarios/${name}.js`)], { stdio: ["ignore", "ignore", "pipe"] });
     // Script errors and timeouts can be numerous, so keep a count of each kind, not every line.
     const k6Messages = {};
     createInterface({ input: k6.stderr }).on("line", (line) => {
@@ -206,11 +217,13 @@ async function runScenario(name, admin) {
     const summary = {
       scenario: name,
       k6_exit_code: exitCode,
+      thresholds: readThresholds(exported),
       k6_messages: k6Messages,
       wall_clock_s: round(wall),
       load_average_at_start: round(load, 2),
       calibration,
       max_queued_requests: process.env.MAX_QUEUED_REQUESTS ?? "default",
+      max_queue_wait_seconds: process.env.MAX_QUEUE_WAIT_SECONDS ?? "default",
       ...(await summarise(raw)),
       database_connections: { peak, settled_after_load: settled },
       ready_after_load_ms: readyAfterMs,
@@ -222,6 +235,7 @@ async function runScenario(name, admin) {
     const { overall, peak_vus: vus } = summary;
     console.log(`calibration ${calibration.cpu_ms} ms, load ${round(load, 1)}`);
     console.log(`${overall.requests} requests, ${overall.rps} req/s, p50 ${overall.p50_ms} ms, p95 ${overall.p95_ms} ms, p99 ${overall.p99_ms} ms, errors ${overall.error_rate_pct}%, peak VUs ${vus}`);
+    for (const item of summary.thresholds) console.log(`  ${item.passed ? "PASS" : "FAIL"}  ${item.metric}: ${item.rule}`);
     if (Object.keys(k6Messages).length) console.log(`k6 messages ${JSON.stringify(k6Messages).slice(0, 400)}`);
     console.log(`statuses ${JSON.stringify(overall.statuses)}; connections peak ${JSON.stringify(peak)}, after ${JSON.stringify(settled)}`);
     return summary;
@@ -233,11 +247,13 @@ async function runScenario(name, admin) {
 
 function environment(database) {
   const exec = (cmd, list) => execFileSync(cmd, list, { encoding: "utf8" }).trim();
+  const mac = process.platform === "darwin";
   return {
     recorded_at: new Date().toISOString(),
-    machine: `${exec("sysctl", ["-n", "machdep.cpu.brand_string"])}, ${os.cpus().length} cores, ${round(os.totalmem() / 2 ** 30, 0)} GB`,
-    os: `macOS ${exec("sw_vers", ["-productVersion"])}`,
-    listen_queue_limit: exec("sysctl", ["-n", "kern.ipc.somaxconn"]),
+    profile: process.env.PERF_PROFILE ?? "local",
+    machine: `${os.cpus()[0]?.model ?? "unknown CPU"}, ${os.cpus().length} cores, ${round(os.totalmem() / 2 ** 30, 0)} GB`,
+    os: mac ? `macOS ${exec("sw_vers", ["-productVersion"])}` : `${os.type()} ${os.release()}`,
+    listen_queue_limit: mac ? exec("sysctl", ["-n", "kern.ipc.somaxconn"]) : readFileSync("/proc/sys/net/core/somaxconn", "utf8").trim(),
     node: process.version,
     python: exec(path.join(API_DIR, ".venv/bin/python"), ["--version"]),
     k6: exec(K6, ["version"]).split(" ").slice(0, 2).join(" "),

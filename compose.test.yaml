@@ -1,0 +1,79 @@
+# An isolated stack for test runs. Run with: npm run docker:test
+# Its database is in memory and named for E2E, and it shares nothing with compose.yaml or .local.
+# The credentials are throwaway values for this private network, which publishes no ports.
+name: testforge-test
+
+services:
+  db:
+    image: postgres:17.11-bookworm@sha256:839fbb5a4942a7758dd93e18b42ea5649807491a0545b5eeeb8f0b8bb11857a5
+    environment:
+      POSTGRES_USER: testforge
+      POSTGRES_PASSWORD: testforge_local
+      POSTGRES_DB: testforge_e2e
+      POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testforge -d testforge_e2e"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  migrate:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    image: testforge-api:test
+    command: ["testforge-migrate"]
+    environment: &api-environment
+      APP_ENV: test
+      DATABASE_URL: postgresql+psycopg://testforge:testforge_local@db:5432/testforge_e2e
+      ALLOWED_ORIGINS: '["http://web:8080"]'
+      # Must equal PAYMENT_SIM_TIMEOUT_MS in framework/config.ts.
+      PAYMENT_SIM_TIMEOUT_MS: "300"
+      SEED_MODE: reset
+    healthcheck:
+      disable: true
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    image: testforge-api:test
+    environment: *api-environment
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+    image: testforge-web:test
+    environment:
+      API_UPSTREAM: api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+
+  runner:
+    build:
+      context: .
+      dockerfile: docker/playwright.Dockerfile
+    image: testforge-runner:test
+    environment:
+      E2E_BASE_URL: http://web:8080
+      E2E_API_URL: http://api:8000
+      E2E_DATABASE_URL: postgresql://testforge:testforge_local@db:5432/testforge_e2e
+      E2E_WORKERS: "2"
+      TESTFORGE_RUN_ID: ${TESTFORGE_RUN_ID:-docker}
+    # Shared memory for the browsers, which the default 64 MB is too small for.
+    shm_size: 1g
+    volumes:
+      - test-reports:/app/reports
+    depends_on:
+      web:
+        condition: service_healthy
+
+volumes:
+  test-reports:

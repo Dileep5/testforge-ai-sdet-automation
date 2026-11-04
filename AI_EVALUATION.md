@@ -193,7 +193,7 @@ D10 was a development miss, and it surfaced in the same run as the first held-ou
 
 ### The one real unresolved failure
 
-The Phase 4 WebKit failure was classified as `timing_or_synchronization`, **medium** confidence, with review required and alternatives listed. **This is not a finding about its cause:** it only reflects the `waitForResponse` timeout. Phase 4 evidence pointed to lost input, which the rules cannot see. It has no label and is not in any accuracy figure. Only its JSON report entry survives, because Playwright clears `test-results/` at the start of each run: the trace, screenshot and video from that failure are gone.
+The Phase 4 WebKit failure was classified as `timing_or_synchronization`, **medium** confidence, with review required and alternatives listed. **This is not a finding about its cause:** it only reflects the `waitForResponse` timeout. Phase 4 evidence pointed to lost input, which the rules cannot see. It has no label and is not in any accuracy figure. Only its JSON report entry survives, because Playwright cleared `test-results/` on a later run: the trace, screenshot and video from that failure are gone. Phase 6 gave each run its own folder.
 
 ## Limitations
 

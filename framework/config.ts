@@ -2,7 +2,16 @@
 export const API_PORT = Number(process.env.E2E_API_PORT ?? 8100);
 export const WEB_PORT = Number(process.env.E2E_WEB_PORT ?? 5273);
 export const BASE_URL = process.env.E2E_BASE_URL ?? `http://localhost:${WEB_PORT}`;
-export const API_URL = `http://127.0.0.1:${API_PORT}`;
+export const API_URL = process.env.E2E_API_URL ?? `http://127.0.0.1:${API_PORT}`;
+
+/**
+ * Every run reports to its own folder, because Playwright empties its output folder when it starts
+ * and would otherwise destroy the evidence of an earlier failure. Workers inherit this variable, so
+ * they share one run. CI sets it to name the job.
+ */
+export const RUN_ID = (process.env.TESTFORGE_RUN_ID ??= `${new Date().toISOString().replace(/[:.]/g, "-")}-${process.pid}`);
+if (!/^[\w.-]+$/.test(RUN_ID)) throw new Error("TESTFORGE_RUN_ID may only use letters, digits, dots, dashes and underscores");
+export const RUN_DIR = `reports/runs/${RUN_ID}`;
 
 /** libpq-style URL; the API needs the SQLAlchemy driver prefix added. */
 export const DATABASE_URL =

@@ -24,7 +24,7 @@ WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 curl -fsSL "$BASE/$ASSET" -o "$WORK/$ASSET"
 curl -fsSL "$BASE/k6-$VERSION-checksums.txt" -o "$WORK/checksums.txt"
-(cd "$WORK" && grep " $ASSET\$" checksums.txt | shasum -a 256 -c -)
+(cd "$WORK" && grep " $ASSET\$" checksums.txt | { if command -v sha256sum >/dev/null; then sha256sum -c -; else shasum -a 256 -c -; fi; })
 
 mkdir -p "$DIR" "$WORK/out"
 case "$ASSET" in

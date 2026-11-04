@@ -1,0 +1,100 @@
+# One Playwright suite on a fresh Linux runner, with its own database and its own artifacts.
+name: Playwright suite
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        type: string
+        required: true
+      projects:
+        description: Space-separated Playwright projects.
+        type: string
+        required: true
+      browsers:
+        type: string
+        required: false
+        default: ""
+      min-tests:
+        description: The run fails if fewer tests than this passed, so a lost suite cannot look green.
+        type: number
+        required: true
+      repeat-each:
+        type: number
+        required: false
+        default: 1
+      workers:
+        type: number
+        required: false
+        default: 2
+      retention-days:
+        type: number
+        required: false
+        default: 14
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17.11-bookworm@sha256:839fbb5a4942a7758dd93e18b42ea5649807491a0545b5eeeb8f0b8bb11857a5
+        env:
+          POSTGRES_USER: testforge
+          POSTGRES_PASSWORD: testforge_local
+          POSTGRES_INITDB_ARGS: --encoding=UTF8 --locale=C
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U testforge"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      EXTERNAL_POSTGRES: "1"
+      POSTGRES_ADMIN_URL: postgresql://testforge:testforge_local@127.0.0.1:55432/postgres
+      E2E_RETRIES: "0"
+      TESTFORGE_RUN_ID: ${{ inputs.name }}
+      E2E_WORKERS: ${{ inputs.workers }}
+      TESTFORGE_ALLOW_LIVE_LLM: "0"
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The contract suite compares the spec with an earlier revision.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: ./.github/actions/setup-test-env
+        with:
+          browsers: ${{ inputs.browsers }}
+      - name: Create isolated databases
+        run: apps/api/.venv/bin/python scripts/create_databases.py
+      - name: Compare the API spec with the base branch
+        if: github.event_name == 'pull_request'
+        run: echo "OPENAPI_BASE_REF=origin/${GITHUB_BASE_REF}" >> "$GITHUB_ENV"
+      - name: Run suites
+        env:
+          PROJECTS: ${{ inputs.projects }}
+          REPEAT_EACH: ${{ inputs.repeat-each }}
+        run: |
+          args=()
+          for project in $PROJECTS; do args+=("--project=$project"); done
+          npx playwright test "${args[@]}" --repeat-each="$REPEAT_EACH"
+      - name: Check counts
+        env:
+          MIN_TESTS: ${{ inputs.min-tests }}
+        run: npm run -s reports:check -- --min-tests "$MIN_TESTS"
+      # Raw reports hold cookies and passwords, so only the sanitized copy is ever uploaded.
+      - name: Make a public copy of the failure evidence
+        if: failure()
+        run: npm run -s reports:sanitize -- --run-dir "reports/runs/${TESTFORGE_RUN_ID}" --out "reports/sanitized/${TESTFORGE_RUN_ID}"
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: failure-${{ inputs.name }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: reports/sanitized/${{ inputs.name }}
+          retention-days: ${{ inputs.retention-days }}
+          if-no-files-found: error

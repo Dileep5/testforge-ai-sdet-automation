@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     payment_sim_timeout_ms: int = 1000
     # Requests allowed to wait for a free slot before the API answers 503. See ARCHITECTURE.md.
     max_queued_requests: int = 200
+    # How long a request may wait for a slot before the API answers 503. See ARCHITECTURE.md.
+    max_queue_wait_seconds: float = 4.0
     # Offline needs no credentials. The OpenAI key is read only by testforge_ai.llm, never here.
     support_chat_provider: Literal["offline", "openai"] = "offline"
 
