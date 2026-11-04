@@ -13,6 +13,7 @@ import { API_URL, BASE_URL, SESSION_COOKIE } from "../config";
 import { TestData, testNamespace, type CreatedUser } from "../factories/test-data";
 import { ApiClient } from "../helpers/api-client";
 import { ReadOnlyDb } from "../helpers/database";
+import { emptyDiagnostics, failureReport, watchPage, type PageDiagnostics } from "../helpers/diagnostics";
 import type { Credentials, Customer, SessionUser } from "../helpers/types";
 import { App } from "../pages/app";
 
@@ -86,7 +87,7 @@ export async function apiLogin(playwright: Playwright, credentials: Credentials,
  * automatic for the built-in `page` fixture, so it is recorded here and kept only for failures.
  */
 function browserOpener(browser: Browser, testInfo: TestInfo) {
-  const opened: { context: BrowserContext; page: Page; errors: string[] }[] = [];
+  const opened: { context: BrowserContext; page: Page; errors: string[]; diagnostics: PageDiagnostics }[] = [];
 
   const open: OpenBrowser = async (storageState) => {
     const context = await browser.newContext({
@@ -98,13 +99,19 @@ function browserOpener(browser: Browser, testInfo: TestInfo) {
     const page = await context.newPage();
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
-    opened.push({ context, page, errors });
+    const diagnostics = emptyDiagnostics();
+    watchPage(page, diagnostics);
+    opened.push({ context, page, errors, diagnostics });
     return { context, page, app: new App(page) };
   };
 
   const closeAll = async () => {
     const failed = testInfo.status !== testInfo.expectedStatus;
     const uncaught = opened.flatMap((item) => item.errors);
+    if (failed) {
+      const report = failureReport(testInfo, browser, opened.map((item) => item.diagnostics));
+      await testInfo.attach("diagnostics", { body: JSON.stringify(report, null, 2), contentType: "application/json" });
+    }
     for (const { context, page } of opened) {
       const video = page.video();
       await context.close();

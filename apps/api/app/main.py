@@ -35,7 +35,7 @@ API_PREFIX = "/api/v1"
 UNSAFE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
 
 _error_responses: dict[int | str, dict[str, Any]] = {
-    status: {"model": ErrorResponse} for status in (400, 401, 403, 404, 409, 422)
+    status: {"model": ErrorResponse} for status in (400, 401, 403, 404, 409, 422, 503)
 }
 
 
@@ -146,6 +146,7 @@ def create_app() -> FastAPI:
     app.add_middleware(
         ConcurrencyLimitMiddleware,
         limit=MAX_CONNECTIONS,
+        max_queued=settings.max_queued_requests,
         exempt_paths=frozenset({f"{API_PREFIX}/health"}),
     )
 

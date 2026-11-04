@@ -18,13 +18,14 @@ test.describe("the OpenAPI document", { tag: "@contract" }, () => {
   });
 
   test("every error response documents the standard envelope", () => {
-    const schemas = contract.operations.flatMap((operation) =>
-      ["400", "401", "403", "404", "409", "422"].flatMap((status) => {
+    const open = contract.operations.filter((operation) => !["/api/v1/health", "/api/v1/ready"].includes(operation.path));
+    const schemas = open.flatMap((operation) =>
+      ["400", "401", "403", "404", "409", "422", "503"].flatMap((status) => {
         const media = operation.definition.responses[status]?.content?.["application/json"];
         return media ? [media.schema] : [];
       }),
     );
-    expect(schemas.length).toBe((contract.operations.length - 2) * 6);
+    expect(schemas.length).toBe(open.length * 7);
     expect(new Set(schemas.map((schema) => schema.$ref))).toEqual(new Set(["#/components/schemas/ErrorResponse"]));
     const documented = contract.operations.filter((operation) => operation.definition.responses["401"]);
     expect(documented.length).toBe(contract.operations.length - 2);
@@ -132,6 +133,14 @@ test.describe("the contract checker itself", { tag: "@contract" }, () => {
       expect(contract.checkResponse(response).join("\n")).toMatch(expected);
     });
   }
+
+  test("accepts the overload refusal, which the API sends before any route runs", () => {
+    const body = { error: { code: "OVERLOADED", message: "m", details: [], request_id: id } };
+    expect(contract.checkResponse(reply(503, body))).toEqual([]);
+    expect(contract.checkResponse(reply(503, body, "/api/v1/ready"))).toEqual([]);
+    const health = reply(503, body, "/api/v1/health");
+    expect(contract.checkResponse(health).join()).toMatch(/status is not documented/);
+  });
 
   test("reports a missing request id and an undocumented content type", () => {
     expect(contract.checkResponse({ ...reply(200, product), headers: { "content-type": "application/json" } }).join()).toMatch(/X-Request-ID/);

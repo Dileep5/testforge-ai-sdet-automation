@@ -15,6 +15,8 @@ Results are in [TEST_RESULTS.md](TEST_RESULTS.md). The framework's design is in
 | Database | `tests/database` | Read-only SQL on the database the API wrote to | Is what was stored correct, whatever the API reported? |
 | Security | `tests/security` | Real API and read-only SQL, local app only | Can a caller reach or change what they should not? |
 | Reliability | `tests/reliability`, plus `test_concurrency_limit.py` | Real API under a fixed burst | Does the API keep answering, and stay correct, under concurrency? |
+| Accessibility | `tests/accessibility` | Production web build in real browsers | What can automated checks find, and can the app be used by keyboard? |
+| Performance | `performance/` (k6) | Real API on its own database | How does it behave under sustained load and overload? |
 
 Nothing in these layers mocks the API or database. A test fails if the real system misbehaves.
 
@@ -125,8 +127,19 @@ The connection and thread-pool deadlock from Phase 2 is guarded at three levels:
 Burst sizes are fixed. No test sleeps or retries to get a result, and client errors are reported by their
 message.
 
-**Not covered here:** sustained load, latency targets, and the unbounded request queue. Those belong to
-Phase 4 performance testing.
+The bounded queue added in Phase 4 has its own deterministic tests, which count admissions exactly.
+
+## Accessibility
+
+Automated checks find a subset of problems, so the aim is to catch regressions, not to show conformance. axe runs with no rule disabled. Tests add what it cannot see: heading hierarchy, label associations, focus indicators, keyboard
+operation, and focus position after errors and actions. Detail and limitations are in [ACCESSIBILITY.md](ACCESSIBILITY.md).
+
+**Manual testing is still needed.** No screen reader has been used.
+
+## Performance
+
+k6 runs 7 scenarios against the real API. Results are compared only between adjacent runs with a matching CPU calibration, because this machine's speed varies. They describe one laptop, and are not compared with production targets. k6 has no pass or fail threshold yet, because no meaningful target exists for this
+machine. A person reads the results. Detail is in [PERFORMANCE.md](PERFORMANCE.md).
 
 ## Test data and isolation
 
@@ -153,7 +166,8 @@ tests using deliberately wrong input. This is a hand-picked set of risks, not fu
 
 | Topic | Where |
 | --- | --- |
-| Accessibility and load testing | Phase 4 |
+| Screen reader and other manual accessibility testing | Not scheduled |
+| Long-running soak tests, and load on Linux | Not scheduled |
 | AI test generation and evaluation | Phase 5 |
 | CI, Docker, Firefox on Linux | Phase 6 |
 | Dependency and secret scanning in CI | Phase 6 |

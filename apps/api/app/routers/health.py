@@ -5,7 +5,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.db import SessionLocal
-from app.schemas import HealthOut, ReadinessOut
+from app.schemas import ErrorResponse, HealthOut, ReadinessOut
 
 router = APIRouter(tags=["health"])
 logger = logging.getLogger(__name__)
@@ -20,7 +20,12 @@ def health() -> HealthOut:
 @router.get(
     "/ready",
     response_model=ReadinessOut,
-    responses={503: {"model": ReadinessOut, "description": "A dependency is unavailable"}},
+    responses={
+        503: {
+            "model": ReadinessOut | ErrorResponse,
+            "description": "A dependency is unavailable, or the API is overloaded",
+        }
+    },
 )
 def ready(response: Response) -> ReadinessOut:
     """Readiness: the database is reachable and migrations have been applied."""

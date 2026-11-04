@@ -26,7 +26,7 @@ function RequirePermission({ permission, children }: { permission: string; child
   if (!can(permission)) {
     return (
       <div data-testid="forbidden">
-        <EmptyState title="You don't have access to this page">
+        <EmptyState pageTitle title="You don't have access to this page">
           Ask an administrator if you need it. <Link to="/">Back to the dashboard</Link>
         </EmptyState>
       </div>
@@ -76,7 +76,7 @@ export function App() {
             </RequirePermission>
           }
         />
-        <Route path="404" element={<EmptyState title="Page not found" />} />
+        <Route path="404" element={<EmptyState pageTitle title="Page not found" />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Route>
     </Routes>

@@ -15,17 +15,18 @@ Browser ──> Web app (React, Vite) ──/api proxy──> FastAPI ──> Po
 
 ### Request admission
 
-`ConcurrencyLimitMiddleware` admits at most as many requests as the database pool has connections (30),
-and queues the rest before they acquire anything. Phase 2 showed why this is needed. FastAPI runs
-synchronous dependencies and endpoints as separate jobs on a 40-thread pool, and a request keeps its
-database connection between those jobs. Under a burst, all threads could be waiting for a connection
-while all connections were held by requests waiting for a thread, freezing the API until the 30 second
-pool timeout. `/health` is exempt, so a busy server does not look dead.
+`ConcurrencyLimitMiddleware` admits at most as many requests as the database pool has connections (30), queues up to
+`MAX_QUEUED_REQUESTS` more (200) in arrival order, and refuses the rest immediately.
 
-The limit is per process. Running several API processes means dividing database connections among them.
+**The admission limit prevents a deadlock.** FastAPI runs synchronous dependencies and endpoints as separate jobs on a 40-thread pool, and a request keeps its database connection between those jobs. Under
+a burst, all threads could wait for a connection while all connections were held by requests waiting for a thread, freezing the API until the 30 second pool timeout. Phase 2 found this.
 
-The queue is unbounded, and it only applies once the operating system has accepted a connection. Phase 3 measured
-`connect ECONNRESET` from a burst of 300 simultaneous connections on macOS, where the listen queue is capped at 128.
+**The queue bound keeps failure fast.** Phase 4 measured the previously unbounded queue: at 800 virtual users, requests waited until clients gave up, and the server still did the work for them. Refused
+requests now get a 503 with `Retry-After` and the standard error envelope, before anything runs, so retrying a write is safe. Measurements are in [PERFORMANCE.md](PERFORMANCE.md#overload-behaviour).
+
+`/health` is exempt, so a busy server does not look dead. `/ready` is not, because it uses a database connection, so a flood of checks could otherwise bring back the deadlock.
+
+The limit is per process. Running several API processes means dividing database connections among them. It only applies once the operating system has accepted a connection, and this machine's listen queue is capped at 128.
 
 ### Reading a whole list
 
@@ -42,14 +43,16 @@ Each kind of test has its own database, so none can damage another's data.
 | Local development | `testforge` | :8000 | :5173 (dev server) |
 | Backend tests (pytest) | `testforge_test` | In process, plus real uvicorn for burst tests | None |
 | Playwright | `testforge_e2e` | :8100 | :5273 (production build) |
+| k6 | `testforge_perf` | :8200 | None |
 
-All three databases live in one project-local PostgreSQL on :55432. Backend tests refuse any database
-whose name does not end in `_test`, and Playwright refuses any not ending in `_e2e`.
+All four databases live in one project-local PostgreSQL on :55432. Backend tests refuse any database
+whose name does not end in `_test`, Playwright refuses any not ending in `_e2e`, and the k6 runner refuses any not ending in `_perf`.
 
 ## Playwright framework
 
 ```
 tests/e2e/*.spec.ts       What should happen, in business terms
+tests/accessibility        axe, semantics, focus and keyboard behaviour, in real browsers
 tests/{api,contract,database,security,reliability}    The same, with no browser
         │
 framework/fixtures        Sessions per role, per-test data, read-only database
@@ -137,10 +140,19 @@ impractical.
 
 Global teardown writes the operations and statuses reached to `reports/contract/coverage.md`.
 
+### Failure diagnostics
+
+Failed browser tests keep a trace, screenshot, video and error context. They also attach `diagnostics`, with the test title, project, browser version, worker, retry, duration, console errors, page errors, failed requests and
+error responses, including each response's request ID, which links it to the API's log. It records URLs and statuses only, with no cookies, headers or bodies.
+
+### Accessibility helpers
+
+`framework/helpers/accessibility.ts` runs axe with no rule disabled and attaches each result. It also checks what axe does not: heading hierarchy, label associations, and a visible focus indicator at each Tab stop.
+
 ### Project configuration
 
 Projects are defined in `playwright.config.ts`: `chromium`, `firefox`, `webkit`, a browserless `framework` project for
-checks on the helpers themselves, and `api`, `contract`, `database`, `security` and `reliability`. `reliability` runs one
+checks on the helpers themselves, `accessibility` in Chromium, `keyboard-webkit` and `keyboard-firefox`, and `api`, `contract`, `database`, `security` and `reliability`. `reliability` runs one
 test at a time, so bursts do not add up past the operating system's connection queue.
 
 | Setting | Value | Override |

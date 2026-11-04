@@ -180,6 +180,26 @@ test.describe("order creation", { tag: "@regression" }, () => {
     expect(values.length - new Set(values).size).toBe(0);
   });
 
+  test("an overloaded API shows its message and a working retry, with no data lost", async ({ manager }) => {
+    // Simulated at the network level: a real overload cannot be targeted at one request.
+    const { app, page } = manager;
+    let refusals = 1;
+    await page.route(/\/api\/v1\/orders\?/, async (route) => {
+      if (refusals-- <= 0) return route.continue();
+      await route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        headers: { "Retry-After": "1" },
+        body: JSON.stringify({ error: { code: "OVERLOADED", message: "The service is busy. Please try again shortly.", details: [], request_id: "1" } }),
+      });
+    });
+    await page.goto("/orders");
+    const state = page.getByTestId("error-state");
+    await expect(state).toContainText("The service is busy");
+    await state.getByRole("button", { name: "Try again" }).click();
+    await expect(app.orders.grid.rows.first()).toBeVisible();
+  });
+
   test("the order form offers a product even when the catalog is larger than one API page", async ({ manager, data }) => {
     // Regression: the form used to load only the first 100 stock rows, silently hiding the rest.
     await data.products(101, { stock: {} });

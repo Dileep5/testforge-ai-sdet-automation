@@ -11,6 +11,7 @@
     "apps/web"
   ],
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@playwright/test": "1.64.1",
     "@types/pg": "8.23.1",
     "ajv": "8.20.0",
@@ -55,6 +56,11 @@
     "test:security": "playwright test --project=security",
     "test:reliability": "playwright test --project=reliability",
     "test:service": "playwright test --project=api --project=contract --project=database --project=security --project=reliability",
+    "test:a11y": "playwright test --project=accessibility",
+    "test:a11y:keyboard": "playwright test --project=keyboard-webkit",
+    "perf:install": "bash scripts/install-k6.sh",
+    "perf:migrate": "cd apps/api && DATABASE_URL=postgresql+psycopg://testforge:testforge_local@127.0.0.1:55432/testforge_perf APP_ENV=test .venv/bin/alembic upgrade head",
+    "perf": "npm run -s db:start && npm run -s perf:migrate && node scripts/perf.mjs",
     "e2e:report": "playwright show-report"
   }
 }

@@ -1,4 +1,4 @@
-import type { Locator } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 import { GridComponent } from "../components/grid";
 import { ModalComponent } from "../components/modal";
 import { whileWaitingFor } from "../helpers/network";
@@ -32,7 +32,10 @@ export class InventoryPage extends BasePage {
   }
 
   async search(text: string): Promise<void> {
-    await this.page.getByLabel("Search name or SKU").fill(text);
+    const box = this.page.getByLabel("Search name or SKU");
+    await box.fill(text);
+    // WebKit lost the typed text once under load. If it recurs, this fails where it happens. No retry.
+    await expect(box).toHaveValue(text);
     await whileWaitingFor(this.page, { method: "GET", path: "/inventory", params: { q: text } }, () =>
       this.page.getByRole("button", { name: "Search", exact: true }).click(),
     );

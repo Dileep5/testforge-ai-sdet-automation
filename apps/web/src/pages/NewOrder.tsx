@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useRef, useMemo, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ApiError,
@@ -11,6 +11,7 @@ import {
   type Warehouse,
 } from "../api";
 import { Field } from "../components/Field";
+import { useFocusFirstInvalid } from "../focus";
 import { ErrorState, Loading } from "../components/States";
 import { useToast } from "../components/Toast";
 import { money, percent, taxCents } from "../format";
@@ -29,6 +30,8 @@ interface FormErrors {
 }
 
 export function NewOrderPage() {
+  const { formRef, focusFirstInvalid } = useFocusFirstInvalid();
+  const addLineButton = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
   const toast = useToast();
   const [customerId, setCustomerId] = useState("");
@@ -97,10 +100,14 @@ export function NewOrderPage() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy) return;
     const found = validate();
     setSubmitted(true);
     setSubmitError(undefined);
-    if (found.customer || found.warehouse || found.lines) return;
+    if (found.customer || found.warehouse || found.lines) {
+      focusFirstInvalid();
+      return;
+    }
     setBusy(true);
     try {
       const order = await post<OrderDetail>("/orders", {
@@ -136,7 +143,7 @@ export function NewOrderPage() {
           <h1>New order</h1>
         </div>
       </header>
-      <form onSubmit={submit} noValidate className="order-form" aria-label="New order">
+      <form ref={formRef} onSubmit={submit} noValidate className="order-form" aria-label="New order">
         <div className="order-form-main">
           <section className="panel form-grid">
             <Field label="Customer" error={errors.customer}>
@@ -210,7 +217,11 @@ export function NewOrderPage() {
                       className="button button-small button-quiet"
                       disabled={lines.length === 1}
                       aria-label={`Remove line ${index + 1}`}
-                      onClick={() => setLines((current) => current.filter((item) => item.key !== line.key))}
+                      onClick={() => {
+                        setLines((current) => current.filter((item) => item.key !== line.key));
+                        // This button is about to disappear, which would otherwise lose keyboard focus.
+                        addLineButton.current?.focus();
+                      }}
                     >
                       Remove
                     </button>
@@ -218,7 +229,7 @@ export function NewOrderPage() {
                 );
               })}
             </ol>
-            <button type="button" className="button button-small" onClick={addLine} disabled={lines.length >= 50}>
+            <button ref={addLineButton} type="button" className="button button-small" onClick={addLine} disabled={lines.length >= 50}>
               Add line
             </button>
           </section>
@@ -256,7 +267,7 @@ export function NewOrderPage() {
               )}
             </div>
           )}
-          <button type="submit" className="button button-primary button-block" disabled={busy}>
+          <button type="submit" className="button button-primary button-block" aria-disabled={busy}>
             {busy ? "Creating…" : "Create order"}
           </button>
         </aside>

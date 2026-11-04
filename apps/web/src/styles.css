@@ -43,6 +43,8 @@ p { margin: 0.25rem 0; }
 a { color: var(--brand); font-weight: 500; }
 .muted { color: var(--muted); }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+/* Focus lands on a date field's inner segments, which the rule above does not reach. */
+input[type="date"]:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
 main:focus { outline: none; }
 
 .skip-link { position: absolute; left: -999px; top: 8px; z-index: 30; padding: 8px 12px; background: var(--surface); border-radius: var(--radius); }
@@ -74,12 +76,12 @@ main:focus { outline: none; }
 
 /* Controls */
 .button { display: inline-flex; align-items: center; justify-content: center; font: inherit; font-weight: 550; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); cursor: pointer; text-decoration: none; }
-.button:hover:not(:disabled) { background: var(--surface-2); }
-.button:disabled { opacity: 0.55; cursor: not-allowed; }
+.button:hover:not(:disabled):not([aria-disabled="true"]) { background: var(--surface-2); }
+.button:disabled, .button[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
 .button-primary { background: var(--brand); border-color: var(--brand); color: var(--brand-ink); }
-.button-primary:hover:not(:disabled) { background: var(--brand-hover); }
+.button-primary:hover:not(:disabled):not([aria-disabled="true"]) { background: var(--brand-hover); }
 .button-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
-.button-danger:hover:not(:disabled) { background: var(--danger-hover); }
+.button-danger:hover:not(:disabled):not([aria-disabled="true"]) { background: var(--danger-hover); }
 .button-small { padding: 4px 10px; font-size: 0.87rem; }
 .button-block { width: 100%; }
 .button-quiet { border-color: transparent; background: transparent; color: var(--muted); }
@@ -128,7 +130,7 @@ th.num .sort-button { flex-direction: row-reverse; }
 
 /* States */
 .state { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 36px 16px; color: var(--muted); text-align: center; }
-.state-empty strong { color: var(--ink); }
+.state-empty strong, .state-empty h1 { color: var(--ink); font-size: 1rem; font-weight: 700; letter-spacing: normal; }
 .spinner { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--brand); animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } }

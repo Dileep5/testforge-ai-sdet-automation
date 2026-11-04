@@ -166,7 +166,7 @@ during development all had root causes above, and each was fixed at its cause.
 
 ## Phase 3: API, contract, PostgreSQL and security testing (2026-11-03)
 
-**Status:** complete, awaiting review. Not committed. Nothing pushed. Firefox unverified.
+**Status:** approved. Committed locally as `41097b3`. Firefox unverified.
 
 ### Built
 
@@ -213,3 +213,45 @@ kept. A clean-copy run exposed the order form bug, after earlier runs on the wor
 - Phase 4 should examine the unbounded request queue and the connection limit under load.
 - Firefox on Linux, CI and Docker in Phase 6.
 - Phases 4 to 7.
+
+## Phase 4: Accessibility and performance testing (2026-11-04)
+
+**Status:** complete, awaiting review. Not committed. Nothing pushed. Firefox unverified.
+
+### Built
+
+- **`tests/accessibility`:** axe scans of 37 screen states, semantics and focus visibility checks, and keyboard tests in Chromium and WebKit, with a Firefox project ready for CI.
+- **`performance/`, `scripts/perf.mjs`:** 7 k6 scenarios, and a runner with a dedicated database, PostgreSQL sampling, CPU calibration, and per-status and per-stage results.
+- **`scripts/install-k6.sh`:** pinned k6, checksum verified, because Homebrew refuses macOS 27.
+- **Bounded admission:** at most 200 queued requests, then an immediate 503. `MAX_QUEUED_REQUESTS` configures it.
+- **Failure diagnostics:** failed browser tests attach console errors, failed requests and execution metadata.
+- **`ACCESSIBILITY.md`, `PERFORMANCE.md`:** new.
+
+Dependency added: `@axe-core/playwright` 4.14.0. API changes: 503 is documented on every operation except `/health`, and `/ready`'s 503 can be either of two shapes, recorded as accepted in the breaking-change list.
+
+### Verified
+
+Exact counts are in [TEST_RESULTS.md](TEST_RESULTS.md). Backend 181; Chromium 58; WebKit 58; accessibility 80; keyboard WebKit 32; Firefox 0 of 90 (launch failure); API 147; contract 98; database 44; security 106; reliability 5; framework 6. All with retries off.
+
+### Failures and how each was resolved
+
+10 accessibility defects fixed, 1 reliability change justified by measurement, and 8 test defects fixed. These are listed in [TEST_RESULTS.md](TEST_RESULTS.md#bugs-found-in-phase-4). The WebKit failure reproduced once with full diagnostics and remains **unresolved**.
+
+### Operator notes
+
+- Two sets of k6 runs were discarded, and the reasons are in [PERFORMANCE.md](PERFORMANCE.md#discarded-runs).
+- A cleanup of `reports/performance/` was refused by a safety check, and was not attempted another way. Older report folders remain there. They are ignored by git and can be deleted by hand.
+- The Phase 3 `/ready` and idempotency entries changed in the accepted breaking-change list: it only holds differences from the current base revision.
+- The new database `testforge_perf` was added to the local cluster. The development database was not modified, confirmed by content hash.
+
+### Environment
+
+- **Firefox:** still fails at launch, and no further workaround was attempted.
+- **Docker:** still not installed.
+- **Machine:** a fanless laptop with variable speed. See [PERFORMANCE.md](PERFORMANCE.md#test-environment).
+
+### Remains
+
+- Manual accessibility review, including a screen reader.
+- Firefox on Linux, CI and Docker in Phase 6.
+- Phases 5 to 7.

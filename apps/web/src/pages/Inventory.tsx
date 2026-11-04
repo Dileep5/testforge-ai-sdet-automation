@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { ApiError, patch, query, request, type InventoryRow, type Page, type Warehouse } from "../api";
 import { useAuth } from "../auth";
 import { Field } from "../components/Field";
+import { useFocusFirstInvalid } from "../focus";
 import { Pagination, SortHeader, TableWrap } from "../components/Grid";
 import { Modal } from "../components/Modal";
 import { EmptyState, ErrorState, Loading } from "../components/States";
@@ -180,6 +181,7 @@ function AdjustModal({
 }) {
   const [quantity, setQuantity] = useState(String(row.quantity));
   const [reason, setReason] = useState("");
+  const { formRef, focusFirstInvalid } = useFocusFirstInvalid();
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
@@ -196,9 +198,13 @@ function AdjustModal({
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy) return;
     setSubmitted(true);
     setError(undefined);
-    if (found.quantity || found.reason) return;
+    if (found.quantity || found.reason) {
+      focusFirstInvalid();
+      return;
+    }
     setBusy(true);
     try {
       const saved = await patch<InventoryRow>(`/inventory/${row.id}`, {
@@ -216,7 +222,7 @@ function AdjustModal({
 
   return (
     <Modal title={`Adjust ${row.product.sku} at ${row.warehouse.code}`} onClose={onClose} testId="adjust-inventory-modal">
-      <form onSubmit={submit} noValidate>
+      <form ref={formRef} onSubmit={submit} noValidate>
         <p className="muted">{row.product.name}</p>
         <Field label="New quantity" error={errors.quantity}>
           <input type="number" min={0} step={1} value={quantity} onChange={(e) => setQuantity(e.target.value)} />
@@ -233,7 +239,7 @@ function AdjustModal({
           <button type="button" className="button" onClick={onClose}>
             Cancel
           </button>
-          <button type="submit" className="button button-primary" disabled={busy}>
+          <button type="submit" className="button button-primary" aria-disabled={busy}>
             {busy ? "Saving…" : "Save quantity"}
           </button>
         </div>

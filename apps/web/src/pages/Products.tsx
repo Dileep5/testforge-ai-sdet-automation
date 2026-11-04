@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ApiError, post, query, request, type Page, type Product, type ProductDetail } from "../api";
 import { useAuth } from "../auth";
 import { Field } from "../components/Field";
+import { useFocusFirstInvalid } from "../focus";
 import { Pagination, SortHeader, TableWrap } from "../components/Grid";
 import { Modal } from "../components/Modal";
 import { EmptyState, ErrorState, Loading } from "../components/States";
@@ -147,6 +148,7 @@ export function ProductsPage() {
 
 function NewProductModal({ onClose, onCreated }: { onClose: () => void; onCreated: (p: ProductDetail) => void }) {
   const [form, setForm] = useState({ sku: "", name: "", category: "", price: "", description: "" });
+  const { formRef, focusFirstInvalid } = useFocusFirstInvalid();
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
@@ -165,9 +167,13 @@ function NewProductModal({ onClose, onCreated }: { onClose: () => void; onCreate
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy) return;
     setSubmitted(true);
     setError(undefined);
-    if (Object.values(found).some(Boolean) || cents === null) return;
+    if (Object.values(found).some(Boolean) || cents === null) {
+      focusFirstInvalid();
+      return;
+    }
     setBusy(true);
     try {
       const product = await post<ProductDetail>("/products", {
@@ -186,7 +192,7 @@ function NewProductModal({ onClose, onCreated }: { onClose: () => void; onCreate
 
   return (
     <Modal title="New product" onClose={onClose} testId="new-product-modal">
-      <form onSubmit={submit} noValidate>
+      <form ref={formRef} onSubmit={submit} noValidate>
         <Field label="SKU" error={errors.sku}>
           <input value={form.sku} onChange={set("sku")} maxLength={32} />
         </Field>
@@ -211,7 +217,7 @@ function NewProductModal({ onClose, onCreated }: { onClose: () => void; onCreate
           <button type="button" className="button" onClick={onClose}>
             Cancel
           </button>
-          <button type="submit" className="button button-primary" disabled={busy}>
+          <button type="submit" className="button button-primary" aria-disabled={busy}>
             {busy ? "Creating…" : "Create product"}
           </button>
         </div>

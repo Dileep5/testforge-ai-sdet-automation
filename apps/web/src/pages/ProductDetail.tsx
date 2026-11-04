@@ -1,8 +1,9 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ApiError, patch, request, type ProductDetail } from "../api";
 import { useAuth } from "../auth";
 import { Field } from "../components/Field";
+import { focusMainIfLost, useFocusFirstInvalid } from "../focus";
 import { TableWrap } from "../components/Grid";
 import { Modal } from "../components/Modal";
 import { EmptyState, ErrorState, Loading } from "../components/States";
@@ -17,11 +18,13 @@ export function ProductDetailPage() {
   const [editing, setEditing] = useState(false);
   const [deactivating, setDeactivating] = useState(false);
   const product = useAsync((signal) => request<ProductDetail>(`/products/${productId}`, { signal }), productId);
+  // Retiring a product removes the button that opened the dialog.
+  useEffect(focusMainIfLost, [product.data?.is_active]);
 
   if (product.error) {
     if (product.error.status === 404 || product.error.status === 422) {
       return (
-        <EmptyState title="Product not found">
+        <EmptyState pageTitle title="Product not found">
           <Link to="/products">Back to products</Link>
         </EmptyState>
       );
@@ -137,6 +140,7 @@ export function ProductDetailPage() {
 function EditModal({ product, onClose, onSaved }: { product: ProductDetail; onClose: () => void; onSaved: () => void }) {
   const [name, setName] = useState(product.name);
   const [price, setPrice] = useState((product.unit_price_cents / 100).toFixed(2));
+  const { formRef, focusFirstInvalid } = useFocusFirstInvalid();
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
@@ -150,9 +154,13 @@ function EditModal({ product, onClose, onSaved }: { product: ProductDetail; onCl
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy) return;
     setSubmitted(true);
     setError(undefined);
-    if (found.name || cents === null) return;
+    if (found.name || cents === null) {
+      focusFirstInvalid();
+      return;
+    }
     setBusy(true);
     try {
       await patch(`/products/${product.id}`, { name, unit_price_cents: cents });
@@ -165,7 +173,7 @@ function EditModal({ product, onClose, onSaved }: { product: ProductDetail; onCl
 
   return (
     <Modal title="Edit product" onClose={onClose} testId="edit-product-modal">
-      <form onSubmit={submit} noValidate>
+      <form ref={formRef} onSubmit={submit} noValidate>
         <Field label="Name" error={errors.name}>
           <input value={name} maxLength={200} onChange={(e) => setName(e.target.value)} />
         </Field>
@@ -181,7 +189,7 @@ function EditModal({ product, onClose, onSaved }: { product: ProductDetail; onCl
           <button type="button" className="button" onClick={onClose}>
             Cancel
           </button>
-          <button type="submit" className="button button-primary" disabled={busy}>
+          <button type="submit" className="button button-primary" aria-disabled={busy}>
             {busy ? "Saving…" : "Save changes"}
           </button>
         </div>
@@ -205,6 +213,7 @@ function RetireModal({
   const [busy, setBusy] = useState(false);
 
   async function confirm() {
+    if (busy) return;
     setBusy(true);
     try {
       await request<void>(`/products/${productId}`, { method: "DELETE" });
@@ -227,7 +236,7 @@ function RetireModal({
         <button type="button" className="button" onClick={onClose}>
           Keep product
         </button>
-        <button type="button" className="button button-danger" disabled={busy} onClick={confirm}>
+        <button type="button" className="button button-danger" aria-disabled={busy} onClick={confirm}>
           {busy ? "Retiring…" : "Retire product"}
         </button>
       </div>

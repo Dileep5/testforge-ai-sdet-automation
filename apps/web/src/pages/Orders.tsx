@@ -89,6 +89,7 @@ export function OrdersPage() {
   }
 
   async function exportCsv() {
+    if (exporting) return;
     setExporting(true);
     try {
       await downloadFile(`/orders/export.csv${query({ ...applied, sort, direction })}`, "orders.csv");
@@ -115,7 +116,7 @@ export function OrdersPage() {
           <p className="muted">Dates are whole days in UTC.</p>
         </div>
         <div className="actions">
-          <button type="button" className="button" onClick={exportCsv} disabled={exporting}>
+          <button type="button" className="button" onClick={exportCsv} aria-disabled={exporting}>
             {exporting ? "Exporting…" : "Export CSV"}
           </button>
           {can("orders:write") && (

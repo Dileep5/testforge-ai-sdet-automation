@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from "react";
+import { focusMainIfLost } from "../focus";
 
 interface ModalProps {
   title: string;
@@ -16,10 +17,13 @@ export function Modal({ title, onClose, children, testId = "modal" }: ModalProps
     const dialog = ref.current;
     const opener = document.activeElement;
     if (dialog && !dialog.open) dialog.showModal();
+    // The browser would pick the close button, which comes first. Start on the form instead.
+    dialog?.querySelector<HTMLElement>("input, select, textarea")?.focus();
     return () => {
       dialog?.close();
       // By now React has removed the dialog, so the browser cannot restore focus by itself.
       if (opener instanceof HTMLElement) opener.focus();
+      focusMainIfLost();
     };
   }, []);
 

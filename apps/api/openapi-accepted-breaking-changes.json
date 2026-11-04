@@ -1,42 +1,7 @@
 [
   {
-    "rule": "response-property-removed",
-    "location": "POST /api/v1/orders 201 application/json.payments[].idempotency_key",
-    "reason": "A buyer could read the idempotency key staff used for their order's payment. No client read the field."
-  },
-  {
-    "rule": "response-property-removed",
-    "location": "GET /api/v1/orders/{order_id} 200 application/json.payments[].idempotency_key",
-    "reason": "A buyer could read the idempotency key staff used for their order's payment. No client read the field."
-  },
-  {
-    "rule": "response-property-removed",
-    "location": "PATCH /api/v1/orders/{order_id}/status 200 application/json.payments[].idempotency_key",
-    "reason": "A buyer could read the idempotency key staff used for their order's payment. No client read the field."
-  },
-  {
-    "rule": "response-property-removed",
-    "location": "GET /api/v1/orders/{order_id}/payments 200 application/json[].idempotency_key",
-    "reason": "A buyer could read the idempotency key staff used for their order's payment. No client read the field."
-  },
-  {
-    "rule": "response-property-removed",
-    "location": "POST /api/v1/orders/{order_id}/payments 200 application/json.idempotency_key",
-    "reason": "A buyer could read the idempotency key staff used for their order's payment. No client read the field."
-  },
-  {
-    "rule": "response-property-removed",
-    "location": "POST /api/v1/orders/{order_id}/payments 201 application/json.idempotency_key",
-    "reason": "A buyer could read the idempotency key staff used for their order's payment. No client read the field."
-  },
-  {
-    "rule": "response-property-removed",
-    "location": "GET /api/v1/payments/{payment_id} 200 application/json.idempotency_key",
-    "reason": "A buyer could read the idempotency key staff used for their order's payment. No client read the field."
-  },
-  {
-    "rule": "response-property-removed",
-    "location": "POST /api/v1/payments/{payment_id}/settle 200 application/json.idempotency_key",
-    "reason": "A buyer could read the idempotency key staff used for their order's payment. No client read the field."
+    "rule": "type-changed",
+    "location": "GET /api/v1/ready 503 application/json",
+    "reason": "Readiness can now also answer with the standard overload error, so its 503 is a union of ReadinessOut and ErrorResponse. Both remain valid JSON objects, and clients of /ready act on the status code."
   }
 ]

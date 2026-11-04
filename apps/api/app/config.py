@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     cookie_secure: bool = False
     allowed_origins: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173"]
     payment_sim_timeout_ms: int = 1000
+    # Requests allowed to wait for a free slot before the API answers 503. See ARCHITECTURE.md.
+    max_queued_requests: int = 200
 
     @model_validator(mode="after")
     def _production_requires_secure_cookies(self) -> "Settings":

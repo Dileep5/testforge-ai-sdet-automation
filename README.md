@@ -74,6 +74,9 @@ against its own database and ports, so it does not touch development data.
 | `npm run test:security` | Security regression, against the local app only |
 | `npm run test:reliability` | Bounded concurrent bursts |
 | `npm run test:service` | All five of the above |
+| `npm run test:a11y` | axe, semantics, focus and keyboard tests in Chromium |
+| `npm run test:a11y:keyboard` | Keyboard tests in WebKit |
+| `npm run perf:install`, then `npm run perf` | k6 scenarios on a dedicated database. See [PERFORMANCE.md](PERFORMANCE.md) |
 | `npm run typecheck` | Strict type check of the frontend and framework |
 | `npm run lint` / `npm run lint:backend` | ESLint / Ruff |
 | `npm run build` | Frontend production build |
@@ -87,7 +90,7 @@ npx playwright test --grep "rapid typing" --headed           # watch one test
 ```
 
 **On this machine, use `npm run test:e2e:chromium` and `test:e2e:webkit`.** Firefox currently fails to
-launch here, so `npm run test:e2e` reports 57 launch failures and Firefox is unverified. See
+launch here, so `npm run test:e2e` reports 58 launch failures and Firefox is unverified. See
 [TEST_RESULTS.md](TEST_RESULTS.md#firefox).
 
 ### Investigating a failure
@@ -98,6 +101,8 @@ Failures keep a trace, screenshots and video in `test-results/<test-name>/`.
 npm run e2e:report                                           # HTML report, with all attachments
 npx playwright show-trace test-results/<test-name>/trace.zip # step through one failure
 ```
+
+Failed browser tests also attach `diagnostics`, with console errors, failed requests and execution metadata.
 
 The trace viewer shows each action with a before and after snapshot of the page, plus console output
 and network calls. A test with two signed-in users has one trace covering both sessions, plus a
@@ -130,12 +135,15 @@ apps/web      React app
 framework     Playwright page objects, components, fixtures, factories, helpers and contract checks
 tests/e2e     Playwright browser tests
 tests/api, contract, database, security, reliability    Playwright tests with no browser
+tests/accessibility    axe, semantics, focus and keyboard tests
+performance   k6 scenarios
 scripts       Setup, local PostgreSQL, dev runner, E2E API runner, OpenAPI export
 ```
 
 The fixture design, page objects, isolation and browser configuration are explained in
 [ARCHITECTURE.md](ARCHITECTURE.md#playwright-framework). What each test layer covers is in
-[TEST_STRATEGY.md](TEST_STRATEGY.md), and results are in [TEST_RESULTS.md](TEST_RESULTS.md).
+[TEST_STRATEGY.md](TEST_STRATEGY.md), and results are in [TEST_RESULTS.md](TEST_RESULTS.md),
+[ACCESSIBILITY.md](ACCESSIBILITY.md) and [PERFORMANCE.md](PERFORMANCE.md).
 
 ## Known limitations
 

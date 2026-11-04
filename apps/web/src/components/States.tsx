@@ -11,10 +11,11 @@ export function Loading({ label = "Loading" }: { label?: string }) {
   );
 }
 
-export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {
+/** With `pageTitle`, the message is all the page shows, so it is the page's main heading. */
+export function EmptyState({ title, pageTitle, children }: { title: string; pageTitle?: boolean; children?: ReactNode }) {
   return (
     <div className="state state-empty" data-testid="empty-state">
-      <strong>{title}</strong>
+      {pageTitle ? <h1>{title}</h1> : <strong>{title}</strong>}
       {children && <p>{children}</p>}
     </div>
   );

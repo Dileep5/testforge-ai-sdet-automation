@@ -22,7 +22,10 @@ export class ProductsPage extends BasePage {
   }
 
   async search(text: string): Promise<void> {
-    await this.page.getByLabel("Search name or SKU").fill(text);
+    const box = this.page.getByLabel("Search name or SKU");
+    await box.fill(text);
+    // WebKit lost the typed text once under load. If it recurs, this fails where it happens. No retry.
+    await expect(box).toHaveValue(text);
     await whileWaitingFor(this.page, { method: "GET", path: "/products", params: { q: text } }, () =>
       this.page.getByRole("button", { name: "Search", exact: true }).click(),
     );

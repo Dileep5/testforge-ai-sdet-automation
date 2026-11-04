@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   ApiError,
@@ -12,6 +12,7 @@ import {
 } from "../api";
 import { useAuth } from "../auth";
 import { Field } from "../components/Field";
+import { focusMainIfLost } from "../focus";
 import { TableWrap } from "../components/Grid";
 import { Modal } from "../components/Modal";
 import { EmptyState, ErrorState, Loading, StatusBadge } from "../components/States";
@@ -51,6 +52,9 @@ export function OrderDetailPage() {
     orderId,
   );
 
+  // Status and payment changes remove the buttons and form that had focus.
+  useEffect(focusMainIfLost, [order.data?.status, order.data?.payment_status]);
+
   function refresh() {
     order.reload();
     history.reload();
@@ -59,7 +63,7 @@ export function OrderDetailPage() {
   if (order.error) {
     if (order.error.status === 404 || order.error.status === 422) {
       return (
-        <EmptyState title="Order not found">
+        <EmptyState pageTitle title="Order not found">
           It may not exist, or you may not have access to it. <Link to="/orders">Back to orders</Link>
         </EmptyState>
       );
@@ -270,6 +274,7 @@ function PaymentForm({ orderId, onDone }: { orderId: string; onDone: (payment: P
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy) return;
     setBusy(true);
     setError(undefined);
     if (attemptKey.current?.token !== token) {
@@ -302,7 +307,7 @@ function PaymentForm({ orderId, onDone }: { orderId: string; onDone: (payment: P
           ))}
         </select>
       </Field>
-      <button type="submit" className="button button-primary" disabled={busy}>
+      <button type="submit" className="button button-primary" aria-disabled={busy}>
         {busy ? "Processing…" : "Run payment"}
       </button>
       {error && (
@@ -325,6 +330,7 @@ function SettleButton({
 }) {
   const [busy, setBusy] = useState(false);
   async function settle() {
+    if (busy) return;
     setBusy(true);
     try {
       await post<Payment>(`/payments/${paymentId}/settle`);
@@ -336,7 +342,7 @@ function SettleButton({
     }
   }
   return (
-    <button type="button" className="button button-small" disabled={busy} onClick={settle}>
+    <button type="button" className="button button-small" aria-disabled={busy} onClick={settle}>
       {busy ? "Settling…" : "Settle"}
     </button>
   );
@@ -359,6 +365,7 @@ function StatusModal({
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy) return;
     setBusy(true);
     setError(undefined);
     try {
@@ -386,7 +393,7 @@ function StatusModal({
           <button type="button" className="button" onClick={onClose}>
             Keep as is
           </button>
-          <button type="submit" className={`button ${status === "CANCELLED" ? "button-danger" : "button-primary"}`} disabled={busy}>
+          <button type="submit" className={`button ${status === "CANCELLED" ? "button-danger" : "button-primary"}`} aria-disabled={busy}>
             {busy ? "Saving…" : ACTION_LABELS[status]}
           </button>
         </div>

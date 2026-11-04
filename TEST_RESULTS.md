@@ -2,59 +2,103 @@
 
 Only results from commands that were actually run are recorded here.
 
-**Last updated:** 2026-11-03, Phase 3. **Environment:** macOS 27.0.1 (arm64), Python 3.13.5, Node 24.3.0,
-PostgreSQL 17.11, Playwright 1.64.1. Everything ran locally. **CI has not run.**
+**Last updated:** 2026-11-04, Phase 4. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
+PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14. Everything ran locally. **CI has not run.**
 
 ## Summary
 
-Every Playwright run used `E2E_RETRIES=0`, so nothing could pass on a retry.
+Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass on a retry.
 
 | Suite | Command | Passed | Failed | Skipped | Flaky |
 | --- | --- | --- | --- | --- | --- |
-| Backend (pytest, real PostgreSQL) | `npm run test:backend` | **175** | 0 | 0 | n/a |
-| Playwright Chromium 156 | `npx playwright test --project=chromium` | **57** | 0 | 0 | 0 |
-| Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **57** | 0 | 0 | 0 |
-| Playwright Firefox 157 | `npm run test:e2e:firefox` | **0: unverified** | 57 at launch, no test body ran | 0 | 0 |
+| Backend (pytest, real PostgreSQL) | `npm run test:backend` | **181** | 0 | 0 | n/a |
+| Playwright Chromium 156 | `npx playwright test --project=chromium` | **58** | 0 | 0 | 0 |
+| Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **58** | 0 | 0 | 0 |
+| Playwright Firefox 157 | `npm run test:e2e:firefox` | **0: unverified** | 58 at launch, no test body ran | 0 | 0 |
 | Framework self-checks | `npx playwright test --project=framework` | 6 | 0 | 0 | 0 |
+| Accessibility, Chromium | `npm run test:a11y` | **80** | 0 | 0 | 0 |
+| Keyboard, WebKit | `npm run test:a11y:keyboard` | **32** | 0 | 0 | 0 |
+| Keyboard, Firefox | `npx playwright test --project=keyboard-firefox` | **0: unverified** | 32 at launch, no test body ran | 0 | 0 |
 | API automation | `npm run test:api` | **147** | 0 | 0 | 0 |
-| OpenAPI contract | `npm run test:contract` | **97** | 0 | 0 | 0 |
+| OpenAPI contract | `npm run test:contract` | **98** | 0 | 0 | 0 |
 | PostgreSQL validation | `npm run test:db` | **44** | 0 | 0 | 0 |
 | Security regression | `npm run test:security` | **106** | 0 | 0 | 0 |
 | Reliability | `npm run test:reliability` | **5** | 0 | 0 | 0 |
 
-These counts include generated cases. For example, the security count has one authorization test per
-operation, and the raw number overstates distinct scenarios.
+These counts include generated cases, which overstate distinct scenarios. Accessibility and keyboard detail is in
+[ACCESSIBILITY.md](ACCESSIBILITY.md).
 
 | Other check | Result |
 | --- | --- |
-| Backend line coverage | 97% (1,284 statements, 33 missed) |
+| Backend line coverage | 97% (1,306 statements, 33 missed) |
 | TypeScript strict type check (frontend and framework) | Passed |
 | ESLint and Ruff | Passed, 0 warnings |
 | Frontend production build | Passed |
-| HTML and JUnit reports | Generated (JUnit: 519 tests, 0 failures, 0 skipped, 0 errors) |
-| Setup from a clean clone, with the uncommitted Phase 3 changes applied | 175 backend and 519 Playwright passed; type check, lint and build passed |
+| HTML and JUnit reports | Generated (JUnit: 634 tests, 0 failures, 0 skipped, 0 errors) |
+| axe-core | 37 screen states, 0 violations, no rule disabled |
+| k6 scenarios | All 7 ran. See [PERFORMANCE.md](PERFORMANCE.md) |
+| Setup from a clean clone, with the uncommitted Phase 4 changes applied | 181 backend and 634 Playwright passed; type check, lint and build passed; k6 scenarios ran at short durations |
 | Development database after all runs | Row counts and content hashes identical to before Phase 3 |
 | `npm audit --omit=dev` | No known vulnerabilities |
 | `npm audit` including dev tools | 13 moderate (see limitations) |
 
-**Not done yet, so no results exist:** axe accessibility scans, k6 load tests, AI evaluation, Docker,
-GitHub Actions, secret scanning.
+**Not done yet, so no results exist:** AI evaluation, Docker, GitHub Actions, secret scanning.
+
+## k6 summary
+
+Normal load, default configuration. These numbers describe one laptop and are not capacity figures. Environment, workloads and overload
+comparison are in [PERFORMANCE.md](PERFORMANCE.md).
+
+| Scenario | VUs | Requests | Req/s | p50 ms | p95 ms | p99 ms | Errors |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Health and readiness | 20 | 94,518 | 3,150 | 5.7 | 10.8 | 14.2 | 0% |
+| Product listing | 20 | 36,700 | 918 | 20.4 | 26.6 | 30.0 | 0% |
+| Order lookup and filtering | 20 | 20,075 | 502 | 36.7 | 51.0 | 65.1 | 0% |
+| Authentication | 10 | 3,315 | 111 | 66.2 | 222.5 | 274.3 | 0% |
+| Order creation, isolated users | 10 | 12,606 | 317 | 31.1 | 36.6 | 50.0 | 0% |
+| Mixed read and write | 30 | 24,628 | 379 | 66.3 | 121.5 | 157.4 | 0% |
+
+| Overload, peak of 800 VUs | Unbounded queue | Bounded at 200 |
+| --- | --- | --- |
+| Served | 22,092 | 21,533 |
+| Served p95 | 4,777 ms | 2,445 ms |
+| Client timeouts after 5s | 2,660 | 0 |
+| Refused with 503 | 0 | 34,598, p99 2.0 ms |
 
 ## Parallel and isolation runs
 
 | Run | Workers | Passed | Failed | Skipped | Flaky | Duration |
 | --- | --- | --- | --- | --- | --- | --- |
-| All 5 service suites together | 4 | 399 | 0 | 0 | 0 | 46s |
-| All 5 service suites, each test 3 times | 4 | 1,197 | 0 | 0 | 0 | 156s |
-| All 5 service suites | 8 | 399 | 0 | 0 | 0 | 48s |
-| All 5 service suites | 1 | 399 | 0 | 0 | 0 | 51s |
-| Everything except Firefox, together | 4 | 519 | 0 | 0 | 0 | 96s |
-| Smoke, Chromium | 4 | 14 | 0 | 0 | 0 | 13s |
-| Critical, Chromium and WebKit | 4 | 62 (31 each) | 0 | 0 | 0 | 42s |
+| Everything except Firefox, together | 4 | 634 | 0 | 0 | 0 | 148s |
+| Everything except Firefox, together | 8 | 634 | 0 | 0 | 0 | 207s |
+| Accessibility and keyboard, each test 3 times | 4 | 336 | 0 | 0 | 0 | 117s |
+| Smoke, Chromium | 4 | 14 | 0 | 0 | 0 | 10s |
+| Critical, Chromium and WebKit | 4 | 62 (31 each) | 0 | 0 | 0 | 40s |
 
 `reliability` always runs one test at a time, whatever the worker count.
 
-### Intermittent failures found by repeating runs
+## The intermittent WebKit failure: unresolved
+
+**The cause is not established.** Failed browser tests now keep a trace, screenshot, video, error context, and a `diagnostics` attachment with the test title, project,
+browser version, worker, retry, duration, console errors, page errors, failed requests and error responses. A deliberate failure confirmed these in both browsers.
+
+| Attempt | Result |
+| --- | --- |
+| WebKit alone, 15 runs of 58 tests | 870 passed, 0 failed |
+| WebKit, Chromium, API and security together, 8 workers, 5 runs | 1,844 passed, **1 failed** |
+| Instrumented probe of the suspected race, 240 attempts, half with a response deliberately timed against typing | 0 reproductions |
+
+The one failure was in WebKit, in `the low stock filter shows a low row and leaves out a healthy one`. What the evidence shows:
+
+- `fill` reported success, but the DOM snapshot straight after it shows an empty search box, as does the failure screenshot.
+- The warehouse dropdown rendered during that same fill.
+- The empty form then matched the URL, so clicking Search sent no request, and the test timed out waiting for one.
+- There were no console errors, page errors, failed requests or error responses.
+
+**This does not separate an application race from a WebKit or Playwright input problem.** It is also unknown whether this is the same failure as the unidentified one in Phase 3. Search page objects now assert the
+typed value right after filling, so a recurrence fails at the point of loss. No retry was added.
+
+## Intermittent failures found in Phase 3
 
 Single passes were not enough here. Repeated runs exposed these, and each is now fixed at its cause.
 
@@ -65,18 +109,16 @@ Single passes were not enough here. Repeated runs exposed these, and each is now
 | `SESSION_EXPIRED` test received `INVALID_SESSION` | The test aged a shared user's session, and another worker's login removed it | Test defect |
 | `ECONNRESET` with 101 fillers | Bulk setup opened too many connections at once | Test defect |
 
-**One failure was not identified.** A single WebKit test failed in one run before failure details were
-being kept, so its cause is unknown. It may be the expired-session race, but that is not established.
-It did not recur in the later runs: 6 Chromium and WebKit runs, 3 runs of everything, and the final
-verification. Treat this as good evidence of stability, not proof that no flakiness exists. Timing on
-other machines and in CI is untested.
+**One failure was not identified.** A single WebKit test failed in one Phase 3 run before failure details were
+being kept. See [the unresolved failure above](#the-intermittent-webkit-failure-unresolved). Timing on other machines and in
+CI is untested.
 
 ## Firefox
 
-**Firefox remains unverified. Nothing here says the app works in Firefox.** The project configuration
-and its tests are unchanged, and none are skipped. Firefox should be tested on Linux in CI in Phase 6.
+**Firefox remains unverified. Nothing here says the app works in Firefox.** The projects are kept and no
+test is skipped. Firefox should be tested on Linux in CI in Phase 6.
 
-Exact failure, for each of the 57 tests, when Playwright launches the browser:
+Exact failure, for each of the 90 tests (58 browser and 32 keyboard), when Playwright launches the browser:
 
 ```
 Error: browserType.launch: Failed to launch the browser process.
@@ -107,7 +149,24 @@ npm run db:start && npm run test:e2e:firefox
 Chromium and WebKit launched normally in the same shell. WebKit here is Playwright's build, which
 reports version 27.2 and downloads as its macOS 26 package. It is close to Safari but is not Safari.
 
-No further macOS workarounds were attempted in Phase 3.
+No further macOS workarounds were attempted in Phases 3 or 4.
+
+## Bugs found in Phase 4
+
+Accessibility defects are listed in [ACCESSIBILITY.md](ACCESSIBILITY.md#defects-found-and-fixed): 10 fixed.
+
+**Application:** the unbounded request queue was measured, and replaced with a bounded one. See [PERFORMANCE.md](PERFORMANCE.md#overload-behaviour).
+
+**Test and framework defects, all fixed:**
+
+- A k6 script logged in with extra fields, so strict validation rejected every login.
+- The overload script retried without pausing. Those runs were discarded.
+- Tests assumed Tab reaches every control in WebKit, which Safari does not do by default.
+- Date fields take several Tab stops, which a filter test had not allowed for.
+- Tests focused controls by script, so they missed two reintroduced bugs.
+- The focus report truncated names, which made one new test always fail. This was noticed because that test failed under every mutation, and it was fixed before relying on those results.
+- Four mutations broke the build, so no tests ran. These were not counted as results, and were redone.
+- Middleware tests hung rather than failed on a broken limit. They now have a time limit.
 
 ## Bugs found in Phase 3
 
@@ -143,6 +202,11 @@ still makes it fail: 99 of 100 requests time out. The 300-request backend test s
 client connects more gradually.
 
 ## Do the tests detect real bugs?
+
+Phase 4 proofs: 17 accessibility and 7 admission-policy bugs were put back, and all were caught. See
+[ACCESSIBILITY.md](ACCESSIBILITY.md#do-the-tests-detect-real-problems) and [PERFORMANCE.md](PERFORMANCE.md#regression-tests-for-the-policy).
+
+The rest of this section is from Phase 3.
 
 Each bug below was temporarily put back, and the service suites listed were run. All 20 were caught, and
 every file was restored and checked afterwards.
@@ -184,8 +248,8 @@ and the final test fixes, and were not repeated afterwards. Bugs outside this li
 
 ## API coverage
 
-Traffic from the service suites reached **all 35 operations and 129 of the 235 documented
-operation-and-status pairs**. A run writes the per-operation table to `reports/contract/coverage.md`.
+In the Phase 3 run, traffic from the service suites reached **all 35 operations and 129 of the 235 documented
+operation-and-status pairs**. Phase 4 added 503 to the spec, which these tests do not trigger through a real overload: the backend suite and k6 do. A run writes the per-operation table to `reports/contract/coverage.md`.
 
 **The other 106 are mostly not real gaps, and this number should not be read as coverage.** FastAPI adds
 400, 401, 403, 404, 409 and 422 to nearly every operation, including ones that cannot occur, such as 409 on
@@ -201,7 +265,7 @@ operation-and-status pairs**. A run writes the per-operation table to `reports/c
 | `tests/api/payments.spec.ts` | 17 | Success, decline, timeout, replay, concurrency, settlement, invalid keys |
 | `tests/api/export.spec.ts` | 4 | Headers, content, filters, formula protection |
 | `tests/api/errors.spec.ts` | 11 | Envelopes, request IDs, invalid bodies, NUL bytes, health |
-| `tests/contract/spec.spec.ts` | 40 | Spec drift, breaking-change rules, the checker itself |
+| `tests/contract/spec.spec.ts` | 41 | Spec drift, breaking-change rules, the checker itself |
 | `tests/contract/operations.spec.ts` | 57 | Every operation's success response, error envelopes, generated invalid requests and queries |
 | `tests/database/persistence.spec.ts` | 35 | Totals, integer cents, inventory, payments, rollback, integrity, audit, isolation |
 | `tests/database/safety.spec.ts` | 9 | Read-only role, no dev access, database name guard |
@@ -220,7 +284,7 @@ The approach for each is in [TEST_STRATEGY.md](TEST_STRATEGY.md).
 | --- | --- | --- |
 | `auth.spec.ts` | 7 | Login, cookie flags, generic errors, server-side logout, expiry, return-to-page, open redirect |
 | `rbac.spec.ts` | 10 | Navigation per role, UI and API refusals, session revocation, customer-scoped Viewer |
-| `orders.spec.ts` | 19 | Totals across UI, API and database, stock races, filters, sort, pagination, CSV, status rules |
+| `orders.spec.ts` | 20 | Totals across UI, API and database, stock races, filters, sort, pagination, CSV, status rules |
 | `payments.spec.ts` | 6 | Approve, decline, timeout, settlement gates, lost-response replay, key reuse |
 | `inventory.spec.ts` | 8 | Search, audited updates, validation, stale edits, focus restoration, low stock |
 | `products.spec.ts` | 7 | Filters, numeric sort, exact cents, duplicates, price history, retirement, dashboard |
@@ -230,10 +294,8 @@ Tags: 14 `@smoke`, 31 `@critical`, and every browser test is `@regression`. A te
 
 ## Backend tests
 
-175 test cases come from 145 test functions. Three functions are parametrized and supply 33 cases, 20 of
-which cover every disallowed order status transition, so the raw count overstates distinct scenarios. New in
-Phase 3: 4 deterministic middleware tests, and regressions for the date overflow, long email, key exposure
-and cursor.
+181 test cases, of which three parametrized functions supply 33, and 20 of those cover every disallowed order status
+transition, so the raw count overstates distinct scenarios. New in Phase 4: deterministic tests of the bounded admission policy.
 
 ## Phase 2 mutation results
 
@@ -272,7 +334,8 @@ Earlier Phase 1 verification, including data surviving a PostgreSQL restart, is 
 
 - **Firefox is unverified,** as described above.
 - **CI has not run.** Timing on a slower machine is untested.
-- **One WebKit failure was not identified,** as described above.
+- **One WebKit failure is unresolved,** as described above.
+- **Accessibility is not proven by these tests.** No screen reader was used. See [ACCESSIBILITY.md](ACCESSIBILITY.md#limitations).
 - **The spec documents statuses that cannot occur,** so the status check is looser than it looks: an
   unexpected 409 on a read would pass it. Specific tests assert exact statuses where they matter.
 - **The spec does not declare cookie authentication or roles.** Authorization expectations live in a policy
@@ -290,10 +353,10 @@ Earlier Phase 1 verification, including data surviving a PostgreSQL restart, is 
 
 **Application**
 
-- **The request queue is unbounded,** to be examined in Phase 4. Under sustained overload, requests wait until
-  the client gives up rather than receiving a fast 503.
-- **More than 128 simultaneous new connections can be reset by the operating system on this machine** before the
-  API accepts them. Phase 4 should measure this on Linux too.
+- **The overload bound refuses requests that a patient client could have waited for.** The trade-off and other
+  limits are in [PERFORMANCE.md](PERFORMANCE.md#limitations).
+- **More than about 128 simultaneous new connections can be reset by the operating system on this machine** before the
+  API accepts them. Linux has not been measured.
 - **List pages use offset pagination.** Turning pages while data changes can repeat or skip a row on screen. Only
   the order form's full read uses the cursor.
 - **No login rate limiting or lockout.** Failed logins are audited but not throttled, so the audit table can grow.

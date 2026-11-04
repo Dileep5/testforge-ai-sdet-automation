@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { ApiError, patch, post, query, request, type AuditEntry, type Page, type Role, type UserRow } from "../api";
 import { useAuth } from "../auth";
 import { Field } from "../components/Field";
+import { useFocusFirstInvalid } from "../focus";
 import { Pagination, TableWrap } from "../components/Grid";
 import { Modal } from "../components/Modal";
 import { EmptyState, ErrorState, Loading } from "../components/States";
@@ -111,6 +112,7 @@ export function UsersPage() {
 
 function NewUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: (user: UserRow) => void }) {
   const [form, setForm] = useState({ email: "", full_name: "", password: "", role: "VIEWER" });
+  const { formRef, focusFirstInvalid } = useFocusFirstInvalid();
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string>();
   const [busy, setBusy] = useState(false);
@@ -126,9 +128,13 @@ function NewUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy) return;
     setSubmitted(true);
     setError(undefined);
-    if (Object.values(found).some(Boolean)) return;
+    if (Object.values(found).some(Boolean)) {
+      focusFirstInvalid();
+      return;
+    }
     setBusy(true);
     try {
       onCreated(await post<UserRow>("/users", form));
@@ -140,7 +146,7 @@ function NewUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
 
   return (
     <Modal title="New user" onClose={onClose} testId="new-user-modal">
-      <form onSubmit={submit} noValidate>
+      <form ref={formRef} onSubmit={submit} noValidate>
         <Field label="Email" error={errors.email}>
           <input type="email" autoComplete="off" value={form.email} onChange={set("email")} />
         </Field>
@@ -168,7 +174,7 @@ function NewUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
           <button type="button" className="button" onClick={onClose}>
             Cancel
           </button>
-          <button type="submit" className="button button-primary" disabled={busy}>
+          <button type="submit" className="button button-primary" aria-disabled={busy}>
             {busy ? "Creating…" : "Create user"}
           </button>
         </div>

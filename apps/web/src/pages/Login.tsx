@@ -1,8 +1,9 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Navigate, useLocation, useSearchParams } from "react-router-dom";
 import { ApiError } from "../api";
 import { useAuth } from "../auth";
 import { Field } from "../components/Field";
+import { useFocusFirstInvalid } from "../focus";
 
 /** Only follow same-site paths, so a crafted ?next= link cannot redirect off the site. */
 function safeNext(value: string | null): string {
@@ -18,6 +19,13 @@ export function LoginPage() {
   const [error, setError] = useState<string>();
   const [submitted, setSubmitted] = useState(false);
   const [busy, setBusy] = useState(false);
+  const { formRef, focusFirstInvalid } = useFocusFirstInvalid();
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  // A rejected sign-in clears the password, which is what the user needs to retype.
+  useEffect(() => {
+    if (error) passwordRef.current?.focus();
+  }, [error]);
 
   if (user) {
     const from = (location.state as { from?: string } | null)?.from;
@@ -33,9 +41,13 @@ export function LoginPage() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy) return;
     setSubmitted(true);
     setError(undefined);
-    if (!email.trim() || !password) return;
+    if (!email.trim() || !password) {
+      focusFirstInvalid();
+      return;
+    }
     setBusy(true);
     try {
       await login(email.trim(), password);
@@ -69,19 +81,20 @@ export function LoginPage() {
             {error}
           </div>
         )}
-        <form onSubmit={submit} noValidate>
+        <form ref={formRef} onSubmit={submit} noValidate>
           <Field label="Email" error={errors.email}>
             <input type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} />
           </Field>
           <Field label="Password" error={errors.password}>
             <input
+              ref={passwordRef}
               type="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </Field>
-          <button type="submit" className="button button-primary button-block" disabled={busy}>
+          <button type="submit" className="button button-primary button-block" aria-disabled={busy}>
             {busy ? "Signing in…" : "Sign in"}
           </button>
         </form>
