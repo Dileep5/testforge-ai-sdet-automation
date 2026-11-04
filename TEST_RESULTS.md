@@ -7,6 +7,8 @@ PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 
 
 ## Latest verified evidence
 
+**This is the latest fully green CI run. [A later run](#latest-ci-run-one-job-stopped-before-testing) passed every test it ran, but one job stopped during setup.**
+
 **Verified, from GitHub Actions on Ubuntu 24.04 runners with 2 cores, at commit `3c1a6fd1d9b2c989d6e5c89162101de11232130e`, with retries off.**
 
 [CI run 41910311071](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41910311071): **14 of 14 jobs succeeded**, including the final gate, in 16m 34s and about 56 job minutes.
@@ -32,8 +34,29 @@ PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 
 - **Two fully green CI runs and one soak, on one day,** do not show long-term stability.
 - **The historical macOS WebKit input failure remains unexplained.** It did not recur, but the soak used a different WebKit build, on a different operating system, and a WebKit-only suite.
 - **The sanitizer's latest fix has been verified locally only.** It runs only when a test fails, and no GitHub run has failed since it was pushed.
-- **A slow Ubuntu package mirror nearly stopped the soak.** One job spent 33.8 minutes in setup, and finished at 44.8 of its 45-minute limit, through infrastructure rather than tests. See [CI_CD.md](CI_CD.md#browser-install-reliability). A mitigation is prepared, and **has not run on GitHub.**
+- **A slow Ubuntu package mirror nearly stopped the soak.** One job spent 33.8 minutes in setup, and finished at 44.8 of its 45-minute limit, through infrastructure rather than tests. [A later run failed from the same cause](#latest-ci-run-one-job-stopped-before-testing), with a limit now in place. See [CI_CD.md](CI_CD.md#browser-install-reliability).
 - **The first attempt at a soak ran no tests.** It failed at startup, with `Unexpected value '5'` at the two `repeat-each` inputs, because a manual input reached a `type: number` input as a string. Wrapping each in `fromJSON` fixed it, as the run above shows.
+
+## Latest CI run: one job stopped before testing
+
+[Run 41928911349](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41928911349), commit `550146d`, took 18m 34s and about 60 job minutes. **It failed: 12 of 14 jobs succeeded.** The Accessibility job's browser install hit the 15-minute limit, because of a slow package mirror, so **its 148 native tests did not run**, and the final gate failed. No test failed.
+
+| Suite | Passed | Failed | Skipped | Flaky |
+| --- | --- | --- | --- | --- |
+| Backend, 97% coverage | 197 | 0 | 0 | n/a |
+| AI | 374 | 0 | 0 | n/a |
+| Chromium, plus framework | 67 + 6 | 0 | 0 | 0 |
+| Firefox | 67 | 0 | 0 | 0 |
+| WebKit | 67 | 0 | 0 | 0 |
+| API 154, contract 100 | 254 | 0 | 0 | 0 |
+| PostgreSQL 44, security 114, reliability 5 | 163 | 0 | 0 | 0 |
+| Docker, including the same 82 accessibility and 66 keyboard tests | 672 | 0 | 0 | 0 |
+| **Native accessibility and keyboard** | **Did not run** | | | |
+| Performance gates | 22 of 22 | 0 | | |
+
+The same 114 MB of packages took **8 seconds on the WebKit job, and over 15 minutes on the Accessibility job**, which fetched 55 of 181. Two of the 22 browser installs in CI so far have hit a mirror this slow, so it is not rare. The limit worked as designed, and stopped that job about 15 minutes in with a clear error.
+
+The run also showed flaws in the mitigation, now fixed locally, and **not yet run on GitHub**. See [CI_CD.md](CI_CD.md#browser-install-reliability).
 
 ## Summary
 
@@ -207,7 +230,8 @@ No application defect was found. Normal-load Linux p95: health 30.5 ms, products
 | Item | Status |
 | --- | --- |
 | Sanitizer fix on GitHub | **Not exercised**, because nothing has failed since. Verified locally. `sanitizer-self-test.yml` is ready, and has not been run |
-| Browser install mitigation | **Prepared, and has not run on GitHub** |
+| Browser install mitigation | **First version ran on GitHub, and needed fixes. The fixed version has not run** |
+| Sanitizer self-test workflow | **Not run** |
 | Live LLM evaluation | **Not run** |
 
 ## CI simulation on macOS

@@ -359,3 +359,5 @@ An audit for public release added the MIT `LICENSE` and rewrote the README, and 
 
 Further local work added a payment form that recovers from every failure, CI concurrency that keeps every result for `main`, static checks for the repository's scripts, `SECURITY.md`, and a sanitizer self-test workflow. The workflow has not been run.
 
+[Run 41928911349](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41928911349) passed every test it ran, but a slow package mirror stopped the Accessibility job's install at the new 15-minute limit. Flaws in the cache design were then fixed locally, and that version has not run on GitHub.
+

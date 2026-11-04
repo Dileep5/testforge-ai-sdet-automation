@@ -79,9 +79,24 @@ A newer push replaces an unfinished run on the same pull request, because only t
 
 **What changed:** `scripts/install-browsers.sh` keeps downloaded `.deb` files in a cached folder, retries failed downloads, stops after 15 minutes (`BROWSER_INSTALL_LIMIT_MINUTES`) with a clear error, and logs how many packages were cached and how long it took. The save happens straight after install, so a later test failure does not lose the download. No test, count, retry or gate changed.
 
-**Status: not yet verified on GitHub.** Its logic is tested locally against stand-ins for `sudo`, `timeout` and Playwright, and the workflow passes `actionlint`, but apt has not run through it on Linux. On the next run, look for `Package cache: N packages` in each browser job's log. The first run of each browser list fills the cache, and later runs should show packages before installing.
+**What [the first real run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41928911349) showed:**
 
-**Remaining risk:** a slow mirror on a cache miss now fails at 15 minutes, as a clear red. That still needs someone to run it again.
+| Observation | Result |
+| --- | --- |
+| The limit | Worked: stopped at 900 seconds, with an error that named the likely cause |
+| A normal install | 20 to 36 seconds |
+| The slow mirror | Recurred. 114 MB took 8 seconds on one job, and over 15 minutes on another |
+| Saving the cache | Worked on 3 jobs |
+| Cache key | **Flaw:** `env.ImageOS` is empty in a composite action, so the OS was missing from the key |
+| Separate caches per browser list | **Flaw:** the Accessibility job could not reuse WebKit's identical packages |
+| Key tied to the whole lock file | **Flaw:** any dependency change emptied the cache |
+| After a failed install | **Flaw:** the sanitize and upload steps also failed, burying the cause |
+
+**Fixed, and not yet run on GitHub:** every job now installs the system packages for all browsers, so the set is the same everywhere, and one cache serves every job. The key is the OS image plus Playwright's version, such as `apt-ubuntu24-1.64.1`. The later steps now report that there is nothing to publish. Tests of the script's logic and `actionlint` pass locally, but apt has not run through this version.
+
+**What to expect:** the first run after these changes still downloads, because the key is new, so a slow mirror can still fail it with a clear error. Once any job succeeds, later runs should show about 180 packages before installing. Look for `Package cache: N packages` in the logs.
+
+**If the slow mirror remains a problem,** the next step is running native jobs in the pinned Playwright image.
 
 ## Artifact retention
 
