@@ -7,6 +7,7 @@ name = "testforge-ai-tools"
 version = "0.1.0"
 description = "AI test generation, FAQ chatbot, LLM evaluation and failure triage for TestForge"
 requires-python = ">=3.12"
+license = "MIT"
 
 [project.scripts]
 testforge-ai = "testforge_ai.cli:main"
