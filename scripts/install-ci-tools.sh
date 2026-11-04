@@ -48,7 +48,7 @@ verify "$HL" hl.txt
 install -m 0755 "$WORK/$HL" "$DIR/hadolint"
 
 python3 -m venv "$DIR/pip-audit-env"
-"$DIR/pip-audit-env/bin/pip" install --quiet --upgrade pip
+"$DIR/pip-audit-env/bin/pip" install --quiet "pip==26.3"
 "$DIR/pip-audit-env/bin/pip" install --quiet "pip-audit==$PIP_AUDIT"
 ln -sf "$DIR/pip-audit-env/bin/pip-audit" "$DIR/pip-audit"
 ls "$DIR"

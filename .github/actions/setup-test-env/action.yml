@@ -30,10 +30,26 @@ runs:
       with:
         path: ~/.cache/ms-playwright
         key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ inputs.browsers }}
-    - name: Install browsers and their system dependencies
+    - name: Restore system packages
+      id: apt-cache
+      if: inputs.browsers != ''
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.cache/apt-archives
+        key: apt-${{ runner.os }}-${{ env.ImageOS }}-${{ inputs.browsers }}-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          apt-${{ runner.os }}-${{ env.ImageOS }}-${{ inputs.browsers }}-
+    - name: Install browsers and their system packages, within a time limit
       if: inputs.browsers != ''
       shell: bash
       env:
         BROWSERS: ${{ inputs.browsers }}
       # BROWSERS is a list, so it is split into words on purpose.
-      run: npx playwright install --with-deps $BROWSERS
+      run: bash scripts/install-browsers.sh $BROWSERS
+    # Saved here, not at the end of the job, so a later test failure does not lose the download.
+    - name: Save system packages
+      if: inputs.browsers != '' && steps.apt-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.cache/apt-archives
+        key: ${{ steps.apt-cache.outputs.cache-primary-key }}
