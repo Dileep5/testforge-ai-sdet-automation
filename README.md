@@ -2,7 +2,7 @@
 
 An enterprise SDET and test automation portfolio project, built around a real application under test.
 
-> **Status: Phases 1 to 6 of 7 built. [The first GitHub Actions run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41883893976) failed on 3 of 14 jobs, and fixes are not yet pushed.** All Playwright, backend and AI suites passed on Linux, including Firefox for the first time. The suites have not run in Docker. One WebKit failure is unresolved. No live LLM has been called. See [TEST_RESULTS.md](TEST_RESULTS.md#first-github-actions-run), [CI_CD.md](CI_CD.md), [DOCKER.md](DOCKER.md) and [AI_EVALUATION.md](AI_EVALUATION.md).
+> **Status: Phases 1 to 6 of 7 built, and the CI gate has not yet passed.** In [the latest GitHub Actions run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41893657050), every native Linux suite passed, including Firefox. Only Docker failed, with 643 passed and 20 failed, and those fixes are not yet pushed. They include a real payment bug on plain HTTP. One WebKit failure is unresolved. No live LLM has been called. See [TEST_RESULTS.md](TEST_RESULTS.md#second-github-actions-run), [CI_CD.md](CI_CD.md), [DOCKER.md](DOCKER.md) and [AI_EVALUATION.md](AI_EVALUATION.md).
 
 ## The application
 
@@ -77,7 +77,7 @@ against its own database and ports, so it does not touch development data.
 | `npm run test:ai`, `npm run lint:ai` | AI tests and lint, offline with no key. See [AI_TESTING.md](AI_TESTING.md) |
 | `npm run ai:eval`, `npm run ai:eval:heldout` | Chatbot evaluation. See [AI_EVALUATION.md](AI_EVALUATION.md) |
 | `npm run ai:triage:corpus` | Run deliberately failing tests, then classify them. Failures are expected |
-| `npm run docker:up`, `docker:smoke`, `docker:test` | Docker stacks. **Suites not yet run in Docker.** See [DOCKER.md](DOCKER.md) |
+| `npm run docker:up`, `docker:smoke`, `docker:test` | Docker stacks. No green run yet. See [DOCKER.md](DOCKER.md) |
 | `npm run ci:tools`, `ci:policy` | Install pinned scanners, and check the CI and Docker rules. See [CI_CD.md](CI_CD.md) |
 | `npm run typecheck` | Strict type check of the frontend and framework |
 | `npm run lint` / `npm run lint:backend` | ESLint / Ruff |

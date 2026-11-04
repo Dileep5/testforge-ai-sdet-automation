@@ -1,6 +1,6 @@
 # CI/CD
 
-**Status: the first GitHub Actions run failed, on 3 of 14 jobs, so the final gate is red.** All Playwright, backend and AI suites passed on Linux, including Firefox. Fixes for all 3 are committed locally and **not yet pushed, so they have not run on GitHub.** The full results of [run 41883893976](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41883893976), at commit `2ad4bf0`, are in [TEST_RESULTS.md](TEST_RESULTS.md#first-github-actions-run).
+**Status: two runs so far, and the final gate has not passed.** In [the second run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41893657050), at `86a8843`, 12 of 14 jobs succeeded, and all native Linux suites passed, including Firefox. Only the Docker job failed, with 643 passed and 20 failed. Fixes are committed locally, and are **not pushed.** Results are in [TEST_RESULTS.md](TEST_RESULTS.md#second-github-actions-run).
 
 ## Jobs
 
@@ -14,9 +14,9 @@
 | `ai` | Ruff, AI pytest, offline evaluation against the baseline | pytest's own result |
 | `api-contract` | `api`, `contract` | 254 |
 | `database-security` | `database`, `security`, `reliability` | 163 |
-| `chromium` | `framework`, `chromium` | 70 |
-| `firefox` | `firefox` | 64 |
-| `webkit` | `webkit` | 64 |
+| `chromium` | `framework`, `chromium` | 71 |
+| `firefox` | `firefox` | 65 |
+| `webkit` | `webkit` | 65 |
 | `accessibility` | `accessibility`, `keyboard-webkit`, `keyboard-firefox` | 148 |
 | `performance` | Short k6 runs with gates | k6 thresholds |
 | `docker` | Build, startup and persistence check, suites in the test stack | 500 |
@@ -82,6 +82,7 @@ Locally, the run ID is a timestamp plus the process ID. In CI it names the job. 
 | By structure | Cookie arrays, sensitive headers, password keys, JSON request bodies, values filled into password fields, password inputs in DOM snapshots |
 | By value | Each secret found is replaced everywhere else in the trace, including bundled source |
 | Check afterwards | A trace that still holds a secret is **dropped and reported**, not published |
+| Text or binary | Decided by content, because real traces hold text with no file extension |
 
 **Retention:** failure evidence 14 days, soak evidence 30 days, measurements 14 or 30 days. Locally, `npm run reports:prune` keeps the newest 20 runs and anything from the last 14 days. It never removes a run with failures unless given `--include-failed`.
 
@@ -120,7 +121,7 @@ The repository is private, at `Dileep5/testforge-ai-sdet-automation`, and pushes
 
 ## Limitations
 
-- **One run so far,** so rare or timing-related Linux failures may not have appeared. The Docker test stack, and the sanitized failure upload on GitHub, have not run yet.
+- **Two runs so far,** so rare or timing-related Linux failures may not have appeared. The sanitized upload has run once on GitHub, before its latest fix.
 - **The `min-tests` numbers need updating** when tests are added or removed, and this is deliberate.
 - **`pip-audit` uses `--no-deps`,** because the lock files are unhashed. It checks exactly what is listed in them.
 - **Shared runners vary,** so performance limits in CI are loose. See [PERFORMANCE.md](PERFORMANCE.md#quality-gates).

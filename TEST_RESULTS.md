@@ -3,7 +3,7 @@
 Only results from commands that were actually run are recorded here.
 
 **Last updated:** 2026-11-04, Phase 6. **Environment:** macOS 27.0.1 (arm64, MacBook Air M3, 8 GB), Python 3.13.5, Node 24.3.0,
-PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). **Results are from macOS unless marked Linux. Linux results are from one GitHub Actions run, below. No live LLM has been called.**
+PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 3.45.0 (against a local fake server only). **Results are from macOS unless marked Linux. Linux results are from two GitHub Actions runs, below. No live LLM has been called.**
 
 ## Summary
 
@@ -12,8 +12,8 @@ Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass o
 | Suite | Command | Passed | Failed | Skipped | Flaky |
 | --- | --- | --- | --- | --- | --- |
 | Backend (pytest, real PostgreSQL) | `npm run test:backend` | **197** | 0 | 0 | n/a |
-| Playwright Chromium 156 | `npx playwright test --project=chromium` | **64** | 0 | 0 | 0 |
-| Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **64** | 0 | 0 | 0 |
+| Playwright Chromium 156 | `npx playwright test --project=chromium` | **65** | 0 | 0 | 0 |
+| Playwright WebKit 27.2 | `npm run test:e2e:webkit` | **65** | 0 | 0 | 0 |
 | Playwright Firefox 157, macOS | `npm run test:e2e:firefox` | **0** | 64 at launch, no test body ran | 0 | 0 |
 | Playwright Firefox 157, **Linux CI** | CI `firefox` job | **64** | 0 | 0 | 0 |
 | Framework self-checks | `npx playwright test --project=framework` | 6 | 0 | 0 | 0 |
@@ -25,7 +25,7 @@ Every Playwright run used `E2E_RETRIES=0` and 4 workers, so nothing could pass o
 | PostgreSQL validation | `npm run test:db` | **44** | 0 | 0 | 0 |
 | Security regression | `npm run test:security` | **114** | 0 | 0 | 0 |
 | Reliability | `npm run test:reliability` | **5** | 0 | 0 | 0 |
-| AI package (pytest, offline) | `npm run test:ai` | **350** | 0 | 0 | n/a |
+| AI package (pytest, offline) | `npm run test:ai` | **353** | 0 | 0 | n/a |
 
 These counts include generated cases, which overstate distinct scenarios. Accessibility and keyboard detail is in
 [ACCESSIBILITY.md](ACCESSIBILITY.md).
@@ -36,7 +36,7 @@ These counts include generated cases, which overstate distinct scenarios. Access
 | TypeScript strict type check (frontend and framework) | Passed |
 | ESLint and Ruff (API and AI package) | Passed, 0 warnings |
 | Frontend production build | Passed |
-| HTML and JUnit reports | Generated (JUnit: 666 tests, 0 failures, 0 skipped, 0 errors) |
+| HTML and JUnit reports | Generated (JUnit: 668 tests, 0 failures, 0 skipped, 0 errors) |
 | axe-core | 41 screen states, 0 violations, no rule disabled |
 | k6 scenarios, with thresholds | All 7 ran and passed their gates. See [PERFORMANCE.md](PERFORMANCE.md#quality-gates) |
 | Offline chatbot evaluation | Held-out correctness 12/23, refusal recall 41/43. See [AI_EVALUATION.md](AI_EVALUATION.md) |
@@ -49,7 +49,7 @@ These counts include generated cases, which overstate distinct scenarios. Access
 | `npm audit --omit=dev` | No known vulnerabilities |
 | `npm audit` including dev tools | 13 moderate (see limitations) |
 
-**Never run, so no results exist:** the Playwright suites in Docker, repeated Linux WebKit runs, live LLM evaluation.
+**Never run, so no results exist:** a green Docker run, repeated Linux WebKit runs, live LLM evaluation.
 
 ## First GitHub Actions run
 
@@ -84,12 +84,54 @@ No application defect was found. Normal-load Linux p95: health 30.5 ms, products
 
 **Artifacts and logs:** only 2 artifacts were uploaded, with 9 JSON files in total, because no test failed. No trace, screenshot, video or HTML report was uploaded, so **the sanitized failure upload has not yet been exercised on GitHub.** Scans of those files and all job logs found 0 seed passwords, session cookies, keys, tokens, authorization headers or passwords in database URLs. gitleaks found nothing in the artifacts. Artifacts expire on 2026-11-18.
 
+## Second GitHub Actions run
+
+[Run 41893657050](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41893657050), commit `86a8843`, 18m 10s from start to finish, about 62 job minutes. **It failed: 12 of 14 jobs succeeded. Only the Docker job failed, which also failed the final gate.** The suites ran in Docker for the first time.
+
+| Native Linux job | Passed | Failed | Skipped | Flaky |
+| --- | --- | --- | --- | --- |
+| Backend | 197 | 0 | 0 | n/a |
+| AI | 350 | 0 | 0 | n/a |
+| Chromium, plus framework | 64 + 6 | 0 | 0 | 0 |
+| Firefox | 64 | 0 | 0 | 0 |
+| WebKit | 64 | 0 | 0 | 0 |
+| Accessibility 82, keyboard Firefox 33, keyboard WebKit 33 | 148 | 0 | 0 | 0 |
+| API 154, contract 100 | 254 | 0 | 0 | 0 |
+| PostgreSQL 44, security 114, reliability 5 | 163 | 0 | 0 | 0 |
+| Performance | 22 of 22 gates, with recovery at `rate==0` and 0 errors in 475 requests | | | |
+
+| In Docker, 2 workers, retries off | Passed | Failed |
+| --- | --- | --- |
+| Framework | 6 | 0 |
+| Chromium | 60 | 4 |
+| Firefox | 60 | 4 |
+| WebKit | 60 | 4 |
+| Accessibility | 79 | 3 |
+| Keyboard Firefox | 31 | 2 |
+| Keyboard WebKit | 31 | 2 |
+| API | 154 | 0 |
+| PostgreSQL | 44 | 0 |
+| Security | 113 | 1 |
+| Reliability | 5 | 0 |
+| **Total of 663** | **643** | **20** |
+
+0 skipped and 0 flaky. The runner exited non-zero, and the job step exited 1. The `contract` project does not run in Docker.
+
+| Failure | Cause | Type | Fix |
+| --- | --- | --- | --- |
+| 19 payment tests, in all browsers | **`crypto.randomUUID` does not exist on plain HTTP away from localhost, so the Run payment button threw and sent nothing.** Only Docker's `http://web:8080` exposed it | **Application bug** | Generate the key with `crypto.getRandomValues`, which works everywhere. A new test failed before the fix and passes after |
+| 1 security test | It hard-coded `http://localhost:5273` as the app's origin | Test defect | Use the configured origin |
+| 19 of 20 sanitized traces dropped | Error context in a trace is stored with no file extension, so it was treated as binary. It held a source excerpt with a seed password, so the leak check dropped the trace | Sanitizer. It failed safe, but lost evidence | Detect text by content. All 6 traces from 4 real local runs were then kept, with 0 credential hits |
+
+**The fixes are local, and have not run on GitHub.**
+
+**Artifacts:** `failure-docker-41893657050-1`, 18.2 MB, was the first real sanitized upload, with 20 error contexts, 19 screenshots, 38 videos and 1 trace, and no HTML report or raw `test-results`. A scan of its contents, inside the trace too, and of all job logs and other artifacts found 0 seed passwords, session cookies, keys, tokens, authorization headers or database passwords. It found **1 synthetic test password** (`E2E-Long-Password-1`) in the one kept trace, a test value that is already in this repository. The same fix covers it. Screenshots and videos were not reviewed one by one. Artifacts expire on 2026-11-18.
+
 ## Status of what remains
 
 | Item | Status |
 | --- | --- |
-| Playwright suites in Docker | **Not run.** Fix ready, and awaiting approval to push |
-| Fixes for the 3 failed jobs | Committed locally, **not on GitHub** |
+| Playwright suites in Docker | Ran: 643 passed, 20 failed. Fixes are local, and awaiting approval to push |
 | Repeated Linux WebKit runs | **Not run**, as instructed. `webkit-soak.yml` is ready |
 
 ## CI simulation on macOS
@@ -158,7 +200,7 @@ comparison are in [PERFORMANCE.md](PERFORMANCE.md).
 
 | Run | Workers | Passed | Failed | Skipped | Flaky | Duration |
 | --- | --- | --- | --- | --- | --- | --- |
-| Everything except Firefox, together, after all fixes | 4 | 666 | 0 | 0 | 0 | 2.2m |
+| Everything except Firefox, together, latest | 4 | 668 | 0 | 0 | 0 | 1.7m |
 | Everything except Firefox, together, before the keep-alive fix | 8 | 666 | 0 | 0 | 0 | 3.8m |
 | WebKit, Chromium, API and security together, 3 times, before the fix | 8 | 396 each | 0 | 0 | 0 | 2.0 to 3.5m |
 | WebKit, each test 5 times, before the fix | 4 | 318 | **2** | 0 | 0 | 5.0m |
@@ -461,7 +503,7 @@ Earlier Phase 1 verification, including data surviving a PostgreSQL restart, is 
 **Testing**
 
 - **Firefox is unverified,** as described above.
-- **CI has run once, and its gate is red.** The suites have not run in Docker. See [the first run](#first-github-actions-run).
+- **CI has run twice, and its gate is still red,** because of Docker failures whose fixes are not pushed. See [the second run](#second-github-actions-run).
 - **One WebKit failure is unresolved,** as described above.
 - **No live LLM has been called.** Offline chatbot results measure keyword retrieval and rules, and it scored 0/8 on held-out paraphrases. See [AI_EVALUATION.md](AI_EVALUATION.md#limitations).
 - **Accessibility is not proven by these tests.** No screen reader was used. See [ACCESSIBILITY.md](ACCESSIBILITY.md#limitations).

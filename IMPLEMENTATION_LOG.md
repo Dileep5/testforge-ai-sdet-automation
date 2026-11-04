@@ -349,3 +349,7 @@ Listed in [TEST_RESULTS.md](TEST_RESULTS.md#bugs-found-in-phase-6). The main one
 - `hadolint` was never run before the push, because I wrongly said it had no macOS arm64 build. It has one.
 - The first SSH check added GitHub's host key to `~/.ssh/known_hosts`.
 
+### Second CI checkpoint (2026-11-04)
+
+The 4 approved commits were pushed as `86a8843`. [Run 41893657050](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41893657050) passed 12 of 14 jobs. The suites ran in Docker for the first time, with 643 passed and 20 failed. This found the **first application bug since Phase 4**: payments could not run on plain HTTP away from localhost. The fixes are committed locally, and are not pushed. Details are in [TEST_RESULTS.md](TEST_RESULTS.md#second-github-actions-run).
+

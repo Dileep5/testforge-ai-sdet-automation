@@ -1,14 +1,15 @@
 # Docker
 
-**Status: images build on Linux, and the application stack is verified. The test stack is not.** Docker is not installed on the development machine, so this comes only from the `docker` job in [the first GitHub Actions run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41883893976).
+**Status: images build, and the application stack is verified on Linux. The test suites have run in Docker, with 643 passed and 20 failed. Fixes for those failures are local, and have not run.** Docker is not installed on the development machine, so this comes only from [the second GitHub Actions run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41893657050).
 
 | Check | Result on GitHub, ubuntu-24.04 |
 | --- | --- |
 | API, web and runner images | Built |
-| Application stack starts healthy, with `up --wait` and a one-shot `migrate` | Passed |
-| Migrations and seeding | Passed |
+| Application stack healthy, with `up --wait` and a one-shot `migrate` | Passed |
+| Migrations and seeding | Passed: the API only starts after `migrate` succeeds, and the seeded admin signed in |
 | A record survives `down` and `up`, keeping the volume | Passed |
-| **Playwright suites in the test stack** | **Did not run.** `--abort-on-container-exit` stopped the stack as soon as `migrate` exited. Fixed locally in `docker-test.sh`, which cannot be tested without Docker, so it is unverified until the next run |
+| Test stack healthy | Passed |
+| Playwright suites in the test stack | 643 passed, **20 failed**. See [TEST_RESULTS.md](TEST_RESULTS.md#second-github-actions-run) |
 
 The Dockerfiles pass `hadolint` locally, with one suppressed note: `USER pwuser` is named by the base image, which documents no fixed numeric id.
 
@@ -61,6 +62,7 @@ The `contract` project is **not** in the Docker test run, because its breaking-c
 
 ## Limitations
 
-- **The test stack is unverified**, as stated above.
+- **No green Docker run yet,** as stated above.
+- **Plain HTTP:** the stack serves `http://web:8080`, which is not a secure context. This found a real bug, and is a useful difference from localhost.
 - **This is not a production deployment.** There is no TLS, `APP_ENV` is `development`, and the seed accounts have published passwords. `SEED_MODE` must be `none` anywhere real.
 - **Digest pins go stale.** Dependabot would propose updates, but it is temporarily off, and has never run. See [CI_CD.md](CI_CD.md#security).
