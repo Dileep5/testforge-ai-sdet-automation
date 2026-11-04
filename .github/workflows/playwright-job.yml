@@ -16,7 +16,7 @@ on:
         required: false
         default: ""
       min-tests:
-        description: The run fails if fewer tests than this passed, so a lost suite cannot look green.
+        description: Tests that must pass per repeat, so that a lost suite cannot look green.
         type: number
         required: true
       repeat-each:
@@ -85,7 +85,8 @@ jobs:
       - name: Check counts
         env:
           MIN_TESTS: ${{ inputs.min-tests }}
-        run: npm run -s reports:check -- --min-tests "$MIN_TESTS"
+          REPEAT_EACH: ${{ inputs.repeat-each }}
+        run: npm run -s reports:check -- --min-tests "$((MIN_TESTS * REPEAT_EACH))"
       # Raw reports hold cookies and passwords, so only the sanitized copy is ever uploaded.
       - name: Make a public copy of the failure evidence
         if: failure()

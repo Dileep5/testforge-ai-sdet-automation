@@ -20,19 +20,19 @@ jobs:
       name: webkit-soak-2-workers
       projects: webkit
       browsers: webkit
-      min-tests: 64
-      repeat-each: ${{ inputs.repeat-each }}
+      min-tests: 65
+      repeat-each: ${{ fromJSON(inputs.repeat-each) }}
       workers: 2
       retention-days: 30
 
-  # Runners have about 4 cores, so 4 workers is the pressure closest to the original failure.
+  # Runners have 2 cores, so 4 workers deliberately oversubscribes them, as the original failure did.
   soak-4-workers:
     uses: ./.github/workflows/playwright-job.yml
     with:
       name: webkit-soak-4-workers
       projects: webkit
       browsers: webkit
-      min-tests: 64
-      repeat-each: ${{ inputs.repeat-each }}
+      min-tests: 65
+      repeat-each: ${{ fromJSON(inputs.repeat-each) }}
       workers: 4
       retention-days: 30
