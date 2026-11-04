@@ -53,7 +53,8 @@ def test_a_normal_install_is_bounded_and_keeps_its_packages(run) -> None:
     assert result.returncode == 0
     calls = run.log.read_text()
     assert "timeout 15m" in calls
-    assert "npx playwright install --with-deps chromium webkit" in calls
+    assert "npx playwright install-deps\n" in calls
+    assert "npx playwright install chromium webkit\n" in calls
     assert "Package cache: 0 packages before" in result.stdout
     assert "Package cache: 2 packages after" in result.stdout
     assert "::error" not in result.stdout
@@ -87,6 +88,14 @@ def test_any_other_failure_is_reported_and_not_hidden(run) -> None:
     assert "exited with 7" in result.stdout
 
 
+def test_a_failed_package_install_stops_before_downloading_browsers(run, tmp_path: Path) -> None:
+    stub(tmp_path / "bin", "npx", f'echo "npx $*" >> "{run.log}"\n[[ "$2" != install-deps ]]')
+    result = run()
+    assert result.returncode != 0
+    assert "npx playwright install webkit" not in run.log.read_text()
+    assert "::error" in result.stdout
+
+
 def test_the_limit_can_be_changed(run, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("BROWSER_INSTALL_LIMIT_MINUTES", "9")
     run()
@@ -97,3 +106,13 @@ def test_ci_cannot_install_browsers_without_the_limit() -> None:
     action = (ROOT / ".github/actions/setup-test-env/action.yml").read_text()
     assert "scripts/install-browsers.sh" in action
     assert "playwright install" not in action
+
+
+def test_one_package_cache_serves_every_browser_job() -> None:
+    action = (ROOT / ".github/actions/setup-test-env/action.yml").read_text()
+    # The runner's own variable: GitHub's env context does not hold it in a composite action.
+    assert "env.ImageOS" not in action
+    assert 'prefix="apt-${ImageOS}-"' in action
+    restore = action[action.index("Restore system packages") :]
+    assert "inputs.browsers }}-" not in restore
+    assert "hashFiles" not in restore

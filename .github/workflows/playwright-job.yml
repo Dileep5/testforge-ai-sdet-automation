@@ -90,7 +90,12 @@ jobs:
       # Raw reports hold cookies and passwords, so only the sanitized copy is ever uploaded.
       - name: Make a public copy of the failure evidence
         if: failure()
-        run: npm run -s reports:sanitize -- --run-dir "reports/runs/${TESTFORGE_RUN_ID}" --out "reports/sanitized/${TESTFORGE_RUN_ID}"
+        run: |
+          if [ -d "reports/runs/${TESTFORGE_RUN_ID}" ]; then
+            npm run -s reports:sanitize -- --run-dir "reports/runs/${TESTFORGE_RUN_ID}" --out "reports/sanitized/${TESTFORGE_RUN_ID}"
+          else
+            echo "The suites did not produce a report, so there is nothing to publish."
+          fi
       - name: Upload failure evidence
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -98,4 +103,4 @@ jobs:
           name: failure-${{ inputs.name }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: reports/sanitized/${{ inputs.name }}
           retention-days: ${{ inputs.retention-days }}
-          if-no-files-found: error
+          if-no-files-found: warn
