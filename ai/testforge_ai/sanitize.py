@@ -26,16 +26,12 @@ _SENSITIVE_KEYS = re.compile(
     r"session_token|authorization|cookie)$",
     re.IGNORECASE,
 )
-# Traces also bundle the test's source files, which name the synthetic accounts' passwords.
-_TEXT_MEMBER = (
-    ".trace", ".network", ".stacks", ".json", ".html", ".md", ".txt", ".xml",
-    ".ts", ".tsx", ".js", ".mjs", ".cjs", ".css", ".py",
-)  # fmt: skip
 _LEAK = re.compile(
     rb"testforge_session=(?!\[REDACTED)[A-Za-z0-9_-]{8,}|"
     rb"\"password\\*\"\s*:\s*\\*\"(?!\[REDACTED)[^\"\\]+|"
     rb"\bsk-[A-Za-z0-9_-]{16,}|"
-    rb"(?:Admin|Manager|Viewer)!Forge2026"
+    rb"(?:Admin|Manager|Viewer)!Forge2026|"
+    rb"E2E-Long-Password|E2E-Passw0rd|Perf-Synthetic-Passw0rd|A-Long-Enough-Passw0rd"
 )
 _COPIED_SUFFIXES = {".png", ".jpeg", ".jpg", ".webm", ".md", ".txt", ".json", ".xml"}
 
@@ -113,6 +109,17 @@ def _replace_known(text: str, found: set[str]) -> str:
     return redact(text)
 
 
+def _is_text(raw: bytes) -> bool:
+    """Decided by content, because traces also hold text with no extension, such as attachments."""
+    if b"\0" in raw:
+        return False
+    try:
+        raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+    return True
+
+
 def _scrub_lines(raw: bytes, found: set[str]) -> str:
     lines = []
     for line in raw.decode("utf-8", errors="replace").splitlines():
@@ -140,8 +147,8 @@ def sanitize_trace(source: Path, target: Path) -> tuple[bool, int]:
     for info, raw in members:
         if info.filename in cleaned:
             data = _replace_known(cleaned[info.filename], found).encode()
-        elif info.filename.endswith(_TEXT_MEMBER):
-            data = _replace_known(raw.decode("utf-8", errors="replace"), found).encode()
+        elif _is_text(raw):
+            data = _replace_known(raw.decode("utf-8"), found).encode()
         else:
             # Binary, such as screencast frames and fonts. Text is still replaced if present.
             data = raw

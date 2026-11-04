@@ -168,6 +168,36 @@ class TestSourceFilesInTraces:
         assert not kept
 
 
+class TestAttachmentsWithoutExtensions:
+    """Real traces store error context under attachments/<hash>, with source excerpts inside."""
+
+    def test_they_are_cleaned_and_the_trace_is_kept(self, tmp_path: Path) -> None:
+        source, target = tmp_path / "in.zip", tmp_path / "out.zip"
+        excerpt = b'  admin: { email: "a@x.example", password: "Admin!Forge2026" },\n'
+        excerpt += b'  data: { email, full_name: "Evil", password: "E2E-Long-Password-1", role: "ADMIN" },\n'
+        make_trace(source, {"attachments/f423998edee3d9ad56": excerpt})
+        kept, _ = sanitize_trace(source, target)
+        assert kept
+        data = all_bytes(target)
+        assert b"Forge2026" not in data
+        assert b"E2E-Long-Password" not in data
+        assert b'role: "ADMIN"' in data or b"ADMIN" in data
+
+    def test_real_binary_members_are_left_alone(self, tmp_path: Path) -> None:
+        source, target = tmp_path / "in.zip", tmp_path / "out.zip"
+        image = b"\xff\xd8\xff\x00not text at all\x00"
+        make_trace(source, {"resources/picture": image})
+        kept, _ = sanitize_trace(source, target)
+        assert kept
+        assert zipfile.ZipFile(target).read("resources/picture") == image
+
+    def test_a_synthetic_password_left_in_binary_drops_the_trace(self, tmp_path: Path) -> None:
+        source, target = tmp_path / "in.zip", tmp_path / "out.zip"
+        make_trace(source, {"resources/blob.bin": b"\x00E2E-Long-Password-1\x00"})
+        kept, _ = sanitize_trace(source, target)
+        assert not kept
+
+
 class TestEachRuleOnItsOwn:
     """One value in one place each, so that no rule is covered by another finding the same value."""
 
