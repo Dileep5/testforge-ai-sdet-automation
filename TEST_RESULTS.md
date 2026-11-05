@@ -7,9 +7,9 @@ PostgreSQL 17.11, Playwright 1.64.1, k6 2.3.0, axe-core 4.14, OpenAI Python SDK 
 
 ## Latest verified evidence
 
-**Verified, from GitHub Actions on Ubuntu 24.04 runners with 2 cores, at commit `f3061c9c1a902bd42a242a10d045256aebc25c2b`, with retries off.**
+**Verified, from GitHub Actions on Ubuntu 24.04 runners with 2 cores, at commit `d61c036fc050378f393060b47cc1edfb720a9237`, with retries off.**
 
-[CI run 41933122691](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691): **14 of 14 jobs succeeded**, including the final gate, in 18m 42s and about 49 job minutes.
+[CI run 41936962432](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41936962432): **14 of 14 jobs succeeded**, including the final gate, in 15m 33s and about 44 job minutes. Compared with [the run before it](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691), at `f3061c9`, only documentation changed, and the test counts are identical.
 
 The same Playwright projects run twice: natively on the runner, and inside the Docker stack, over plain HTTP. The two totals overlap, and should not be added together.
 
@@ -35,15 +35,15 @@ The same Playwright projects run twice: natively on the runner, and inside the D
 | AI tools pytest | **376** | 0 | 0 |
 | k6 performance gates | **22 of 22** | 0 | |
 
-**Performance on that runner:** p95 was 55.6 ms for health, 125.3 ms for products, 218.2 ms for orders and 1,136.8 ms for mixed, with 0% errors. Recovery had 0 errors in 460 requests, at `rate==0`. Refusal p95 was 506.2 ms, against a limit of 1,000 ms.
+**Performance on that runner:** p95 was 38.1 ms for health, 85.1 ms for products, 147.7 ms for orders and 633.3 ms for mixed, with 0% errors. Recovery had 0 errors in 460 requests, at `rate==0`. Refusal p95 was 172 ms, against a limit of 1,000 ms. These varied a lot between runs: mixed p95 has ranged from 602 to 1,456 ms, and refusal p95 from 152 to 541 ms.
 
 **The payment fixes passed on real plain HTTP.** Docker serves `http://web:8080`, which browsers treat as an insecure context. The 3 payment recovery and plain-HTTP tests passed there in Chromium, Firefox and WebKit.
 
-**Scans in that run:** gitleaks over 29 commits found no leaks. Production npm dependencies report 0 findings, and Python reports none known. Development tools have 9 moderate findings, none higher. Text scans of all 14 job logs and of the 9 uploaded JSON files found 0 credentials. Nothing failed, so no trace, screenshot, video or HTML report was uploaded.
+**Scans in that run:** gitleaks over 30 commits found no leaks. Production npm dependencies report 0 findings, and Python reports none known. Development tools have 9 moderate findings, none higher. Text scans of all 14 job logs and of the 9 uploaded JSON files found 0 credentials. Nothing failed, so no trace, screenshot, video or HTML report was uploaded.
 
 ### Sanitizer self-test
 
-[Run 41935807067](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41935807067), same commit: **both jobs succeeded**, in about 2 minutes. It was started by hand once.
+[Run 41935807067](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41935807067), at the earlier commit `f3061c9`: **both jobs succeeded**, in about 2 minutes. It was started by hand once, and only documentation has changed since.
 
 | Check | Result |
 | --- | --- |
@@ -63,23 +63,27 @@ The same Playwright projects run twice: natively on the runner, and inside the D
 
 ### What this evidence does not show
 
-- **Long-term stability.** There have been 3 fully green CI runs and 1 complete soak, all on one day.
+- **Long-term stability.** There have been 4 fully green CI runs and 1 complete soak, within about a day.
 - **An explanation for the macOS WebKit input failure.** It occurred once, and has not recurred, but the soak used a different WebKit build, on a different operating system, and a WebKit-only suite. [The root cause is unknown](#the-intermittent-webkit-failure-unresolved).
-- **That the package cache is reused.** The cache was [filled successfully, but no run has yet hit it](#browser-package-cache).
-- **Immunity to slow mirrors.** A cache miss can still meet one. See [CI_CD.md](CI_CD.md#browser-install-reliability).
+- **Immunity to slow mirrors.** [The package cache now works](#browser-package-cache), but apt still reads its package lists from a mirror, and a cache miss can still meet a slow one. See [CI_CD.md](CI_CD.md#browser-install-reliability).
 - **That local runs are immune to overload.** See [the failed local run](#a-failed-local-run-in-the-final-audit).
 - **Anything about a live LLM,** which has not been called.
 
 ### Browser package cache
 
-| Item | Result in run 41933122691 |
-| --- | --- |
-| Key | `apt-ubuntu24-1.64.1`, now with the OS in it |
-| Cache hits | **0, and hits remain unverified.** All 4 browser jobs started together on a new key |
-| Saved | **Yes:** by the WebKit job, with 181 packages, 114 MB |
-| Other jobs | Reported `Unable to reserve cache`, a harmless warning, because another job was saving |
-| Install times | 28 s, 30 s, 32 s and 87 s |
-| Handling of a failed install | **Not exercised,** as no install failed. Tested locally only |
+**The cache produced genuine hits in all 4 browser jobs of [run 41936962432](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41936962432).** This rests on each job's own log, not on download speed.
+
+| Evidence | Chromium | Firefox | WebKit | Accessibility |
+| --- | --- | --- | --- | --- |
+| Restore result for `apt-ubuntu24-1.64.1` | Exact hit | Exact hit | Exact hit | Exact hit |
+| Packages before installing | 181 | 181 | 181 | 181 |
+| apt's download need | 0 B of 114 MB | 0 B of 114 MB | 0 B of 114 MB | 0 B of 114 MB |
+| Install time | 22 s | 27 s | 22 s | 31 s |
+| Without a hit, [the run before](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691) | 30 s | 32 s | 28 s | 87 s |
+
+The saving step was skipped in all 4 jobs, as it should be after an exact hit. [The previous run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691) had filled the cache, with 181 packages, 114 MB, and lost nothing to the jobs that could not save.
+
+**What this does not show:** no mirror was slow in either run, so the cache has not yet been seen to rescue a job from one. apt still fetched 10 to 13 MB of package lists from the mirror. Handling of a failed install has not been exercised on GitHub.
 
 ## CI run stopped by a slow package mirror
 
@@ -98,9 +102,9 @@ The same Playwright projects run twice: natively on the runner, and inside the D
 | **Native accessibility and keyboard** | **Did not run** | | | |
 | Performance gates | 22 of 22 | 0 | | |
 
-The same 114 MB of packages took **8 seconds on the WebKit job, and over 15 minutes on the Accessibility job**, which fetched 55 of 181. Across all 26 browser installs in CI so far, at least 2 have hit a mirror this slow, so it is not rare. The limit worked as designed, and stopped that job about 15 minutes in with a clear error.
+The same 114 MB of packages took **8 seconds on the WebKit job, and over 15 minutes on the Accessibility job**, which fetched 55 of 181. Across all 30 browser installs in CI so far, at least 2 have hit a mirror this slow, so it is not rare. The limit worked as designed, and stopped that job about 15 minutes in with a clear error.
 
-The run also showed flaws in the mitigation, which were then fixed, and passed in the latest run. See [CI_CD.md](CI_CD.md#browser-install-reliability).
+The run also showed flaws in the mitigation, which were then fixed, and passed in later runs. See [CI_CD.md](CI_CD.md#browser-install-reliability).
 
 ## Summary
 
@@ -273,7 +277,6 @@ No application defect was found. Normal-load Linux p95: health 30.5 ms, products
 
 | Item | Status |
 | --- | --- |
-| Package cache hit | **Unverified.** Cache filled, and no run has hit it yet |
 | Failed install handling on GitHub | **Not exercised**, as no install has failed since it changed |
 | Sanitizer on a real failing trace on GitHub, with the latest fix | **Not exercised.** Verified locally on real traces, and on GitHub on a synthetic run |
 | Live LLM evaluation | **Not run** |
@@ -676,7 +679,7 @@ Anyone publishing the Docker images would need to review the licences of what th
 **Testing**
 
 - **Firefox is verified on Linux only.** It cannot launch on the development Mac.
-- **Limited CI history.** Three fully green runs and one complete soak, all on one day. See [the latest evidence](#latest-verified-evidence).
+- **Limited CI history.** Four fully green runs and one complete soak, within about a day. See [the latest evidence](#latest-verified-evidence).
 - **One WebKit failure is unresolved,** as described above.
 - **No live LLM has been called.** Offline chatbot results measure keyword retrieval and rules, and it scored 0/8 on held-out paraphrases. See [AI_EVALUATION.md](AI_EVALUATION.md#limitations).
 - **Accessibility is not proven by these tests.** No screen reader was used. See [ACCESSIBILITY.md](ACCESSIBILITY.md#limitations).

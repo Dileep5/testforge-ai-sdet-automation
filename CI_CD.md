@@ -1,8 +1,8 @@
 # CI/CD
 
-**Status: the latest run is fully green.** [CI run 41933122691](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691), at commit `f3061c9`, passed all 14 jobs, including the final gate, in 18m 42s and about 49 job minutes. [Sanitizer self-test run 41935807067](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41935807067) also passed. Results are in [TEST_RESULTS.md](TEST_RESULTS.md#latest-verified-evidence).
+**Status: the latest run is fully green.** [CI run 41936962432](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41936962432), at commit `d61c036`, passed all 14 jobs, including the final gate, in 15m 33s and about 44 job minutes. [Sanitizer self-test run 41935807067](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41935807067) also passed. Results are in [TEST_RESULTS.md](TEST_RESULTS.md#latest-verified-evidence).
 
-Of 6 complete CI runs, 3 were green, all on one day, so this history does not show long-term stability. The 3 failed runs came from a linter setting, defects in the Docker test script and an overload test, a real payment bug found by Docker, and a slow package mirror. All are [explained with their fixes](TEST_RESULTS.md#first-github-actions-run).
+Of 7 complete CI runs, 4 were green, within about a day, so this history does not show long-term stability. The 3 failed runs came from a linter setting, defects in the Docker test script and an overload test, a real payment bug found by Docker, and a slow package mirror. All are [explained with their fixes](TEST_RESULTS.md#first-github-actions-run).
 
 ## Jobs
 
@@ -83,20 +83,18 @@ A newer push replaces an unfinished run on the same pull request, because only t
 
 **How the shared cache works:** every browser job installs the system packages for all browsers, even if it runs only one, so the set is the same everywhere and one cache serves every job. The key is the OS image plus Playwright's version, currently `apt-ubuntu24-1.64.1`. An older key with the same OS can be restored as a starting point, and apt then fetches only what is missing. Jobs start together, so on a new key they all download, one saves the cache, and the others log `Unable to reserve cache`, which is harmless.
 
-| Observation | [First version](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41928911349) | [Latest run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691) |
-| --- | --- | --- |
-| Time limit | Worked: stopped at 900 s, with an error naming the likely cause | Not reached |
-| Install times | 20, 24 and 36 s, and 1 job stopped at 900 s | 28, 30, 32 and 87 s |
-| Slowest 114 MB download | Over 15 minutes, incomplete | 42 s |
-| Cache key | **Flaw:** `env.ImageOS` is empty in a composite action, so the OS was missing | Fixed: `apt-ubuntu24-1.64.1` |
-| Cache sharing | **Flaw:** one cache per browser list, tied to the whole lock file | Fixed: one cache, tied to Playwright's version |
-| Cache saved | 3 separate caches | **1 cache: 181 packages, 114 MB** |
-| Cache hits | None | **None, as all jobs started on a new key** |
-| After a failed install | **Flaw:** later steps also failed, burying the cause | Fixed, and **not exercised**, as nothing failed |
+| Observation | [First version](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41928911349) | [Filling the cache](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691) | [Using the cache](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41936962432) |
+| --- | --- | --- | --- |
+| Time limit | Worked: stopped at 900 s, with an error naming the likely cause | Not reached | Not reached |
+| Install times | 20, 24 and 36 s, and 1 job stopped at 900 s | 28, 30, 32 and 87 s | **22, 22, 27 and 31 s** |
+| Slowest 114 MB download | Over 15 minutes, incomplete | 42 s | **None needed** |
+| Cache key | **Flaw:** `env.ImageOS` is empty in a composite action, so the OS was missing | Fixed: `apt-ubuntu24-1.64.1` | Same |
+| Cache sharing | **Flaw:** one cache per browser list, tied to the whole lock file | Fixed: one cache, tied to Playwright's version | Same |
+| Cache saved | 3 separate caches | **1 cache: 181 packages, 114 MB** | Skipped, as it should be after a hit |
+| Cache hits | None | None, as all jobs started on a new key | **4 of 4: 181 packages before installing, and `Need to get 0 B/114 MB`** |
+| After a failed install | **Flaw:** later steps also failed, burying the cause | Fixed, and **not exercised**, as nothing failed | **Not exercised** |
 
-**Still unverified:** that a later run actually hits this cache. The next run should log `Package cache: 181 packages before installing`.
-
-**Remaining slow-mirror risk:** at least 2 of 26 browser installs have met a very slow mirror. A cache hit should avoid most of the download, though apt still updates its package lists, and fetches any package that has changed. A miss, such as after a Playwright upgrade, can still meet a slow mirror, which now fails with a clear error at 15 minutes and needs someone to run it again. **If this remains a problem,** the next step is running native jobs in the pinned Playwright image.
+**Remaining slow-mirror risk:** at least 2 of 30 browser installs have met a very slow mirror. A cache hit avoids the package download, though apt still fetches 10 to 13 MB of package lists from the mirror, and any package that has changed. No mirror was slow in the runs above, so the cache has not yet been seen to rescue a job from one. A miss, such as after a Playwright upgrade, can still meet a slow mirror, which now fails with a clear error at 15 minutes and needs someone to run it again. **If this remains a problem,** the next step is running native jobs in the pinned Playwright image.
 
 ## Artifact retention
 
@@ -171,8 +169,8 @@ No secrets need configuring. `performance-stress.yml` has never been started. Fo
 
 ## Limitations
 
-- **A short history:** 6 complete CI runs, 3 of them green, on one day, so rare or timing-related Linux failures may not have appeared.
-- **Package cache hits are unverified,** and a slow mirror can still fail a run. See [Browser install reliability](#browser-install-reliability).
+- **A short history:** 7 complete CI runs, 4 of them green, within about a day, so rare or timing-related Linux failures may not have appeared.
+- **A slow mirror can still fail a run,** on a cache miss or while fetching package lists. See [Browser install reliability](#browser-install-reliability).
 - **Failed install handling has not been exercised on GitHub.**
 - **The latest sanitizer fix has run on GitHub only on a synthetic fixture.** A real failing trace would be the first real test.
 - **Images and video in artifacts cannot be text-scanned,** and those from the second run have not been reviewed one by one.

@@ -15,7 +15,7 @@ Test suites often look healthy while proving little: they mock the system they c
 
 ## Verified evidence
 
-From [CI run 41933122691](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691), on Ubuntu 24.04 runners with 2 cores, at commit `f3061c9`, on 2026-11-04. All have 0 failed and 0 skipped, and the Playwright suites have 0 flaky.
+From [CI run 41936962432](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41936962432), on Ubuntu 24.04 runners with 2 cores, at commit `d61c036`, on 2026-11-04. All have 0 failed and 0 skipped, and the Playwright suites have 0 flaky.
 
 The same Playwright projects run twice, natively and inside Docker, so **the two totals overlap, and should not be added together.**
 
@@ -164,7 +164,7 @@ Raw reports contain session cookies and synthetic passwords. They are ignored by
 - **Firefox cannot launch on the development Mac,** so it is verified on Linux only.
 - **Performance figures describe one laptop or a shared 2-core runner.** They are not capacity figures or service levels, and the gates have thin margins on slow runners.
 - **The sanitizer's latest fix has run on GitHub only on a synthetic fixture.** Real failing traces have been sanitized with it only locally. Screenshots and video cannot be text-scanned.
-- **Limited CI history:** three fully green runs and one complete soak, on one day. A slow package mirror has twice disrupted browser installs, and the cache meant to reduce this has not yet been seen to hit.
+- **Limited CI history:** four fully green runs and one complete soak, within about a day. A slow package mirror has twice disrupted browser installs. A package cache now avoids that download, but has not yet been tested against a slow mirror.
 - **Dependabot is off for now,** so pinned versions need updating by hand.
 
 The full list is in [TEST_RESULTS.md](TEST_RESULTS.md#known-limitations).

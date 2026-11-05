@@ -225,7 +225,7 @@ Run with no API key in the environment. Playwright retries were off.
 | API tests of the route | `tests/api/support.spec.ts` | 7 | 0 | 0 |
 | Security tests of the route | `tests/security/ai-support.spec.ts` | 7 | 0 | 0 |
 
-These counts include parametrised cases, which overstate distinct scenarios. All 376 passed in [CI run 41933122691](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691).
+These counts include parametrised cases, which overstate distinct scenarios. All 376 passed in [CI run 41936962432](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41936962432).
 
 ## Limitations
 
