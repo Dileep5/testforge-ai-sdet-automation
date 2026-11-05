@@ -35,7 +35,7 @@ The same Playwright projects run twice: natively on the runner, and inside the D
 | AI tools pytest | **376** | 0 | 0 |
 | k6 performance gates | **22 of 22** | 0 | |
 
-**Performance on that runner:** p95 was 38.1 ms for health, 85.1 ms for products, 147.7 ms for orders and 633.3 ms for mixed, with 0% errors. Recovery had 0 errors in 460 requests, at `rate==0`. Refusal p95 was 172 ms, against a limit of 1,000 ms. These varied a lot between runs: mixed p95 has ranged from 602 to 1,456 ms, and refusal p95 from 152 to 541 ms.
+**Performance on that runner:** p95 was 38.1 ms for health, 85.1 ms for products, 147.7 ms for orders and 633.3 ms for mixed, with 0% errors. Recovery had 0 errors in 460 requests, at `rate==0`. Refusal p95 was 172 ms, against a limit of 1,000 ms. These varied a lot between runs: mixed p95 has ranged from 602 to 1,456 ms, and refusal p95 from 77 to 541 ms, across all 7 complete CI runs.
 
 **The payment fixes passed on real plain HTTP.** Docker serves `http://web:8080`, which browsers treat as an insecure context. The 3 payment recovery and plain-HTTP tests passed there in Chromium, Firefox and WebKit.
 
@@ -81,7 +81,9 @@ The same Playwright projects run twice: natively on the runner, and inside the D
 | Install time | 22 s | 27 s | 22 s | 31 s |
 | Without a hit, [the run before](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691) | 30 s | 32 s | 28 s | 87 s |
 
-The saving step was skipped in all 4 jobs, as it should be after an exact hit. [The previous run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691) had filled the cache, with 181 packages, 114 MB, and lost nothing to the jobs that could not save.
+The saving step was skipped in all 4 jobs, as it should be after an exact hit. [The previous run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691) had filled the cache, with 181 packages, 114 MB.
+
+**These times are not a clean comparison.** They cover the whole install step. Accessibility's 87 s in the earlier run also included a 42 s package download and a miss on the separate browser cache, so it overstates what the package cache saves. For the other 3 jobs, the saving was 6 to 8 s, on a fast mirror.
 
 **What this does not show:** no mirror was slow in either run, so the cache has not yet been seen to rescue a job from one. apt still fetched 10 to 13 MB of package lists from the mirror. Handling of a failed install has not been exercised on GitHub.
 
