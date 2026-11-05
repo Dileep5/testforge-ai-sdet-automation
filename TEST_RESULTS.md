@@ -83,7 +83,7 @@ The same Playwright projects run twice: natively on the runner, and inside the D
 
 The saving step was skipped in all 4 jobs, as it should be after an exact hit. [The previous run](https://github.com/Dileep5/testforge-ai-sdet-automation/actions/runs/41933122691) had filled the cache, with 181 packages, 114 MB.
 
-**These times are not a clean comparison.** They cover the whole install step. Accessibility's 87 s in the earlier run also included a 42 s package download and a miss on the separate browser cache, so it overstates what the package cache saves. For the other 3 jobs, the saving was 6 to 8 s, on a fast mirror.
+**These times are not a clean comparison.** They cover the whole install step. Accessibility's 87 s in the earlier run also included a 42 s package download and a miss on the separate browser cache, so it overstates what the package cache saves. For the other 3 jobs, the saving was 5 to 8 s, on a fast mirror.
 
 **What this does not show:** no mirror was slow in either run, so the cache has not yet been seen to rescue a job from one. apt still fetched 10 to 13 MB of package lists from the mirror. Handling of a failed install has not been exercised on GitHub.
 
